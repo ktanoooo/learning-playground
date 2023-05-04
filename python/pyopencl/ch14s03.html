@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>14.3. HelloWorld（タスク並列プログラミング）</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch14.html" title="Chapter 14. HelloWorldプログラム" /><link rel="prev" href="ch14s02.html" title="14.2. カーネル関数のソースコード" /><link rel="next" href="ch14s04.html" title="14.4. HelloWorld（データ並列プログラミング）" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch14s02.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch14s04.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_helloworld_タスク並列プログラミング"></a>14.3. HelloWorld（タスク並列プログラミング）</h2></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>タスク並列プログラミングの詳細については「<a class="xref" href="ch13s06.html#task-parallel-model" title="タスク並列プログラミングモデル">the section called “タスク並列プログラミングモデル”</a>」を参照ください。</p></div><p>この項目で以下のファイルを使います。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+TaskTest.py
+</li></ul></div><p>まず以下のようなカーネル関数をOpenCL-C言語で記述してみます。</p><p><strong>カーネル関数. </strong>
+</p><pre xmlns="" class="prettyprint">__kernel void helloworld(__global int* number, char c) //<a xmlns="http://www.w3.org/1999/xhtml" id="CO12-1"></a>(1)
+{
+        int4 num4 = vload4(0, number + 1); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO12-2"></a>(2)
+        float4 fl4 = (float4) (1.0f, 2.0f, 3.0f, 4.0f); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO12-3"></a>(3)
+
+        printf("Hello World! Buddy!\n"); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO12-4"></a>(4)
+        printf("%s\n", "Text literal is output just like this!");
+        printf("input integer is %d\n", number[4]); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO12-5"></a>(5)
+        printf("15 in hex format is %#x\n", 15);
+        printf("num4 vector is %#v4x\n", num4); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO12-6"></a>(6)
+        printf("fl4 vector is %#v4x\n", fl4);
+        printf("input character is %c\n", c); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO12-7"></a>(7)
+}</pre><p>
+</p><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO12-1">(1)</a> </p></td><td valign="top" align="left"><p>
+カーネルを宣言。第一引数にグローバル変数のnumber、第二引数にプライベート変数のbow、第三引数にプライベート変数のc。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO12-2">(2)</a> </p></td><td valign="top" align="left"><p>
+配列「number」のポインタをインクリメントした位置から４つのアドレスを、num4にコピー。「グローバル変数からプライベート変数へのロード」が行なわれます。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO12-3">(3)</a> </p></td><td valign="top" align="left"><p>
+printfはC言語とほぼ同じように使えます。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO12-4">(4)</a> </p></td><td valign="top" align="left"><p>
+「%s」は文字列の表示を指定します。「\n」は改行を指定します。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO12-5">(5)</a> </p></td><td valign="top" align="left"><p>
+「%d」は整数の表示を指定します。「\n」は改行を指定します。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO12-6">(6)</a> </p></td><td valign="top" align="left"><p>
+「%#v4x」は、v4つまり４つの要素からなるベクトルを、0xで始まる16進数型式での表示を指定します。num4にコピーした「number」は添字1から４つの要素ですが、「number」変数の添字５は未定義のため、0が表示されます。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO12-7">(7)</a> </p></td><td valign="top" align="left"><p>
+プライベートメモリ内の変数cにアクセスします。
+</p></td></tr></table></div><p>次にこれに対応するスクリプトのコードをしてみます。</p><p><strong>TaskTest.py. </strong>
+</p><pre xmlns="" class="prettyprint">import pyopencl as cl
+import numpy as np
+
+data = np.arange(16).astype(np.int32)
+devices = [cl.get_platforms()[0].get_devices(cl.device_type.GPU)[0]]
+
+ctx = cl.Context(devices)
+queue = cl.CommandQueue(ctx)
+mf = cl.mem_flags
+
+a = np.arange(16).astype(np.int32)
+a_mem = cl.Buffer(ctx, cl.mem_flags.USE_HOST_PTR, hostbuf=a)
+c = np.uint8(90)
+
+program = cl.Program(ctx, """
+    __kernel void helloworld(__global int* number, char c)
+    {
+        int4 num4 = vload4(0, number + 1);
+        float4 fl4 = (float4) (1.0f, 2.0f, 3.0f, 4.0f);
+
+        printf("Hello World! Buddy!\\n");
+        printf("%s\\n", "Text literal is output just like this!");
+        printf("input integer is %x\\n", number[4]);
+        printf("15 in hex format is %#x\\n", 15);
+        printf("num4 vector is %#v4x\\n", num4);
+        printf("fl4 vector is %#v4x\\n", fl4);
+        printf("input character is %c\\n", c);
+    }
+    """).build()
+
+kernel = cl.Kernel(program, name="helloworld")
+
+kernel.set_arg(0, a_mem)
+kernel.set_arg(1, c)
+
+cl.enqueue_task(queue, kernel)
+
+queue.finish()</pre><p>
+</p><p>OpenCLでタスク並列プログラミングを指す場合は原則として、enqueue_task関数を使ったカーネルコマンドのキューへの挿入を意味し、以下のようにすればカーネルコマンドがデバイス内で発行し実行されます。</p><pre xmlns="" class="prettyprint">cl.enqueue_task(queue, kernel)</pre><p>第１引数のqueueはコマンドキューオブジェクト、第2引数のkernelはカーネルオブジェクトです。</p><p>コマンドキューオブジェクトを生成するには、以下のようにコンテキストオブジェクト、デバイスオブジェクトを先行して生成しておく必要があります。</p><pre xmlns="" class="prettyprint">queue = cl.CommandQueue(ctx)</pre><p>コンテキストオブジェクトを生成するには以下のようにclCreateContext関数の引数としてデバイスオブジェクトが必要となります。</p><pre xmlns="" class="prettyprint">ctx = cl.Context(devices)</pre><p>デバイスオブジェクトの生成は、clGetDeviceIDs関数を使いますが、第一引数でプラットフォームオブジェクトが必要となります。</p><pre xmlns="" class="prettyprint">devices = [cl.get_platforms()[0].get_devices(cl.device_type.GPU)[0]]</pre><p>この一連の流れは「図：OpenCL API UMLクラス図」（<a class="xref" href="ch05.html#openclClass" title="Figure 5.1. 図：OpenCL API UMLクラス図">Figure 5.1, “図：OpenCL API UMLクラス図”</a>）にあるように、プラットフォームからデバイス、コンテキストからコマンドキューやバッファ、カーネルという依存性として理解できます。</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_出力"></a>14.3.1. 出力</h3></div></div></div><p>サンプルプログラムによる出力は以下のようになります。</p><pre xmlns="" class="prettyprint">/Users/komatsu/JOCLBook/target/classes/com/book/jocl/task/basic_helloworld.cl
+Hello World! Buddy!
+Text literal is output just like this!
+input integer is 4
+15 in hex format is 0xf
+num4 vector is 0x2,0x3,0x4,0
+fl4 vector is 0x25ad905c,0x25ad9064,0x25ad906c,0x25ad9074
+input character is p</pre></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch14s02.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch14.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch14s04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

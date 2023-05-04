@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>17.2. 組み込みデータ型</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch17.html" title="Chapter 17. OpenCL C言語プログラミング" /><link rel="prev" href="ch17s01.html" title="17.1. カーネルプログラミング" /><link rel="next" href="ch17s03.html" title="17.3. その他の関数" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch17s01.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch17s03.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_組み込みデータ型"></a>17.2. 組み込みデータ型</h2></div></div></div><p>前の項目で、uchar16というベクトル型が登場しました。このベクトル型は並列処理に適しており、各ベンダーのOpenCL-C実装はハードウェア上の演算ユニットが並列で処理ができるように最適化が行なわれます。</p><p>OpenCL-Cではベクトル型を使うほうがパフォーマンスの面では有利となりますが、コードが複雑となり可読性を犠牲になってもベクトル型で記述する理由としてハードウェアリソースの最適化があります。</p><p>もちろんOpenCLにはベクトル型以外のデータ型もあり、その代表格としてスカラデータ型とイメージデータ型があります。</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="scalar-chapter"></a>17.2.1. 組み込みスカラデータ型</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：スカラデータ型」（<a class="xref" href="apbs01.html#scalar" title="Table B.1. 表：スカラデータ型">Table B.1, “表：スカラデータ型”</a>）を参照ください。</p></div><p>OpenCL C言語のスカラ型は端的に言えば、複数の値でなく一つの値を持つデータ型のことです。</p><p>以下が代表的なスカラデータ型です。</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+bool
+</span></dt><dd>
+真偽型、true/false、1/0の値をとります。
+</dd><dt><span class="term">
+unsigned char, uchar
+</span></dt><dd>
+符号なしの8ビット整数。
+</dd><dt><span class="term">
+short
+</span></dt><dd>
+符号付き２の補数の16ビット整数。
+</dd><dt><span class="term">
+half
+</span></dt><dd>
+16ビット浮動小数点。A 32-bit floating-point. IEEE 754 半精度の記憶域フォーマットに準拠。
+</dd><dt><span class="term">
+int￼
+</span></dt><dd>
+符号付き２の補数の32ビット整数。
+</dd><dt><span class="term">
+unsigned int, uint
+</span></dt><dd>
+符号なしの32ビット整数。
+</dd><dt><span class="term">
+long￼
+</span></dt><dd>
+符号付き２の補数の64ビット整数。
+</dd><dt><span class="term">
+float
+</span></dt><dd>
+32ビット浮動小数点。A 32-bit floating-point. IEEE 754 単精度の記憶域フォーマットに準拠。
+</dd><dt><span class="term">
+double
+</span></dt><dd>
+64ビット浮動小数点。A 32-bit floating-point. IEEE 754 倍精度の記憶域フォーマットに準拠。
+</dd><dt><span class="term">
+size_t
+</span></dt><dd>
+符号なしの整数型（sizeof演算子の結果として用いる）。CL_DEVICE_ADDRESS_BITSが32ビットの時は、符号なしの32ビット整数。CL_DEVICE_ADDRESS_BITSが64ビットの時は、符号なしの64ビット整数。
+</dd></dl></div><p>doubleはデバイスによってはサポートしていません。double型がデバイスでサポートされているかチェックするには、cl_khr_fp64拡張（エクステンション）がサポートされているか、clGetDeviceInfoを呼び出して情報を取得します。サポートされている場合は以下のようにして拡張を有効にします。</p><pre xmlns="" class="prettyprint"> #pragma OPENCL EXTENSION cl_khr_fp64 : enable</pre><p>もし拡張を無効とする場合は、以下のようにenableをdisableに書き換えます。</p><pre xmlns="" class="prettyprint"> #pragma OPENCL EXTENSION cl_khr_fp64 : disable</pre><p>全エクステンションを有効または無効とする場合は、個別の拡張ではなく「all」の設定をします。</p><pre xmlns="" class="prettyprint">#pragma OPENCL EXTENSION all : enable</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_ホストapiとの対応"></a>17.2.2. ホストAPIとの対応</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：OpenCLホストAPIとC言語の対応表」（<a class="xref" href="apbs02.html#interop_scalar" title="Table B.2. 表：OpenCLホストAPIとC言語の対応表">Table B.2, “表：OpenCLホストAPIとC言語の対応表”</a>）を参照ください。</p></div><p>OpenCLホストアプリケーションからカーネルの引数に、データを渡す場合、ホストAPIとOpenCL-Cのデータ型は異なります。</p><p>「表：OpenCLホストAPIとC言語の対応表」（<a class="xref" href="apbs02.html#interop_scalar" title="Table B.2. 表：OpenCLホストAPIとC言語の対応表">Table B.2, “表：OpenCLホストAPIとC言語の対応表”</a>）に表記されている通り、bool型に対応したOpenCL APIのデータ型はありません。カーネル内でcharやintを引数として使う場合、cl_charやcl_intとして宣言したバッファオブジェクトを渡す必要があります。</p><p>基本的にOpenCLホストAPIとC言語の対応は直感的に操作することができます。記憶しなくとも慣れてくると無意識的に各データ型の対応をできるようになるものなので、無理に覚えようとしないほうがいいかもしれません。</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_half"></a>half</h4></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>本項目は数値演算の興味の無い方はとばしてください。</p></div><p>スカラ型の中でも、half型は特殊ケースのため補足します。IEEE 754-2008規格という半精度浮動小数点演算の規格に準拠したデータ型でして、ここで詳細は記述しません。</p><p>IEEE 754規格は浮動小数点を（２進数）ビットで表すために以下のような計算式を示しています。</p><p>表したい浮動小数点値 = 符号 * 2^指数 * 仮数</p><p>数式とするのであれば以下のように表すことができます。</p><div class="informalfigure"><div class="mediaobject"><img src="images/ieee754.png" alt="images/ieee754.png" /></div></div><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+y
+</span></dt><dd>
+    浮動小数点値
+</dd><dt><span class="term">
+s
+</span></dt><dd>
+    符号
+</dd><dt><span class="term">
+b
+</span></dt><dd>
+    指数
+</dd><dt><span class="term">
+c
+</span></dt><dd>
+    仮数
+</dd></dl></div><p>各要素は以下の２進数のビット数で表します。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+符号：1ビット
+</li><li class="listitem">
+指数：5ビット(指数バイアスは15、2^4=16のbitのみで指数部は1）
+</li><li class="listitem">
+仮数：10ビット（正確には11bit、最上位ビットは指数部によって0から1をとる）
+</li></ul></div><div class="informaltable"><table class="informaltable" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; "><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /><col class="col_4" /><col class="col_5" /><col class="col_6" /><col class="col_7" /><col class="col_8" /><col class="col_9" /><col class="col_10" /><col class="col_11" /><col class="col_12" /><col class="col_13" /><col class="col_14" /><col class="col_15" /><col class="col_16" /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>符号</em></span></p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="5" align="left" valign="top"><p><span class="emphasis"><em>指数</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="10" align="left" valign="top"><p><span class="emphasis"><em>仮数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>1</em></span></p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="5" align="left" valign="top"><p><span class="emphasis"><em>5</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="10" align="left" valign="top"><p><span class="emphasis"><em>10</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="" align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td></tr></tbody></table></div><p>指数部は下駄履き表現とし、バイアスは15となります。</p><p>例えば、指数部分の計算をする場合、指数からバイアス（又はエキセス）を下記のように減じます。</p><div class="informalfigure"><div class="mediaobject"><img src="images/latex0.png" alt="images/latex0.png" /></div></div><p>仮数部の最上位ビットは、指数部が00000の場合は0とし、それ以外（無限値となる11111を除外）を1とします。</p><div class="informalfigure"><div class="mediaobject"><img src="images/latex1.png" alt="images/latex1.png" /></div></div><p>この計算のより詳細な記述を知りたい方は、IEEE754規格を参照頂くようお願い致します。</p><p>OpenCL-Cではhalf型はあまり使う機会はないかと思います。half型で計算をするハードウェアがないため、非効率な処理になる可能性が高いからです。</p><p>OpenCL 1.2以降では、half値のバッファオブジェクトを指すポインタを宣言する場合に使います。</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_float"></a>float</h4></div></div></div><p>floatは単精度浮動小数点（32bit）のスカラデータ型です。原則としてIEEE 754に準拠します。</p><p>本書を執筆している段階では、ハードウェアの演算ユニットはfloatであればサポートしているので、パフォーマンスを最適化する場合は、ハードの仕様がfloat以外をサポートしない場合は、floatをベースのデータ型としてアルゴリズムの設計を行うことを推奨します。</p><p>floatの各要素は以下の２進数のビット数で表します。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+符号：1bit
+</li><li class="listitem">
+指数：8bit
+</li><li class="listitem">
+仮数：23bit
+</li></ul></div><p>最大値は(1)、最小値は(2)で表すことができます。</p><div class="informalfigure"><div class="mediaobject"><img src="images/latex2.png" alt="images/latex2.png" /></div></div><div class="informaltable"><table class="informaltable" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; "><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /><col class="col_4" /><col class="col_5" /><col class="col_6" /><col class="col_7" /><col class="col_8" /><col class="col_9" /><col class="col_10" /><col class="col_11" /><col class="col_12" /><col class="col_13" /><col class="col_14" /><col class="col_15" /><col class="col_16" /><col class="col_17" /><col class="col_18" /><col class="col_19" /><col class="col_20" /><col class="col_21" /><col class="col_22" /><col class="col_23" /><col class="col_24" /><col class="col_25" /><col class="col_26" /><col class="col_27" /><col class="col_28" /><col class="col_29" /><col class="col_30" /><col class="col_31" /><col class="col_32" /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>符号</em></span></p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="8" align="left" valign="top"><p><span class="emphasis"><em>指数</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="23" align="left" valign="top"><p><span class="emphasis"><em>仮数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>1</em></span></p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="8" align="left" valign="top"><p><span class="emphasis"><em>8</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="23" align="left" valign="top"><p><span class="emphasis"><em>23</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="" align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td></tr></tbody></table></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_double"></a>double</h4></div></div></div><p>64ビットの倍精度浮動小数点型、doubleはOpenCL規格ではオプション機能であり、多くのGPUデバイスでサポートしていません。</p><p>本書で検証機として利用しているMac Miniでdoubleがサポートされているか確認してみました。下記のように「FP_64」が定義されているか検証コードを書いてみました。</p><pre xmlns="" class="prettyprint">/* OpenCL 1.2では手動設定は不要 */
+#ifdef FP_64
+#pragma OPENCL EXTENSION cl_khr_fp64: enable
+#endif
+
+__kernel void helloworld(float f)
+{
+#ifdef FP_64
+        printf("Double precision FP supported by GPU.\n");
+#else
+        printf("Double precision FP not supported by GPU.\n");
+#endif
+}</pre><p>実行可能ファイルの出力結果は以下のようになります。</p><pre xmlns="" class="prettyprint">$ ./helloworld
+kernel completed.
+Double precision FP not supported by GPU.</pre><p>出力結果にあるようにMac Miniでは倍精度浮動小数点はサポートしていないことを確認できました。</p><p>double型の値は64ビット（２進数）で表します。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+符号：1ビット
+</li><li class="listitem">
+指数：11ビット
+</li><li class="listitem">
+仮数：52ビット
+</li></ul></div><div class="informaltable"><table class="informaltable" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; "><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>符号</em></span></p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>指数</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>仮数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>1ビット</em></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>11ビット</em></span></p></td><td style="" align="left" valign="top"><p><span class="emphasis"><em>52ビット</em></span></p></td></tr></tbody></table></div><p>doubleについては、ハードウェアでサポートされていないこともありますが、より大きなメモリ領域を確保する必要が生じるため、使える機会は限定されます。</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_他のデータ型"></a>他のデータ型</h4></div></div></div><p><a class="xref" href="apbs01.html#scalar" title="Table B.1. 表：スカラデータ型">Table B.1, “表：スカラデータ型”</a>では基本的なデータ型とは別にCL_DEVICE_ADDRESS_BITSという値に依存するデータ型が存在します。以下がそのデータ型です。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+size_T
+</li><li class="listitem">
+ptrdiff_t
+</li><li class="listitem">
+intrptr_t
+</li><li class="listitem">
+uintptr_t
+</li></ul></div><p>CL_DEVICE_ADDRESS_BITSはclGetDeviceInfo関数のparam_name引数にCL_DEVICE_ADDRESS_BITSを指定すると求めることができます。CL_DEVICE_ADDRESS_BITSの値は32か64のいずれかになります。</p><p>例えばsize_tのサイズはCL_DEVICE_ADDRESS_BITSが32の場合は、32bit、64の場合は64bitとなります。この作用は上記にあげた他３つのデータ型で共通しています。</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_バイト順序"></a>17.2.3. バイト順序</h3></div></div></div><p>データ型を定義する際にはハードウェアのアーキテクチャやプラットフォームについても留意する必要があります。</p><p>バイト順序と呼ばれるバイトがどのように並べられるかは0x86とIBM-Power等では異なり、以下の４つのバイト順序があります。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+リトルエンディアン（x86）
+</li><li class="listitem">
+ビッグエンディアン（IBM Power/Java Virtual Machine）
+</li><li class="listitem">
+ミドルエンディアン
+</li><li class="listitem">
+バイエンディアン（ARM）
+</li></ul></div><p>このうち重要なものは、上２つのリトルエンディアンとビッグエンディアンです。バイエンディアンは、リトルエンディアンとビッグエンディアンを切り替え可能なアーキテクチャで、2016年時点でミドルエンディアンを採用するアーキテクチャを筆者は知らないため割愛いたします。</p><p>本書ではx86アーキテクチャを想定するため、ビッグエンディアンを使う前提ではありますが、製造したソフトウェアをパブリッシュする際には、</p><pre xmlns="" class="prettyprint">unsigned int x = 0x01234567;</pre><p>リトルエンディアンのバイト順序は、右から左に整理されます。</p><div class="informaltable"><table class="informaltable" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; "><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /><col class="col_4" /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="strong"><strong>67</strong></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="strong"><strong>45</strong></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="strong"><strong>23</strong></span></p></td><td style="" align="left" valign="top"><p><span class="strong"><strong>01</strong></span></p></td></tr></tbody></table></div><p>というように右から左の順序に整理し、コードが左から右に記述しているバイトを逆にしています。</p><p>ビッグエンディアンはリトルエンディアンの反対の順序をとります。つまり、</p><div class="informaltable"><table class="informaltable" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; "><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /><col class="col_4" /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="strong"><strong>01</strong></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="strong"><strong>23</strong></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="strong"><strong>45</strong></span></p></td><td style="" align="left" valign="top"><p><span class="strong"><strong>67</strong></span></p></td></tr></tbody></table></div><p>という順序をとります。</p><p>バイト順序については、ベクトル型をとりあげる際にも解説します。</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="vector-chapter"></a>17.2.4. 組み込みベクトルデータ型</h3></div></div></div><p>ベクトルはスカラ型をベースにして、charn、ucharn、shortn、intn、floatnと表記され、nは要素数に該当し、2、3、4、8、16の値を指定できます。</p><p>単なる複数の要素を持った基本データ型は配列を指すポインタでも可能ですが、ベクトル型は各要素への処理を並列化させる効用があります。</p><p>最新のプロセッサー(CPU)では、サイクル単位でデータ処理量を増やすことを目的としたIntelの実装にはSSE（Streaming SIMD extensions）やAVX（Intel Advanced Vector Extensions）といった処理方式が提供されています。SSEは128ビット、AVXが256ビットのレジスタを持ちます。つまり、SSEであれば4つの32ビットデータ型、AVXであれば8個の32ビットデータ型を一回のサイクルで並列で処理させることができます。</p><p>SIMD方式による命令は、レジスタの領域を効率的に使用することで、複数のベクトル要素が同時に処理されることを可能とします。OpenCLのベクトルデータ型はこのSIMDのスレッド・スケジューリングとディスパッチを自動で行います。そのため本の前半で紹介したMMXテクノロジのようなベンダー独自のAPIを使う必要はなく、ベクトル型への操作は、ほぼC言語で記述するのと同じ感覚でプログラミングができます。</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_ベクトルデータ型の実装"></a>ベクトルデータ型の実装</h4></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：ベクトルデータ型」（<a class="xref" href="apbs03.html#vector" title="Table B.3. 表：ベクトルデータ型">Table B.3, “表：ベクトルデータ型”</a>）と「表：ベクトル型の互換性」（<a class="xref" href="apbs03.html#vector_interop" title="Table B.4. 表：ベクトル型の互換性">Table B.4, “表：ベクトル型の互換性”</a>）を参照ください。</p></div><p>IntelのGPUデバイスではメモリアドレス空間の最適化のために、最低でも32-bitのデータサイズでのアクセスが推奨されています。以下のデータ型は32ビットデータ型の例です。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+char4
+</li><li class="listitem">
+ushort2
+</li><li class="listitem">
+int
+</li></ul></div><p>intは32ビット、char4は8 x 4、ushort2は16 x 2ということで32ビットを構成します。</p><div class="important" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Important</h3><p>一般的に２の冪乗のコンポーネントを持つことがメモリ空間の最適化の原則です。</p></div><p>さらによりメモリを効率的に使うには以下のような４つの32-bitをまとめたベクトルデータ型が良いとされています。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+float4
+</li><li class="listitem">
+int4
+</li></ul></div><p>これは4 x 4 = 16バイトに相当します。</p><p>最適化について追記すると、OpenCLアプリケーションでパフォーマンスをあげるには、ホストプログラム内でデータを初期化するのは定石といっていいでしょう。その際には、本項目で解説したベクトルデータ型はOpenCL-C専用なため、ホストAPI側の対応データ型を使う必要があります。</p><p>例えば浮動小数点型、整数型のスカラデータをカーネル引数として渡すのであれば以下のようにホストプログラム内で宣言します。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+cl_float
+</li><li class="listitem">
+cl_int
+</li></ul></div><p>ただしスカラデータ型の場合は、floatやintのままでもコンパイルは通ります。OpenCLのホストAPIの組込みデータ型が役に立つのは、ベクトルとしてデータを初期化する場合です。</p><p>OpenCL-C言語のfloatn、intnに対応するのは以下の２つです。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+cl_floatn
+</li><li class="listitem">
+cl_intn
+</li></ul></div><p>このようにベクトル型にせよスカラ型にせよ、ホスト側とOpenCL-C（カーネル）の型の相互変換は直感的に行なうことができます。</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_その他の組み込みデータ型"></a>17.2.5. その他の組み込みデータ型</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：その他の組み込みデータ型」（<a class="xref" href="apbs04.html#other_data" title="Table B.5. 表：その他の組み込みデータ型">Table B.5, “表：その他の組み込みデータ型”</a>）を参照ください。</p></div><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+image2d_t
+</span></dt><dd>
+2次元イメージ。
+</dd><dt><span class="term">
+image3d_t￼
+</span></dt><dd>
+3次元イメージ。
+</dd><dt><span class="term">
+sampler_t
+</span></dt><dd>
+サンプラー型
+</dd><dt><span class="term">
+event_t￼
+</span></dt><dd>
+イベント型
+</dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_予約組み込みデータ型"></a>17.2.6. 予約組み込みデータ型</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：予約組み込みデータ型」（<a class="xref" href="apbs05.html#reserved" title="Table B.6. 表：予約組み込みデータ型">Table B.6, “表：予約組み込みデータ型”</a>）を参照ください。</p></div><p>予約語は未実装のため使うことができない識別子を指します。</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_ベクトル_コンポーネント"></a>17.2.7. ベクトル・コンポーネント</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：ベクトルコンポーネント」（<a class="xref" href="apbs06.html#vector_component" title="Table B.7. 表：ベクトルコンポーネント">Table B.7, “表：ベクトルコンポーネント”</a>）を参照ください。</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_ラウンド_端数処理モード"></a>17.2.8. ラウンド・端数処理モード</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：ラウンド・端数処理モード」（<a class="xref" href="apbs07.html#rounding_mode" title="Table B.8. 表：ラウンド・端数処理モード">Table B.8, “表：ラウンド・端数処理モード”</a>）を参照ください。</p></div><p>端数処理モードは以下の４つの種類があります。</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+_rte
+</span></dt><dd>
+最近接偶数への丸め (round to the nearest even)
+</dd><dt><span class="term">
+_rtz
+</span></dt><dd>
+0への丸め (rounding toward zero)
+</dd><dt><span class="term">
+_rtp
+</span></dt><dd>
+正の無限大への丸め (rounding toward positive/plus infinity)
+</dd><dt><span class="term">
+_rtn
+</span></dt><dd>
+負の無限大への丸め (rounding toward negative/minus infinity)
+</dd><dt><span class="term">
+修飾子を指定しない
+</span></dt><dd>
+既定の丸めモード、整数型は_rtz。
+</dd></dl></div><p>このモードは丸めが必要な操作をする数学関数等で指定できることがあります。</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_整数型openclマクロ"></a>17.2.9. 整数型OpenCLマクロ</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：整数型マクロ」（<a class="xref" href="apbs39.html#integer_macro" title="表：整数型マクロ">表：整数型マクロ</a>）と「表：ホストAPIとデータ型の対応」（<a class="xref" href="apbs39.html#interop_integer" title="Table B.113. 表：ホストAPIとデータ型の対応">Table B.113, “表：ホストAPIとデータ型の対応”</a>）を参照ください。</p></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch17s01.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch17.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch17s03.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

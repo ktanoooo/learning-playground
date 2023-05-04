@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>17.8. 比較関数</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch17.html" title="Chapter 17. OpenCL C言語プログラミング" /><link rel="prev" href="ch17s07.html" title="17.7. 幾何関数" /><link rel="next" href="ch17s09.html" title="17.9. ベクトルデータ読み出し・変換関数" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch17s07.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch17s09.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_比較関数"></a>17.8. 比較関数</h2></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：比較関数」（<a class="xref" href="apbs42.html#relation" title="Table B.117. 表：比較関数">Table B.117, “表：比較関数”</a>）を参照ください。</p></div><p>比較関数では単純な等号、大小を比べる操作が行なえます。</p><pre xmlns="" class="prettyprint">int any (igentype x)</pre><p>引数xのどれかの要素の最上位ビットが設定されているときは１、それ以外のときは0を返します。</p><pre xmlns="" class="prettyprint">int all (igentype x)</pre><p>引数xの全ての要素の最上位ビットが設定されているときは１、それ以外のときは0を返します。</p><p><strong>サンプル. </strong>
+</p><pre xmlns="" class="prettyprint">int8 intvec1 = vload8(0, number);
+int8 intvec2 = vload8(0, number);
+int8 intvec3 = -1;
+
+int any2 = any(intvec1); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO61-1"></a>(1)
+printf("any2 %d\n", any2);
+int any3 = any(intvec3); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO61-2"></a>(2)
+int all3 = all(intvec3); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO61-3"></a>(3)
+printf("any3 and all3 %d : %d\n", any3, all3);
+
+int4 intvec4 = (int4)(1,-1,1,-1);
+int4 intvec5 = (int4)(1,0,1,-1);
+int4 intvec6 = 0;
+
+int any4 = any(intvec4); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO61-4"></a>(4)
+int all4 = all(intvec4); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO61-5"></a>(5)
+printf("any4 and all4 %d : %d\n", any4, all4);
+
+intvec6 = intvec4 == intvec5;
+printf("intvec6 = %v4d\n",intvec6);
+int any5 = any(intvec6); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO61-6"></a>(6)
+int all5 = all(intvec6); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO61-7"></a>(7)
+printf("any5 and all5 %d : %d\n", any5, all5);</pre><p>
+</p><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO61-1">(1)</a> </p></td><td valign="top" align="left"><p>
+符号つきの整数の最上位ビットは負の整数だが、全て正のため0を返します。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO61-2">(2)</a> </p></td><td valign="top" align="left"><p>
+`-1`の要素が一つでもあるため、1を返します。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO61-3">(3)</a> </p></td><td valign="top" align="left"><p>
+全ての要素が`-1`のため、1を返します。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO61-4">(4)</a> </p></td><td valign="top" align="left"><p>
+`-1`の要素が一つでもあるため、1を返します。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO61-5">(5)</a> </p></td><td valign="top" align="left"><p>
+全ての要素が`-1`でないため、0を返します。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO61-6">(6)</a> </p></td><td valign="top" align="left"><p>
+`-1`の要素が一つでもあるため、1を返します。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO61-7">(7)</a> </p></td><td valign="top" align="left"><p>
+全ての要素が`-1`でないため、0を返します。
+</p></td></tr></table></div><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">intvec1 = 0,1,2,3,4,5,6,7
+intvec2 = 0,1,2,3,4,5,6,7
+any2 0
+any3 and all3 1 : 1
+any4 and all4 1 : 0
+intvec6 = -1,0,-1,-1
+any5 and all5 1 : 0</pre><p>
+</p><p>allとanyが最も活躍できる分野は自然言語処理です。以下のように、文字列の比較を一括で行なう場合に使用できます。</p><pre xmlns="" class="prettyprint">char4 word1 = (char4) ('a','b','c','\0');
+char4 word2 = (char4) ('b','c','d','\0');
+char2 word3 = word1.s01 == word2.s12;
+
+int all6 = all(word3);
+printf("word match all6: %d\n", all6);</pre><p>無論、次のような等号の比較をする関数も用意されています。</p><pre xmlns="" class="prettyprint">int isequal (float x, float y)</pre><p>各要素にたいして、x == yの比較をし、その結果を返します。</p><pre xmlns="" class="prettyprint">int isinf (float)</pre><p>無限大（正または負）かテストをします。</p><pre xmlns="" class="prettyprint">int isnormal (float)</pre><p>正規値（0, 非正規化数, 無限大, NaN のいずれでもない）かテストします。</p><pre xmlns="" class="prettyprint">float nan = NAN;
+float huge_val = HUGE_VALF;
+float infinity = INFINITY;
+int is_nan = isnan(nan);
+int is_infinity1 = isinf(huge_val); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO62-1"></a>(1)
+int is_infinity2 = isinf(infinity);
+int is_normal1 = isnormal(nan); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO62-2"></a>(2)
+int is_normal2 = isnormal(-2.4f);
+int is_normal3 = isnormal(0.5f);
+int is_normal4 = isnormal(MAXFLOAT+1.0f);
+printf("edge test: %d - %d - %d\n", is_nan, is_infinity1, is_infinity2);
+printf("normal test1: %d\n", is_normal1);
+printf("normal test2: %d\n", is_normal2);
+printf("normal test3: %d\n", is_normal3);
+printf("normal test4: %d\n", is_normal4);</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO62-1">(1)</a> </p></td><td valign="top" align="left"><p>
+無限大（正または負）かテストをします。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO62-2">(2)</a> </p></td><td valign="top" align="left"><p>
+正規値（0, 非正規化数, 無限大, NaN のいずれでもない）かチェック。nanのため0を返します。
+</p></td></tr></table></div><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">edge test: 1 - 1 - 1
+normal test1: 0
+normal test2: 1
+normal test3: 1
+normal test4: 1</pre><p>
+</p><pre xmlns="" class="prettyprint">int isordered (float x, float y)</pre><p>`isequal(x, x) &amp;&amp; isequal(y, y)`の計算をします。</p><pre xmlns="" class="prettyprint">int isunordered (float x, float y)</pre><p>￼
+xまたはyがNaNのときはゼロ以外、それ以外は0を返します。</p><pre xmlns="" class="prettyprint">int signbit (float)</pre><p>符号ビットをテストします。符号ビットが設定されているときはゼロ以外、それ以外のときは0を返します。</p><pre xmlns="" class="prettyprint">float4 floatvec1 = (float4)(3.0f, -4.0f, 5.0f, -6.0f);
+int4 sign = signbit(floatvec1); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO63-1"></a>(1)
+printf("signbit test: %#v4d\n", sign);
+
+int ordered1 = isordered(floatvec1.x, floatvec1.z); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO63-2"></a>(2)
+printf("isordered test: %d\n", ordered1);
+
+int ordered2 = isunordered(floatvec1.x, floatvec1.z); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO63-3"></a>(3)
+printf("isunordered test: %d\n", ordered2);</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO63-1">(1)</a> </p></td><td valign="top" align="left"><p>
+符号を抽出します。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO63-2">(2)</a> </p></td><td valign="top" align="left"><p>
+`isequal(x, x) &amp;&amp; isequal(y, y)`の計算結果を返します。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO63-3">(3)</a> </p></td><td valign="top" align="left"><p>
+NaNではないため、0を返します。
+</p></td></tr></table></div><pre xmlns="" class="prettyprint">signbit test: 0,-1,0,-1
+isordered test: 1
+isunordered test: 0</pre><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_比較分岐"></a>17.8.1. 比較分岐</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：比較関数」（<a class="xref" href="apbs42.html#relation" title="Table B.117. 表：比較関数">Table B.117, “表：比較関数”</a>）を参照ください。</p></div><p>GPU等の専用デバイスでは、if構文などの分岐は一番苦手とするところで、（筆者は例外を知らないが）大半のベンダーがif文を使わないように推奨しています。</p><p>OpenCLの組込みbitselect、select関数では分岐を避けることができます。まずbitselect関数を見てみましょう。</p><pre xmlns="" class="prettyprint">gentype bitselect (
+    gentype a,
+    gentype b,
+    gentype c)</pre><p>この関数は戻り値のビットを条件により選別、設定します。変数cの対応するビットが0のときは、aのビットそれ以外のときは、bのビットを返します。</p><pre xmlns="" class="prettyprint">uchar4 bit_result;
+uchar4 bit_mask = (uchar4)(0x00,0x99,0x00,0x99);
+uchar4 bit_input1 = (uchar4)(0x55,0x55,0x55,0x55);
+uchar4 bit_input2 = (uchar4)(0xFF,0xFF,0xFF,0xFF);
+bit_result = bitselect(bit_input1,bit_input2,bit_mask);
+printf("Result vector is %#v4u\n", bit_result);</pre><pre xmlns="" class="prettyprint">Result vector is 85,221,85,221</pre><p>この場合、0x55が85なので、221を見ればビットセレクトが処理した内容が理解できます。</p><div class="informaltable"><table class="informaltable" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; "><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /><col class="col_4" /><col class="col_5" /><col class="col_6" /><col class="col_7" /><col class="col_8" /><col class="col_9" /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">mask</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">1</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">0</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">0</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">1</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">1</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">0</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">0</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">1</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">a</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">1</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">1</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">1</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">1</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">1</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">1</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">1</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">1</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">b</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">0</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">1</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">0</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">1</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">0</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">1</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">0</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">1</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">戻り値（十進数）</pre></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">128</pre></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">64</pre></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">0</pre></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">16</pre></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">8</pre></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">4</pre></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">0</pre></td><td style="" align="left" valign="top"><pre class="literallayout">1</pre></td></tr></tbody></table></div><p>戻ったビットの和は221となります。</p><p>次により単純な分岐処理ができるselect関数を見てみます。</p><pre xmlns="" class="prettyprint">gentype select (
+    gentype a,
+    gentype b,
+    igentype c)
+gentype select (
+    gentype a, gentype b,
+    ugentype c)</pre><p>￼ベクトル型のとき、<code class="literal">c[i]`の最上位ビット（MSB）から</code>? b[i] : a[i]`を計算します。スカラ型のときは、`c ? b : a`を計算します。</p><p>それでは実装例を見てみましょう。</p><pre xmlns="" class="prettyprint">float4 in1 = (float4)(1.5f, 15.0f,5.0f,7.5f);
+float4 in2 = (float4)(-20.0f, -5.0f, 1.0f, 100.0f);
+int4 mask = (int4)(-1,0,0,-1);
+
+printf("in1 vector is %#v4f\n", in1);
+printf("in2 vector is %#v4f\n", in2);
+printf("mask vector is %#v4d\n", mask);
+
+float4 result = select(in1, in2, mask);
+printf("Result vector is %#v4f\n", result);</pre><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">in1 vector is 1.500000,15.000000,5.000000,7.500000
+in2 vector is -20.000000,-5.000000,1.000000,100.000000
+mask vector is -1,0,0,-1
+Result vector is -20.000000,15.000000,5.000000,100.000000</pre><p>
+</p><pre xmlns="" class="prettyprint">int mask_sc = 1;
+float in1_sc = 20.0f;
+float in2_sc = 10.0f;
+printf("in1 scalar is %#f\n", in1_sc);
+printf("in2 scalar is %#f\n", in2_sc);
+printf("mask scalar is %#d\n", mask_sc);
+float scalar_result = select(in1_sc,in2_sc,mask_sc);
+printf("Result scalar is %f\n", scalar_result);</pre><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">in1 scalar is 20.000000
+in2 scalar is 10.000000
+mask scalar is 1
+Result scalar is 10.000000</pre><p>
+</p><p>最上ビットを使うベクトル型に対して、スカラ型はif分岐のように使えます。これは分岐の苦手なGPUでは分岐の代用となります。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch17s07.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch17.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch17s09.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

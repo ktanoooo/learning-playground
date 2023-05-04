@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>B.20. オブジェクトのライフサイクル</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="apb.html" title="Appendix B. OpenCL 1.2 API Reference" /><link rel="prev" href="apbs19.html" title="B.19. サンプラーオブジェクト" /><link rel="next" href="apbs21.html" title="B.21. マップされたメモリオブジェクトをアンマップ" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="apbs19.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apbs21.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_オブジェクトのライフサイクル"></a>B.20. オブジェクトのライフサイクル</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clretainmemobject"></a>B.20.1. clRetainMemObject</h3></div></div></div><div class="table"><a id="clRetainMemObject"></a><p class="title"><strong>Table B.58. 表：clRetainMemObject</strong></p><div class="table-contents"><table class="table" summary="表：clRetainMemObject" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">関数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_int</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clRetainMemObject
+(
+    cl_mem memobj
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> メモリオブジェクト参照カウントをインクリメント。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 成功した場合の戻り値</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> CL_SUCCESS</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 失敗した場合の戻り値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+MEM_OBJECT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">memobjが有効な
+メモリオブジェクト
+でない場合。（
+バッファまたはイメ
+ージオブジェクト）</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_
+OF_RESOURCES</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とするリソ
+ース確保に失敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+HOST_MEMORY</pre></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL
+実装が必要とするリ
+ソース確保に失敗し
+た場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clreleasememobject"></a>B.20.2. clReleaseMemObject</h3></div></div></div><div class="table"><a id="clReleaseMemObject"></a><p class="title"><strong>Table B.59. 表：clReleaseMemObject</strong></p><div class="table-contents"><table class="table" summary="表：clReleaseMemObject" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>関数
+cl_int</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em></em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clReleaseMemObject
+(
+    cl_mem memobj
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>memobjの参照カウントをデクリメント。</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>引数</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>成功した場合の戻り値</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>CL_SUCCESS</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>失敗した場合の戻り値</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+MEM_OBJECT</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">memobjが有効な
+メモリオブジェクト
+でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_
+OF_RESOURCES</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上の
+OpenCL実装が必要
+とするリソース確保
+に失敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_OF_
+HOST_MEMORY</em></span></p></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL
+実装が必要とする
+リソース確保に
+失敗した場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clsetmemobjectdestructorcallback"></a>B.20.3. clSetMemObjectDestructorCallback</h3></div></div></div><div class="table"><a id="clSetMemObjectDestructorCallback"></a><p class="title"><strong>Table B.60. 表：clSetMemObjectDestructorCallback</strong></p><div class="table-contents"><table class="table" summary="表：clSetMemObjectDestructorCallback" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">関数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_int</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clSetMemObjectDestructorCallback (
+    cl_mem memobj,
+    void (CL_CALLBACK *pfn_notify)
+    (
+        cl_mem memobj,
+        void *user_data
+    ),
+    void *user_data
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> ユーザーコールバック関数をメモリ
+オブジェクトと登録。clSetMemObject
+DestructorCallbackのそれぞれの呼び出し
+は指定したユーザーコールバック関数を
+memobjに関連付けられたコールバック
+スタック上に登録。登録されたユーザーコー
+ルバック関数は、登録された際の逆順で呼び
+出される。ユーザーコールバック関数が呼
+ばれると、メモリオブジェクトのリソースが
+解放されて削除される。これは、host_ptrで参
+照されたメモリが再利用または解放された際に、
+アプリケーションがmemobjについて通知を
+受ける仕組みを提供</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 引数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">memobj</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">有効なメモリオ
+ブジェクトを指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">pfn_notify</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">アプリケーション
+が登録するコール
+バック関数を指定。
+この関すはOpenCL
+実装に非同期で呼び
+出される。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">memobj</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">削除されるメモリ
+オブジェクトを指定。
+ユーザーコールバック
+は実装に呼び出され
+た際、このメモリオブ
+ジェクトはすでに有
+効でなくなる。
+memobjは参考目的
+のためだけに提供さ
+れている。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">user_data</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">提供されたデータ
+を指すポインタを
+指定。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 成功した場合の戻り値</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> CL_SUCCESS</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 失敗した場合の戻り値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+MEM_OBJECT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">memobjが有効な
+メモリオブジェクト
+でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">pfn_notifyが
+NULLの場合</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+RESOURCES</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+HOST_MEMORY</pre></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apbs19.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apb.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apbs21.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

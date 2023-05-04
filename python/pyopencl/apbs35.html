@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>B.35. イベントオブジェクト</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="apb.html" title="Appendix B. OpenCL 1.2 API Reference" /><link rel="prev" href="apbs34.html" title="B.34. Flush・Finish" /><link rel="next" href="apbs36.html" title="B.36. プロファイリング" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="apbs34.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apbs36.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_イベントオブジェクト"></a>B.35. イベントオブジェクト</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clcreateuserevent"></a>B.35.1. clCreateUserEvent</h3></div></div></div><div class="table"><a id="clCreateUserEvent"></a><p class="title"><strong>Table B.93. 表：clCreateUserEvent</strong></p><div class="table-contents"><table class="table" summary="表：clCreateUserEvent" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>関数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>cl_event</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clCreateUserEvent (
+    cl_context context,
+    cl_int *errcode_ret
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>ユーザイベントオブジェクトを生成。ユーザイベントはコマン
+ドがデバイスに実行される前に、アプリケーションがユーザーイベ
+ントを終了するまで待機するコマンドを挿入させることを可能とする。</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>引数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>context</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">有効なOpenCLコ
+ンテキストを指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>errcode_ret</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">適切なエラーコー
+ドを戻す。NULLの場
+合、エラーコードは戻
+さない。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>成功した場合の戻り値</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>ユーザイベント
+オブジェクト</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>失敗した場合の
+errcode_retに設定
+されるエラーコード</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+CONTEXT</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">contextが有効
+なコンテキストで
+ない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_
+OF_RESOURCES</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_OF_
+HOST_MEMORY</em></span></p></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clsetusereventstatus"></a>B.35.2. clSetUserEventStatus</h3></div></div></div><div class="table"><a id="clSetUserEventStatus"></a><p class="title"><strong>Table B.94. 表：clSetUserEventStatus</strong></p><div class="table-contents"><table class="table" summary="表：clSetUserEventStatus" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>関数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>cl_int</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clSetUserEventStatus (
+    cl_event event,
+    cl_int execution_status
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>ユーザイベントオブジェクトの実行状態を設定。</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>引数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>event</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">clCreateUserEventを使って生成したユーザイベントオブ
+ジェクトを指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>execution_
+status</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">設定される新たな実
+行状態を指定。
+CL_COMPLETEまたは、
+負の整数値でエラーを
+示すことができる。負
+の整数値は全ての挿入さ
+れたユーザーイベント
+待機中のコマンドを停止
+させる。clSetUser
+EventStatusはイベン
+トの実行状態を変更する
+ときのみ呼び出せる。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>成功した場合の戻り値</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>CL_SUCCESS</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>失敗した場合の戻り値</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+EVENT</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">eventが有効なユーザ
+イベントオブジェクトの場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+VALUE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">execution_status
+がCL_COMPLETEでな
+いか、負の整数値の場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+OPERATION</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">execution_status
+が既に前のclSetUser
+EventStatusの呼び
+出しで変更されてい
+る場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_OF_
+RESOURCES</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_OF_
+HOST_MEMORY</em></span></p></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clwaitforevents"></a>B.35.3. clWaitForEvents</h3></div></div></div><div class="table"><a id="clWaitForEvents"></a><p class="title"><strong>Table B.95. 表：clWaitForEvents</strong></p><div class="table-contents"><table class="table" summary="表：clWaitForEvents" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>関数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>cl_int</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clWaitForEvents (
+    cl_uint num_events,
+    const cl_event *event_list
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>event_list内のイベントオブジェクトで識別されるコマン
+ドのホストスレッドの完了を待機。実行ステータスがCL_COMPLETE
+または負の値の場合、コマンドは完了とみなす。event_listで指
+定したイベントは同期点としても作用する。</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>成功した場合の戻り値</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>CL_SUCCESS</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>失敗した場合の戻り値</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_VALUE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">num_eventsが0の場合。
+event_listがNULLの場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+CONTEXT</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_list内のイ
+ベントが同じコンテキ
+ストに所属しない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+EVENT</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_list内のイ
+ベントオブジェクト
+が有効なイベントオ
+ブジェクトでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_EXEC_
+STATUS_ERROR_
+FOR_EVENTS_
+IN_WAIT_LIST</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_list内の、
+いずれかのイベント
+の実行状態が負の
+整数値の場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_OF_
+RESOURCES</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_OF_
+HOST_MEMORY</em></span></p></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clgeteventinfo"></a>B.35.4. clGetEventInfo</h3></div></div></div><div class="table"><a id="clGetEventInfo"></a><p class="title"><strong>Table B.96. 表：clGetEventInfo</strong></p><div class="table-contents"><table class="table" summary="表：clGetEventInfo" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>関数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>cl_int</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clGetEventInfo (
+    cl_event event,
+    cl_event_info param_name,
+    size_t param_value_size,
+    void *param_value,
+    size_t *param_value_size_ret
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>イベントオブジェクトに関する情報を取得。</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>引数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>event</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">情報取得するイベ
+ントオブジェクト
+を指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>param_name</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">取得する情報の
+パラメータの名称
+を指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>param_value</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">取得する結果が
+戻されるメモリを
+指すポインタ。
+NULLの場合は無視。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>param_value_
+size</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">param_value
+を指すメモリのバ
+イトサイズを指定。
+サイズは戻り値の型
+のサイズ以上とな
+る必要がある。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>param_value_
+size_ret</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">param_valueに
+複製されるデータ
+の実際のバイトサイ
+ズを戻す。NULLの
+場合は無視。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>成功した場合の戻り値</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>CL_SUCCESS</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>失敗した場合の戻り値</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+VALUE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">param_nameが
+有効でない場合。
+
+param_value_
+sizeが指定する
+バイトサイズが戻
+り値型のサイズよ
+り小さい場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+VALUE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">param_nameで指
+定した取得するイベ
+ント情報が、取得で
+きない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+EVENT</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">eventが有効なイ
+ベントオブジェクト
+でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_OF_
+RESOURCES</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_OF_
+HOST_MEMORY</em></span></p></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_cl_event_info"></a>B.35.5. cl_event_info</h3></div></div></div><div class="table"><a id="cl_event_info"></a><p class="title"><strong>Table B.97. 表：cl_event_info</strong></p><div class="table-contents"><table class="table" summary="表：cl_event_info" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_event_
+info
+￼</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">戻り値型</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">param_value
+に戻される情報</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_EVENT_
+COMMAND_
+QUEUE</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_command_
+￼queue</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">eventに関連づけら
+れたcommand-queue
+を戻す。ユーザイベ
+ントオブジェクトであ
+れば、NULL値を戻す。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_EVENT_
+CONTEXT</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_context
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">eventに関連付け
+られたコンテキスト
+を戻す。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_EVENT_
+COMMAND_
+TYPE</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_command_
+type</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">eventに関連付け
+られたコマンドを戻
+す。次のいずれかの
+値をとる。
+
+CL_COMMAND_
+NDRANGE_KERNEL
+
+CL_COMMAND_
+TASK
+
+CL_COMMAND_
+NATIVE_KERNEL
+
+CL_COMMAND_
+READ_BUFFER
+
+CL_COMMAND_
+WRITE_BUFFER
+
+CL_COMMAND_
+COPY_BUFFER
+
+CL_COMMAND_
+READ_IMAGE
+
+CL_COMMAND_
+WRITE_IMAGE
+
+CL_COMMAND_
+COPY_IMAGE
+
+CL_COMMAND_
+COPY_BUFFER_
+TO_IMAGE
+
+CL_COMMAND_
+COPY_IMAGE_
+TO_BUFFER
+
+CL_COMMAND_
+MAP_BUFFER
+
+CL_COMMAND_
+MAP_IMAGE
+
+CL_COMMAND_
+UNMAP_MEM_
+OBJECT
+
+CL_COMMAND_
+MARKER
+
+CL_COMMAND_
+ACQUIRE_GL_
+OBJECTS
+
+CL_COMMAND_
+RELEASE_GL_
+OBJECTS
+
+CL_COMMAND_
+READ_BUFFER_
+RECT
+
+CL_COMMAND_
+WRITE_BUFFER_
+RECT
+
+CL_COMMAND_
+COPY_BUFFER_
+RECT
+
+CL_COMMAND_
+USER
+
+CL_COMMAND_
+BARRIER
+
+CL_COMMAND_
+MIGRATE_MEM_
+OBJECTS
+
+CL_COMMAND_
+FILL_BUFFER
+
+CL_COMMAND_
+FILL_IMAGE</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_EVENT_
+COMMAND_
+EXECUTION_
+STATUS
+￼</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_int
+￼
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">eventで識別されるコマンドの実行状態を戻す。
+
+有効な値は：
+
+CL_QUEUED
+– command_queueに
+コマンドが挿入された。
+
+CL_SUBMITTED
+– 挿入されたコマンド
+がホストから、
+command-queueに関
+連付けられたデバイス
+に送信された。
+
+CL_RUNNING
+– デバイスがコマ
+ンドの実行中。
+
+CL_COMPLETE
+– コマンドが完了。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_EVENT_
+REFERENCE_
+COUNT
+￼</pre></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_uint
+￼
+￼</pre></td><td style="" align="left" valign="top"><pre class="literallayout">イベントの参照
+カウントを戻す。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apbs34.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apb.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apbs36.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

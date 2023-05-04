@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>10.1. ElementwiseKernel</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch10.html" title="Chapter 10. カスタムカーネル(組み込み)" /><link rel="prev" href="ch10.html" title="Chapter 10. カスタムカーネル(組み込み)" /><link rel="next" href="ch11.html" title="Chapter 11. MapReduceアルゴリズム" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch10.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch11.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_elementwisekernel"></a>10.1. ElementwiseKernel</h2></div></div></div><p>ElementwiseKernelは一言でいえばお手軽カーネルツールです。引数や処理ロジックをC言語で記述しますが、それ以外はPythonのインターフェースをとるため、とっつきやすいかもしれません。</p><pre xmlns="" class="prettyprint">class pyopencl.elementwise.ElementwiseKernel(
+    context,
+    arguments, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO4-1"></a>(1)
+    operation, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO4-2"></a>(2)
+    name="kernel",
+    preamble="",
+    options=[])</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO4-1">(1)</a> </p></td><td valign="top" align="left"><p>
+引数を指定。（C99準拠）
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO4-2">(2)</a> </p></td><td valign="top" align="left"><p>
+演算ロジックを指定。添字は常にiとなります。（C99準拠）
+</p></td></tr></table></div><p>参考までに実装例を以下に掲載します。</p><pre xmlns="" class="prettyprint">import numpy as np
+import pyopencl as cl
+import pyopencl.array as clarr
+import warnings
+from pyopencl.elementwise import ElementwiseKernel
+
+import os
+os.environ['PYOPENCL_COMPILER_OUTPUT'] = '1'
+
+a = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]).astype(np.float32)
+b = np.array([10, 9, 8, 7, 6, 5, 4, 3, 2, 1]).astype(np.float32)
+
+platforms = cl.get_platforms()
+ctx = cl.Context([platforms[0].get_devices(cl.device_type.GPU)[0]])
+queue = cl.CommandQueue(ctx)
+
+a_mem = clarr.to_device(queue, a)
+b_mem = clarr.to_device(queue, b)
+
+multiply = ElementwiseKernel(
+    ctx,
+    "float* a, float* b, float* out", #<a xmlns="http://www.w3.org/1999/xhtml" id="CO5-1"></a>(1)
+    "out[i] = a[i] * b[i]", #<a xmlns="http://www.w3.org/1999/xhtml" id="CO5-2"></a>(2)
+    "multiply") #<a xmlns="http://www.w3.org/1999/xhtml" id="CO5-3"></a>(3)
+
+out_mem = clarr.empty_like(a_mem)
+multiply(a_mem, b_mem, out_mem)
+
+print(out_mem)</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO5-1">(1)</a> </p></td><td valign="top" align="left"><p>
+arguments（引数）を宣言します。C99に準拠したOpenCL-C言語で記述します。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO5-2">(2)</a> </p></td><td valign="top" align="left"><p>
+Map処理を指定します。C99に準拠したOpenCL-C言語で記述します。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO5-3">(3)</a> </p></td><td valign="top" align="left"><p>
+カーネル関数の名前を指定します。（Cの名前空間で固有であれば何でも構いません。）
+</p></td></tr></table></div><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">/Library/Frameworks/Python.framework/Versions/3.5/bin/python3.5 /Users/komatsu/PycharmProjects/MyPythonProject/CLElementWiseKernelTest.py
+[ 10.  18.  24.  28.  30.  30.  28.  24.  18.  10.]</pre><p>
+</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch10.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch10.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch11.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

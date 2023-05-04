@@ -1,0 +1,569 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>B.48. OpenGLバッファとの同期</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="apb.html" title="Appendix B. OpenCL 1.2 API Reference" /><link rel="prev" href="apbs47.html" title="B.47. イメージ情報の取得" /><link rel="next" href="apc.html" title="Appendix C. OpenCLエラーコード" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="apbs47.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apc.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_openglバッファとの同期"></a>B.48. OpenGLバッファとの同期</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clcreatefromglbuffer"></a>B.48.1. clCreateFromGLBuffer</h3></div></div></div><div class="table"><a id="clCreateFromGLBuffer"></a><p class="title"><strong>Table B.130. 表：clCreateFromGLBuffer</strong></p><div class="table-contents"><table class="table" summary="表：clCreateFromGLBuffer" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; "><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">関数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_mem</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clCreateFromGLBuffer(
+    cl_context context,
+    cl_mem_flags flags,
+    GLuint bufobj,
+    cl_int *errcode_ret
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">OpenCLバッファオブジェクトを
+OpenGLバッファオブジェクトから生成。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 引数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">context</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">OpenGLコンテキス
+トから生成した有効な
+OpenCLコンテキストを指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">flags</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">メモリ使用情報を指
+定するたのビットフィー
+ルドです。
+
+以下の３つのいずれ
+かのみサポートされ
+ています。
+
+CL_MEM_READ_ONLY
+CL_MEM_WRITE_ONLY
+CL_MEM_READ_WRITE</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">bufobj</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">GLバッファオブジェク
+トの名称。GLバッファ
+オブジェクトのデータ記
+憶（ストア）は
+glBufferDataの呼び出し
+で事前に生成されたものと
+なる。データ記憶サイズは
+CLバッファオブジェクトの
+サイズを決定するのに
+用いる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">errcode_ret</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">適切なエラーコー
+ドを戻す。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 成功した場合
+の戻り値</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> CL_SUCCESS</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 失敗した場合
+の戻り値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+CONTEXT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">有効なコンテキス
+トでない場合。
+
+GLコンテキストか
+ら生成されてない
+場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">flagsに指定し
+た値が無効な場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+GL_OBJECT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">bufobjがGLバッファ
+オブジェクトでない場合。
+
+GLバッファオブジェク
+トだが、データ記憶域
+を持たない場合。
+バッファサイズが０の
+場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_
+OF_RESOURCES</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL実
+装が必要とするリソース
+確保に失敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+HOST_MEMORY</pre></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL実装
+が必要とするリソース
+確保に失敗したとき。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clcreatefromgltexture"></a>B.48.2. clCreateFromGLTexture</h3></div></div></div><div class="table"><a id="clCreateFromGLTexture"></a><p class="title"><strong>Table B.131. 表：clCreateFromGLTexture</strong></p><div class="table-contents"><table class="table" summary="表：clCreateFromGLTexture" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; "><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">関数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_mem</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clCreateFromGLTexture (
+    cl_context context,
+    cl_mem_flags flags,
+    GLenum texture_target,
+    GLint miplevel,
+    GLuint texture,
+    cl_int *errcode_ret
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">以下のオブジェクトを生成します。
+
+OpenGL-2Dテキスチャオブジェク
+トまたはOpenGLキューブマップオ
+ブジェクトテキスチャの一面から
+OpenCL-2Dイメージオブジェクト
+
+OpenGL-2Dテキスチャ配列オブジ
+ェクトからOpenCL-2Dイメージ配
+列オブジェクト
+
+OpenGL-1Dテキスチャオブジェク
+トからOpenCL-1Dイメージオブ
+ジェクト
+
+OpenGL-1Dテキスチャ配列オブジ
+ェクトからOpenCL-1Dイメージ
+配列オブジェクト
+
+OpenGL-3Dテキスチャオブジェク
+トからOpenCL-3Dイメージオブ
+ジェクト</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 引数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">context</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">OpenGLコンテキス
+トから生成した有効な
+OpenCLコンテキスト
+を指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">flags</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">メモリ使用情報を
+指定するたのビット
+フィールドです。
+
+以下の３つのいずれ
+かのみサポートされ
+ています。
+
+CL_MEM_READ_ONLY
+CL_MEM_WRITE_ONLY
+CL_MEM_READ_WRITE</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">texture_
+target</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">以下のうち一つ
+の値をとります。
+
+GL_TEXTURE_1D,
+
+GL_TEXTURE_1D_
+ARRAY,
+
+GL_TEXTURE_BUFFER,
+
+GL_TEXTURE_2D,
+
+GL_TEXTURE_2D_
+ARRAY,
+
+GL_TEXTURE_3D,
+
+GL_TEXTURE_CUBE_
+MAP_POSITIVE_X,
+
+GL_TEXTURE_CUBE_
+MAP_POSITIVE_Y,
+
+GL_TEXTURE_CUBE_
+MAP_POSITIVE_Z,
+
+GL_TEXTURE_CUBE_
+MAP_NEGATIVE_X,
+
+GL_TEXTURE_CUBE_
+MAP_NEGATIVE_Y,
+
+GL_TEXTURE_CUBE_
+MAP_NEGATIVE_Z,
+
+GL_TEXTURE_
+RECTANGLE
+
+テキスチャのイメージ
+型を定義するために
+使われる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">miplevel</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">使用されるmipmap
+レベルを指定。GL_
+TEXTURE_BUFFERの場
+合、miplevelは0とな
+る必要がある。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">texture</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">GL 1D, 2D, 3D,
+1D配列、2D配列、
+cubemap、矩形、バッ
+ファテキスチャオブジ
+ェクトの名称です。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">errcode_ret</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">適切なエラーコ
+ードを戻します。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 成功した場合
+の戻り値</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> CL_SUCCESS</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 失敗した場合
+の戻り値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+CONTEXT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">コンテキストが有
+効でない場合。
+
+GLコンテキストから
+生成されていない
+場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">flagsに指定され
+た値が有効でない
+場合。
+
+texture_target
+に指定された値が
+有効でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+MIP_LEVEL</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">miplevelがレベ
+ルベース（OpenGL
+実装）の値より小さ
+い場合か、0の場合
+（OpenGL ES実装）。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+MIP_LEVEL</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">miplevelが0より
+大きく、OpenGL実装
+が非ゼロmipmapレ
+ベルの生成をサポート
+しない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+GL_OBJECT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">テキスチャがtexture_
+targetに適合するGLテ
+キスチャオブジェクト
+でない場合。
+
+指定されたテキスチャ
+のmiplevelが定義さ
+れていない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+IMAGE_FORMAT_
+DESCRIPTOR</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">OpenGL内部テキス
+チャ型式が、OpenCLが
+サポートするイメージ
+型式にマップしない
+場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+OPERATION</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">テキスチャが、ボーダ
+ーの太さが０以上の値
+で生成されたGLテキス
+チャオブジェクトの場
+合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_
+OF_RESOURCES</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とするリ
+ソース確保に失敗し
+た場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_
+OF_HOST_
+MEMORY</pre></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL
+実装が必要とするリ
+ソース確保に失敗し
+たとき。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clgetglobjectinfo"></a>B.48.3. clGetGLObjectInfo</h3></div></div></div><div class="table"><a id="clGetGLObjectInfo"></a><p class="title"><strong>Table B.132. 表：clGetGLObjectInfo</strong></p><div class="table-contents"><table class="table" summary="表：clGetGLObjectInfo" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; "><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">関数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_int</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clGetGLObjectInfo (
+    cl_mem memobj,
+    cl_gl_object_type *gl_object_type,
+    GLuint *gl_object_name
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">gl_object_typeはmemobjにアタッ
+チされたGLオブジェクトを戻し、以下
+のいずれかの値をとります。
+
+CL_GL_OBJECT_
+BUFFER
+
+CL_GL_OBJECT_
+TEXTURE2D
+
+CL_GL_OBJECT_
+TEXTURE3D
+
+CL_GL_OBJECT_
+TEXTURE2D_ARRAY
+
+CL_GL_OBJECT_
+TEXTURE1D
+
+CL_GL_OBJECT_
+TEXTURE1D_ARRAY
+
+CL_GL_OBJECT_
+TEXTURE_BUFFER
+
+CL_GL_OBJECT_
+RENDERBUFFER
+
+NULLの場合は無視。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 引数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">gl_object_name</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">memobjを生成する
+のに用いるGLオブジ
+ェクト名を戻す。
+NULLの場合は無視。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 成功した場合
+の戻り値</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> CL_SUCCESS</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 失敗した場合
+の戻り値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+MEM_OBJECT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">memobjが有効な
+OpenCLメモリオブ
+ジェクトでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+GL_OBJECT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">memObjに関連づけ
+られたGLオブジェ
+クトが存在しない
+場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_
+OF_RESOURCES</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とするリ
+ソース確保に失敗し
+た場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+HOST_MEMORY</pre></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL実
+装が必要とするリソー
+ス確保に失敗したとき。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clgetgltextureinfo"></a>B.48.4. clGetGLTextureInfo</h3></div></div></div><div class="table"><a id="clGetGLTextureInfo"></a><p class="title"><strong>Table B.133. 表：clGetGLTextureInfo</strong></p><div class="table-contents"><table class="table" summary="表：clGetGLTextureInfo" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; "><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">関数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_int</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clGetGLTextureInfo (
+    cl_mem memobj,
+    cl_gl_texture_info param_name,
+    size_t param_value_size,
+    void *param_value,
+    size_t *param_value_size_ret
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">memObjに関連付けられたGLテキスチャオ
+ブジェクトについての追加情報を戻します。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 引数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">param_name</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">クエリするmemobjに
+関連付けられたGLテ
+キスチャオブジェクト
+についての追加情報を
+指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">param_value</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">クエリした結果が戻
+るメモリ空間を指すポ
+インタを指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">param_value_
+size</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">param_valueが指
+すメモリ空間のバイ
+トサイズを指定。サ
+イズは&gt;=戻り値の型
+となります。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">param_value_
+size_ret</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">param_valueに複製
+されるデータの実際の
+バイトサイズを戻す。
+NULLの場合は無視。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 成功した場合
+の戻り値</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> CL_SUCCESS</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 失敗した場合
+の戻り値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+MEM_OBJECT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">memobjが有効な
+OpenCLメモリオブ
+ジェクトでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+GL_OBJECT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">memobjに関連付け
+られたGLテキスチャ
+オブジェクトが存在
+しない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">param_nameが有
+効でない場合。
+
+param_value_size
+のバイトサイズが戻り
+値の型より小さく、
+param_valueがNULL
+でない場合。
+
+param_valueと
+param_value_
+size_retがNULL
+の場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_
+OF_RESOURCES</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とするリ
+ソース確保に失敗し
+た場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+HOST_MEMORY</pre></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL
+実装が必要とするリ
+ソース確保に失敗し
+たとき。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clenqueueacquireglobjects"></a>B.48.5. clEnqueueAcquireGLObjects</h3></div></div></div><div class="table"><a id="clEnqueueAcquireGLObjects"></a><p class="title"><strong>Table B.134. 表：clEnqueueAcquireGLObjects</strong></p><div class="table-contents"><table class="table" summary="表：clEnqueueAcquireGLObjects" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; "><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">関数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_int</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clEnqueueAcquireGLObjects (
+    cl_command_queue command_queue,
+    cl_uint num_objects,
+    const cl_mem *mem_objects,
+    cl_uint num_events_in_wait_list,
+    const cl_event *event_wait_list,
+    cl_event *event)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">OpenGLオブジェクトから生成されたOpenCL
+メモリオブジェクトを取得するために用いま
+す。コマンドキューに挿入されたコマンドが
+使用される前に、これらのオブジェクトは取
+得される必要があります。OpenGLオブジェク
+トは、コマンドキューに関連付けられた
+OpenCLコンテキストにより取得され、
+OpenCLコンテキスト関連づけられた全ての
+コマンドキューで使うことができます。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 引数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">command_queue</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">有効なコマンドキュー。
+コマンドキューに関連づ
+けられたOpenCLコンテ
+キストを生成するのに
+用いた全てのデバイスは
+CL/GL共有オブジェクト
+の取得をサポートしてな
+くてはならない。この制
+約はコンテキスト生成時
+に適用される。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">num_objects</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">mem_objectsで取得
+されるメモリオブジェ
+クトの数を指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">mem_objects</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">GLオブジェクトに対応
+するCLメモりオブジェ
+クトのリストを指すポ
+インタです。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">num_events_
+in_wait_list</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">event_wait_list
+で指定したイベントオ
+ブジェクトの数を指定
+します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">event_wait_
+list</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">このコマンドが実行さ
+れる前に完了していなけ
+ればならないイベントを
+指定。
+
+event_wait_listが
+NULLの場合、このコマ
+ンドはどのイベントの
+完了待機もしない。
+
+event_wait_listが
+NULLの場合、num_
+events_in_wait_list
+は0となる必要がある。
+
+event_wait_listが
+NULLでない場合、
+event_wait_listが
+指す各イベントは有効
+となる必要があり、
+またnum_events_in_
+wait_listは0より大き
+な値となる必要がある。
+
+event_wait_listに指
+定したイベントは同期点
+としてふるまう。
+
+event_wait_list内の
+イベントと関連付けられ
+たOpenCLコンテキスト
+と command_queueと
+関連付けられたOpenCL
+コンテキストは同じとな
+る必要がある。
+
+event_wait_listと
+関連付けられたメモリ
+は、関数が完了の後に、
+再利用または解放できる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">event</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">このコマンドを識別
+するイベントオブジ
+ェクトが戻され、コ
+マンド完了の確認や
+コマンド完了待機をす
+る。eventがNULLの
+場合、アプリケーシ
+ョンはコマンドの状
+況確認やコマンド完
+了待ちを行えない。
+
+event_wait_list
+とevent引数がNULL
+でない場合、event
+引数はevent_wait_
+list配列の要素を参
+照すべきでない。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 成功した場合
+の戻り値</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> CL_SUCCESS</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 失敗した場合
+の戻り値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">num_objectsが0で、
+mem_objectsがNULL
+でない場合。
+
+`num_objects &gt; 0`
+で、mem_objectsが
+NULLの場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+MEM_OBJECT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">mem_objects内の
+メモリオブジェクト
+が有効でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+COMMAND_QUEUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queue
+が有効でない場合</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+CONTEXT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queue
+に関連付けられた
+コンテキストが
+OpenGLコンテキスト
+から生成されてい
+ない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+GL_OBJECT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">mem_objects内の
+メモリオブジェクトが
+OpenGLオブジェクト
+から生成されていな
+い場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+EVENT_WAIT_LIST</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_list
+がNULLでnum_events_
+in_wait_listが0よ
+り大きい場合。
+
+event_wait_listが
+NULLでなく
+num_events_in_
+wait_listが0の場合。
+
+event_wait_list
+内のイベントオブジ
+ェクトが有効なもの
+でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+RESOURCES</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とするリソ
+ース確保に失敗した場
+合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF
+_HOST_MEMORY</pre></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL
+実装が必要とするリソ
+ース確保に失敗した
+とき。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clenqueuereleaseglobjects"></a>B.48.6. clEnqueueReleaseGLObjects</h3></div></div></div><div class="table"><a id="clEnqueueReleaseGLObjects"></a><p class="title"><strong>Table B.135. 表：clEnqueueReleaseGLObjects</strong></p><div class="table-contents"><table class="table" summary="表：clEnqueueReleaseGLObjects" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; "><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">関数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_int</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clEnqueueReleaseGLObjects (
+    cl_command_queue command_queue,
+    cl_uint num_objects,
+    const cl_mem *mem_objects,
+    cl_uint num_events_in_wait_list,
+    const cl_event *event_wait_list,
+    cl_event *event
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">OpenGLオブジェクトから生成されている
+OpenCLメモリオブジェクトを解放するた
+めに用います。これらのオブジェクトは
+OpenGLに使われる前に解放する必要があ
+ります。OpenGLオブジェクトはコマンド
+キューに関連付けられたOpenCLコンテキ
+ストによって解放されます。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 引数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">num_objects</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">mem_objectsコレク
+ション内で解放するメ
+モリオブジェクトの数。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">mem_objects</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">GLオブジェクトに対
+応するCLメモリオブジ
+ェクトのリストを指す
+ポインタ。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">num_events_
+in_wait_list</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">event_wait_list
+で指定したイベントオ
+ブジェクトの数を指
+定します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">event_wait_
+list</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">このコマンドが実
+行される前に完了し
+ていなければならない
+イベントを指定。
+
+event_wait_list
+がNULLの場合、この
+コマンドはどのイベン
+トの完了待機もしない。
+
+event_wait_list
+がNULLの場合、num_
+events_in_wait_
+listは0となる必要が
+ある。
+
+event_wait_listが
+NULLでない場合、
+event_wait_listが
+指す各イベントは有効
+となる必要があり、ま
+たnum_events_in_
+wait_listは0より大
+きな値となる必要がある。
+
+event_wait_listに
+指定したイベントは同
+期点としてふるまう。
+
+event_wait_list内
+のイベントと関連付けら
+れたOpenCLコンテキ
+ストと command_
+queueと関連付けられ
+たOpenCLコンテキスト
+は同じとなる必要がある。
+
+event_wait_listと
+関連付けられたメモリ
+は、関数が完了の後に、
+再利用または解放できる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">event</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">このコマンドを識別す
+るイベントオブジェク
+トが戻され、コマンド
+完了の確認やコマンド
+完了待機をする。
+eventがNULLの場合、
+アプリケーションはコ
+マンドの状況確認やコ
+マンド完了待ちを行え
+ない。
+
+event_wait_listと
+event引数がNULLで
+ない場合、event引数
+はevent_wait_list
+配列の要素を参照すべ
+きでない。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 成功した場合
+の戻り値</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> CL_SUCCESS</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 失敗した場合
+の戻り値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">num_objectsが0
+で、mem_objectsが
+NULLでない場合。
+
+`num_objects &gt; 0`
+で、mem_objectsが
+NULLの場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+MEM_OBJECT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">mem_objects内の
+メモリオブジェクトが
+有効でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+COMMAND_QUEUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queue
+が有効でない場合</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+CONTEXT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queue
+に関連付けられたコ
+ンテキストがOpenGL
+コンテキストから生
+成されていない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+GL_OBJECT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">mem_objects内の
+メモリオブジェクト
+がOpenGLオブジェク
+トから生成されてい
+ない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+EVENT_WAIT_LIST</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_list
+がNULLで
+num_events_in_
+wait_listが0より
+大きい場合。
+
+event_wait_list
+がNULLでなくnum_
+events_in_wait_
+listが0の場合。
+
+event_wait_list
+内のイベントオブジ
+ェクトが有効なもの
+でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_
+OF_RESOURCES</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とするリ
+ソース確保に失敗
+した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+HOST_MEMORY</pre></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL
+実装が必要とするリ
+ソース確保に失敗し
+たとき。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apbs47.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apb.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apc.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>B.21. マップされたメモリオブジェクトをアンマップ</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="apb.html" title="Appendix B. OpenCL 1.2 API Reference" /><link rel="prev" href="apbs20.html" title="B.20. オブジェクトのライフサイクル" /><link rel="next" href="apbs22.html" title="B.22. プログラムオブジェクト" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="apbs20.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apbs22.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_マップされたメモリオブジェクトをアンマップ"></a>B.21. マップされたメモリオブジェクトをアンマップ</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clenqueueunmapmemobject"></a>B.21.1. clEnqueueUnmapMemObject</h3></div></div></div><div class="table"><a id="clEnqueueUnmapMemObject"></a><p class="title"><strong>Table B.61. 表：clEnqueueUnmapMemObject</strong></p><div class="table-contents"><table class="table" summary="表：clEnqueueUnmapMemObject" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>関数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>cl_int</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clEnqueueUnmapMemObject (
+    cl_command_queue command_queue,
+    cl_mem memobj,
+    void *mapped_ptr,
+    cl_uint num_events_in_wait_list,
+    const cl_event *event_wait_list,
+    cl_event *event
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>以前にマップされたメモリオブジェクトの
+領域をアンマップ（マップの解除）する
+コマンドを挿入。clEnqueueMapBuffer
+またはclEnqueueMapImage
+が戻したポインタを使ってホストからの読
+み込みや書き込みは終了したものと見なされる。</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>引数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>memobj</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">有効なメモリオブジェ
+クトを指定。
+command_queueと
+memobjに関連付けら
+れたOpenCLコンテキ
+ストは同じになる
+必要がある。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>mapped_ptr</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">前に呼び出した
+clEnqueueMapBuffer
+または
+clEnqueueMapImage
+が戻したmemobjのホ
+ストアドレスを指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>num_events_
+in_wait_list</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_list
+で指定したイベント
+オブジェクトの数
+を指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>event_wait_
+list</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">このコマンドが実行
+される前に完了されて
+いるイベントを指定。
+
+event_wait_listが
+NULLの場合、この
+コマンドはどのイベント
+の完了待機もしない。
+
+event_wait_listが
+NULLの場合、num_
+events_in_wait_
+listは0となる必要
+がある。
+
+event_wait_list
+がNULLではない場合、
+event_wait_listが
+指す各イベントは有効
+となり、またnum_
+events_in_wait_
+listは0より大きな値
+となる必要がある。
+
+event_wait_list
+に指定したイベントは
+同期点としてふるまう。
+
+event_wait_list内の
+イベントと関連付けられた
+OpenCLコンテキストと
+command_queueと関連付
+けられたOpenCLコンテキ
+ストは同じとなる必要
+がある。
+
+event_wait_listと
+関連付けられたメモリ
+領域は関数が戻った後に、
+再利用か解放できる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>event</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">複製コマンドを識別
+するイベントオブジェ
+クトが戻され、コマン
+ド完了の確認やコマン
+ド完了の待機に使える。
+
+eventがNULLの場合、
+アプリケーションはコ
+マンドの状況確認やコ
+マンド完了待ちができ
+なくなる。
+
+event_wait_listと
+eventがNULLでない
+場合、eventはevent_
+wait_list配列の要素
+を参照すべきでない。
+
+clEnqueueBarrier
+WithWaitListを代
+わりに使うことができ
+る。event_wait_
+listとevent引数NULL
+でない場合、event
+引数はevent_wait_
+list内の要素を参照
+すべきでない。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>成功した場合の戻り値</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>CL_SUCCESS</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>失敗した場合の戻り値</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+COMMAND_QUEUE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queueが
+有効なコマンドキュー
+でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+MEM_OBJECT</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">memobjが有効な
+メモリオブジェクト
+でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+VALUE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">mapped_ptrが
+clEnqueueMapBuffer
+または
+clEnqueueMapImage
+が戻したメモリオブジ
+ェクトの有効なポイン
+タでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+CONTEXT</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queueと
+memobjが関連付けら
+れたコンテキストが同
+じでない場合。
+
+command_queueと
+event_wait_list内
+のイベントが関連付け
+られたコンテキストが
+同じでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+EVENT_WAIT_LIST</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_list
+がNULLで、
+num_events_in_
+wait_list &gt; 0の
+場合。
+
+event_wait_list
+がNULLでなく
+num_events_in_
+wait_listが0の場合。
+
+event_wait_list内
+のイベントオブジェ
+クトが有効なイベント
+でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_OF_
+RESOURCES</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とするリ
+ソース確保に失敗し
+た場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_OF_
+HOST_MEMORY</em></span></p></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL
+実装が必要とするリ
+ソース確保に失敗し
+た場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apbs20.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apb.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apbs22.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

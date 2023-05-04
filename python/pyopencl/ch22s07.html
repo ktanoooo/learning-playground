@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>22.7. 実装例（CPU）</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch22.html" title="Chapter 22. 基数配列" /><link rel="prev" href="ch22s06.html" title="22.6. 並び替え（Rank）" /><link rel="next" href="ch22s08.html" title="22.8. 実装例（GPU）" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch22s06.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch22s08.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_実装例_cpu_2"></a>22.7. 実装例（CPU）</h2></div></div></div><p>LSD Radix Sortは通常はデータから情報単位（ビット）を抽出しますが、この方法では基数整列のアルゴリズムが見えにくくなるので、今回は大幅に簡略化して配列として処理を行います。</p><p>並び変える元データは、8ビットのデータを4列持った配列となります。</p><pre xmlns="" class="prettyprint">DATA_SIZE = 16
+BIN_SIZE = 3
+W = 4
+raw_data = randint(0, BIN_SIZE, DATA_SIZE*W).astype(np.uint8)
+data = raw_data.reshape((DATA_SIZE, W))</pre><p>データの数は16として、一時変数tmpで中間処理を保管します。</p><pre xmlns="" class="prettyprint">raw_tmp = np.zeros(DATA_SIZE*W).astype(np.uint8)
+tmp = raw_tmp.reshape((DATA_SIZE, W))</pre><p>Nがデータ数、Wが元データのユニット数となります。WはASCIIコードにすると4つの文字を持つ配列を整列する問題となりますが、ここではシンプルに数値の整列を問題とします。</p><p>LSDの定義としてデータ配列の右側から整列することになります。この前提ですとW-1, W-2, …, 0というように一つ一つ左に走査・デクリメントしていきます。</p><p>従ってアルゴリズムは以下の反復を行います。</p><pre xmlns="" class="prettyprint">for d in reversed(range(W)):
+    //dの列を整列</pre><p>反復してd列を整列するアルゴリズムが、前述のヒストグラム、Prefix-Sum(up-sweep、down-sweep)、並び替え（Rank）となります。</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_ヒストグラム_2"></a>22.7.1. ヒストグラム</h3></div></div></div><p>ヒストグラムはcount変数に保管します。8bitなので、要素数はBIN_SIZE=3に決め打ちできます。</p><pre xmlns="" class="prettyprint">count = np.zeros(BIN_SIZE+1).astype(np.uint32)</pre><p>ヒストグラムの算出は以下のようにします。</p><pre xmlns="" class="prettyprint">for i in range(0, DATA_SIZE):
+    count[data[i][d] + 1] += 1</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_prefix_sum"></a>22.7.2. Prefix-Sum</h3></div></div></div><p>Prefix-Sum（up-sweepとdown-sweep）については、シーケンシャルに連続する要素を加算していきます。</p><pre xmlns="" class="prettyprint">for k in range(1, BIN_SIZE):
+    count[k] += count[k-1]</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_並び替え"></a>22.7.3. 並び替え</h3></div></div></div><p>次に「並び替え（Rank）」ですが、元データとその値を、tmpで累積した頻度をマッチしていきます。</p><pre xmlns="" class="prettyprint">for i in range(DATA_SIZE):
+    tmp[count[data[i][d]]] = data[i]
+    count[data[i][d]] += 1</pre><p>最後に、次のループ処理に移るための準備をします。tmpは添字dの一つに限定して整列したのですが、この整列した結果を元データの配列dataに一旦更新します。</p><pre xmlns="" class="prettyprint">for i in range(DATA_SIZE):
+    data[i] = tmp[i]</pre><p>tmpは次の反復には新たに整列しなおすので、配列dataは毎回（配列右側から）最も新しい整列を更新していきます。</p><p><strong>RadixSortCPUTest.py. </strong>
+</p><pre xmlns="" class="prettyprint">from numpy.random import *
+
+# Set the seed to 0
+np.random.seed(0)
+
+DATA_SIZE = 16
+BIN_SIZE = 3
+W = 4
+raw_data = randint(0, BIN_SIZE, DATA_SIZE*W).astype(np.uint8)
+data = raw_data.reshape((DATA_SIZE, W))
+
+raw_tmp = np.zeros(DATA_SIZE*W).astype(np.uint8)
+tmp = raw_tmp.reshape((DATA_SIZE, W))
+
+for d in reversed(range(W)):
+    count = np.zeros(BIN_SIZE+1).astype(np.uint32)
+    for i in range(0, DATA_SIZE): #<a xmlns="http://www.w3.org/1999/xhtml" id="CO76-1"></a>(1)
+        count[data[i][d] + 1] += 1
+    for k in range(1, BIN_SIZE): #<a xmlns="http://www.w3.org/1999/xhtml" id="CO76-2"></a>(2)
+        count[k] += count[k-1]
+    for i in range(DATA_SIZE): #<a xmlns="http://www.w3.org/1999/xhtml" id="CO76-3"></a>(3)
+        tmp[count[data[i][d]]] = data[i]
+        count[data[i][d]] += 1
+    for i in range(DATA_SIZE): #<a xmlns="http://www.w3.org/1999/xhtml" id="CO76-4"></a>(4)
+        data[i] = tmp[i]
+
+print(data)</pre><p>
+</p><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO76-1">(1)</a> </p></td><td valign="top" align="left"><p>
+ヒストグラムの計算をします。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO76-2">(2)</a> </p></td><td valign="top" align="left"><p>
+ヒストグラムの累積配列を計算（Up-SweepとDown-Sweep）します。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO76-3">(3)</a> </p></td><td valign="top" align="left"><p>
+配列を並び変え、tmp配列に一時的に保管します。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO76-4">(4)</a> </p></td><td valign="top" align="left"><p>
+tmp配列からa配列に要素をコピーします。
+</p></td></tr></table></div><p>上記のサンプルプログラムの出力は以下のようになります。</p><pre xmlns="" class="prettyprint">/Library/Frameworks/Python.framework/Versions/3.5/bin/python3.5 /Users/komatsu/PycharmProjects/MyPythonProject/RadixSortCPUTest.py
+[[0 0 0 2]
+ [0 0 1 1]
+ [0 1 1 1]
+ [0 1 2 2]
+ [0 2 0 0]
+ [0 2 0 1]
+ [1 0 0 0]
+ [1 0 2 1]
+ [1 1 0 2]
+ [1 1 2 2]
+ [1 2 0 2]
+ [1 2 2 0]
+ [2 0 1 2]
+ [2 0 2 1]
+ [2 1 2 1]
+ [2 2 2 2]]</pre><p>これで整列の確認ができました。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch22s06.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch22.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch22s08.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

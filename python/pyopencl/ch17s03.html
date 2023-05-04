@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>17.3. その他の関数</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch17.html" title="Chapter 17. OpenCL C言語プログラミング" /><link rel="prev" href="ch17s02.html" title="17.2. 組み込みデータ型" /><link rel="next" href="ch17s04.html" title="17.4. 組み込み関数" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch17s02.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch17s04.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_その他の関数"></a>17.3. その他の関数</h2></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳細は「表：その他の関数」（<a class="xref" href="apbs40.html#misc" title="Table B.114. 表：その他の関数">Table B.114, “表：その他の関数”</a>）を参照ください。</p></div><p>この項目では頻繁に使うことは無いが、あると便利な関数をご案内します。</p><pre xmlns="" class="prettyprint">gentype clamp (
+    gentype x, gentype minval,
+    gentype maxval)</pre><p>`min(max(x, minval), maxval)`を計算します。結果は`minval &gt; maxval`のときに未定義です。</p><pre xmlns="" class="prettyprint">gentype radians (
+    gentype degrees)</pre><p>度をラジアンに変換します。`(π / 180) * degrees`を計算します。</p><pre xmlns="" class="prettyprint">gentype step (
+    gentype edge,
+    gentype x)</pre><p>`x &lt; edge`のときに、0.0、それ以外のときに、1.0を返します。</p><pre xmlns="" class="prettyprint">gentype smoothstep (
+    gentype edge0,
+    gentype edge1,
+    gentype x)</pre><p>`x ⇐ edge0`のときは、0.0、`x &gt;= edge1`のときは、1.0を返します。
+`edge0 &lt; x &lt; edge1`のときは0と1の間でエルミート補間をします。スムースに遷移してくれる閾関数が必要な時に使います。</p><pre xmlns="" class="prettyprint">gentype sign (gentype x)</pre><p>`x &gt; 0`のときは、1.0、`x = -0.0`のときは、-0.0、`x = +0.0`のときは、+0.0、`x &lt; 0`のときは、-1.0を返します。xがNaNのときは、0.0を返します。</p><pre xmlns="" class="prettyprint">gentype mix (
+    gentype x,
+    gentype y,
+    gentype a)</pre><p>xとyの線形ブレンドをします。`x + (y – x) * a`の計算をします。
+aは[0.0, 1.0]の範囲内とします。aが範囲外のときの戻り値は未定義です。</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_printf関数"></a>17.3.1. printf関数</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳細は「表：printf関数」（<a class="xref" href="apbs40.html#printf" title="Table B.115. 表：printf関数">Table B.115, “表：printf関数”</a>）を参照ください。</p></div><p>OpenCL-Cのprintf関数はC言語のものと概ね類似しています。printf関数はコマンドをキューに挿入しているため実際に実行されるタイミングはキューがスケジューリングしますが、clFinishを呼び出すことで即座に標準出力されます。</p><p>通常のC言語のprintfと異なる仕様としては1点抑えておきたいことがあります。例えば以下の関数を見てください。</p><p><strong>サンプル. </strong>
+</p><pre xmlns="" class="prettyprint">float4 f4 = (float4)(1.5f, 2.5f, 3.5f, 4.5f);
+printf("f4 = %2.4v4hlf\n", f4);
+printf("f4 = %2.4v4hle\n", f4);
+printf("f4 = %2.4v4hla\n", f4);</pre><p>
+</p><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">f4 = 1.5000,2.5000,3.5000,4.5000
+f4 = 1.5000e+00,2.5000e+00,3.5000e+00,4.5000e+00
+f4 = 0x1.8000p+0,0x1.4000p+1,0x1.c000p+1,0x1.2000p+2</pre><p>
+</p><p>サンプルを見ると、%で始まる表現の中に`v4`という文字列があります。これは4つの要素を持つベクトル型の出力を指定しています。個別の型は、`f`、`e`、`a`で指定します。hlは出力の長さを指定する修飾子です。ベクトル型では、`hh`、`h`、`hl`があります。</p><p>次に16進数の出力で頭に<code class="literal">0x`を付加させたい場合は、</code>#<code class="literal">を</code>%`の次に指定します。</p><pre xmlns="" class="prettyprint">uchar2 uc2 = (uchar2)(0xaa, 0xba);
+printf("uc2 = %#v2hhx\n", uc2);
+printf("uc2 = %#v2hx\n", uc2);
+printf("uc2 = %#v2lx\n", uc2);
+printf("uc2 = %#v2x\n", uc2);</pre><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">uc2 = 0xaa,0xba
+uc2 = 0xaa,0xba
+uc2 = 0xaa,0xba
+uc2 = 0xaa,0xba</pre><p>
+</p><p>出力を見て頂くと、全て同じです。これは0xaaの長さが、最低の長さ(<code class="literal">hh</code>)の範囲でカバーされているためです。</p><p>文字列の出力は以下のようにC言語と何も変わりありません。</p><pre xmlns="" class="prettyprint">printf("%s\n", "helloworld");
+constant char *hello = "helloworld";
+printf("%s\n", hello);</pre><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">helloworld
+helloworld</pre><p>
+</p><p>最後にベクトルに設定する値を上げることで、長さの修飾子（`hh`、`h`、`hl`）によって出力が異なることを示します。</p><pre xmlns="" class="prettyprint">uint2 ui = (uint2)(0x12345678, 0x87654321);
+printf("unsigned char value = %#v2hhx\n", ui);
+printf("unsigned short value = %#v2hx\n", ui);
+printf("unsigned long value = %#v2hlx\n", ui);
+printf("unsigned long value = %#v2x\n", ui);</pre><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">unsigned char value = 0x78,0x21
+unsigned short value = 0x5678,0x4321
+unsigned long value = 0x12345678,0x87654321
+unsigned long value = 0x12345678,0x87654321</pre><p>
+</p><p>出力を見て頂くと（`hh`、`h`、`hl`）の作用が理解できるものと思います。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch17s02.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch17.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch17s04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

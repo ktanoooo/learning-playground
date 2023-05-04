@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>17.10. OpenCL-Cイメージ処理関数</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch17.html" title="Chapter 17. OpenCL C言語プログラミング" /><link rel="prev" href="ch17s09.html" title="17.9. ベクトルデータ読み出し・変換関数" /><link rel="next" href="ch17s11.html" title="17.11. サンプラー無し読み込み" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch17s09.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch17s11.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="image_function"></a>17.10. OpenCL-Cイメージ処理関数</h2></div></div></div><p>OpenCL-C言語の引数として、イメージオブジェクトを設定する場合にはイメージデータを表すデータ型を用いられます。例えば以下2つのようなものがあります。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+image2d_t
+</li><li class="listitem">
+image3d_t
+</li></ul></div><p>2dは2次元、3dは3次元を示します。このデータ型にたいして読み込みと書き込みの関数をOpenCL-Cは用意しています。最も使われるのは単精度浮動小数点データの読み書きを行える以下２つの関数があります。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+read_imagef
+</li><li class="listitem">
+write_imagef
+</li></ul></div><p>read_imagefが読み込みで、write_imagefが書き込み機能を担います。この関数はイメージデータをサンプリングするためのサンプラーパラメーターと、座標値を指定して要素ルックアップを行います。</p><div class="important" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Important</h3><p>イメージ関数の数やチャンネルデータタイプ等、情報が多いので読者は混乱するかもしれませんが、画像の型式、エンコードは決めうちで行なうか、前処理を行なって統一しておく事が一般的です。それにイメージ処理は、各イメージ形式ごとに1つの本が書けるほど深みのある専門分野なので、本書ではPNGファイル、RGBAチャンネルに限定した解説を行います。</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_正規化整数チャンネルデータ型の活用による浮動小数点変換"></a>17.10.1. 正規化整数チャンネルデータ型の活用による浮動小数点変換</h3></div></div></div><p>以下の項目で解説するイメージ読み込み・書き込み関数はイメージオブジェクトの要素ルックアップを行います。</p><p>しかしイメージ処理関数の解説をする前に、チャンネルデータの型に正規化数があることを読者には知ってもらいたいと思います。</p><p>通常、画素の定義をする際は、RGBからなる３つの画素、またはRGBA（Aはアルファチャンネル、透過度を指定）からなる４つの画素に、`0…255`の整数値を指定します。</p><p>しかしオンラインアルゴリズムによっては、浮動小数点に正規化したものの方が都合が良い場合があります。その場合、浮動小数点に都度変換するより、チャンネルデータタイプを正規化を<code class="literal">0.0f...1.0f`または</code>-1.0f…1.0f`の範囲の正規化浮動小数点値に指定した方が効率的です。つまり読み込みの段階で浮動小数点変換型に変換するので、操作を一つ減らせます。</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_符号無し"></a>符号無し</h4></div></div></div><p>符号無しのチャンネルデータ型には以下のものがあります。</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+CL_UNORM_INT8
+</span></dt><dd>
+(8ビット符号無し整数)
+</dd></dl></div><p>値cに対して、`正規化浮動小数点値 = (float)c / 255.0f`の処理がされた値を読み込み（書き込み）ます。</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+CL_UNORM_INT_101010
+</span></dt><dd>
+(10ビット符号無し整数)
+</dd></dl></div><p>値cに対して、`正規化浮動小数点値 = (float)c / 1023.0f`の処理がされた値を読み込み（書き込み）ます。</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+CL_UNORM_INT16
+</span></dt><dd>
+(16ビット符号無し整数)
+</dd></dl></div><p>値cに対して、`正規化浮動小数点値 = (float)c / 65535.0f`の処理がされた値を読み込み（書き込み）ます。</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_符号付き"></a>符号付き</h4></div></div></div><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+CL_SNORM_INT8
+</span></dt><dd>
+(8ビット符号付き整数)
+</dd></dl></div><p>値cに対して、`正規化浮動小数点値 = max(-1.0f, (float)c / 127.0f)`の処理がされた値を読み込み（書き込み）ます。</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+CL_SNORM_INT16
+</span></dt><dd>
+(16ビット符号付き整数)
+</dd></dl></div><p>値cに対して、`正規化浮動小数点値 = max(-1.0f, (float)c / 32767.0f)`の処理がされた値を読み込み（書き込み）ます。</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_サンプラー"></a>17.10.2. サンプラー</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：サンプラの状態」（<a class="xref" href="apbs44.html#sampler_state" title="Table B.124. 表：サンプラの状態">Table B.124, “表：サンプラの状態”</a>）を参照ください。</p></div><p>サンプラーはイメージ処理時の属性を定義します。以下が指定可能な属性です。</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+座標の正規が非正規されるかの指定
+</li><li class="listitem">
+アドレスモードの指定
+</li><li class="listitem">
+フィルターモードの指定
+</li></ol></div><p>座標の正規化の有無については、以下の２つの値があります。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+CLK_NORMALIZED_COORDS_TRUE
+</li><li class="listitem">
+CLK_NORMALIZED_COORDS_FALSE
+</li></ul></div><p>アドレスモードは以下の内いずれかの値をとります。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+CLK_ADDRESS_MIRRORED_REPEAT
+</li><li class="listitem">
+CLK_ADDRESS_REPEAT
+</li><li class="listitem">
+CLK_ADDRESS_CLAMP_TO_EDGE
+</li><li class="listitem">
+CLK_ADDRESS_CLAMP
+</li><li class="listitem">
+CLK_ADDRESS_NONE
+</li></ul></div><p>フィルタモードは以下の２つの値があります。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+CLK_FILTER_NEAREST
+</li><li class="listitem">
+CLK_FILTER_LINEAR
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_イメージ読み込み_書き込み関数"></a>17.10.3. イメージ読み込み・書き込み関数</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：イメージ読み込み関数」（<a class="xref" href="apbs44.html#image_read_write" title="Table B.125. 表：イメージ読み込み・書き込み関数">Table B.125, “表：イメージ読み込み・書き込み関数”</a>）を参照ください。</p></div><p>イメージ読み込み関数は座標(coord.x, coord.y)を使い２次元イメージオブジェクトの要素ルックアップをします。</p><pre xmlns="" class="prettyprint">float4 read_imagef (
+    image2d_t image,
+    sampler_t sampler,
+    int2 coord)
+float4 read_imagef (
+    image2d_t image,
+    sampler_t sampler,
+    float2 coord)</pre><p>image2d_tには以下のような制約と、戻り値の規則があります。</p><p>image_channel_data_typeがCL_UNORM_INT8かCL_UNORM_INT16のいずれかに指定されて生成されたイメージオブジェクトにおいて、`[0.0 … 1.0]`の範囲の浮動小数点の値を返します。</p><p>image_channel_data_typeがCL_SNORM_INT8かCL_SNORM_INT16のいずれかに指定されて生成されたイメージオブジェクトにおいて、`[-1.0 … 1.0]`の範囲の浮動小数点の値を返します。</p><p>image_channel_data_typeがCL_HALF_FLOATかCL_FLOATのいずれかに指定されて生成されたイメージオブジェクトにおいて、浮動小数点の値を返します。</p><p>整数の座標を扱う呼び出しでは、フィルターモードがCLK_FILTER_NEAREST、座標モードはCLK_NORMALIZED_COORDS_FALSE、アドレスモードはCLK_ADDRESS_CLAMP_TO_EDGE, CLK_ADDRESS_CLAMP、 CLK_ADDRESS_NONEのいずれかに指定している必要があります。</p><p>以下は整数型で返すイメージ読み込み関数の定義です。</p><pre xmlns="" class="prettyprint">int4 read_imagei (
+    image2d_t image,
+    sampler_t sampler,
+    int2 coord)
+int4 read_imagei (
+    image2d_t image,
+    sampler_t sampler,
+    float2 coord)
+uint4 read_imageui (
+    image2d_t image,
+    sampler_t sampler,
+    int2 coord)
+uint4 read_imageui (
+    image2d_t image,
+    sampler_t sampler,
+    float2 coord)</pre></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch17s09.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch17.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch17s11.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

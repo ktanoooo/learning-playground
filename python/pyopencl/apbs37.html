@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>B.37. マーカー・バリアー・イベント待機</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="apb.html" title="Appendix B. OpenCL 1.2 API Reference" /><link rel="prev" href="apbs36.html" title="B.36. プロファイリング" /><link rel="next" href="apbs38.html" title="B.38. 組み込み関数" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="apbs36.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apbs38.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_マーカー_バリアー_イベント待機"></a>B.37. マーカー・バリアー・イベント待機</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clenqueuemarkerwithwaitlist"></a>B.37.1. clEnqueueMarkerWithWaitList</h3></div></div></div><div class="table"><a id="clEnqueueMarkerWithWaitList"></a><p class="title"><strong>Table B.100. 表：clEnqueueMarkerWithWaitList</strong></p><div class="table-contents"><table class="table" summary="表：clEnqueueMarkerWithWaitList" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>関数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>cl_int</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clEnqueueMarkerWithWaitList (
+    cl_command_queue command_queue,
+    cl_uint num_events_in_wait_list,
+    const cl_event *event_wait_list,
+    cl_event *event
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>イベントリストが完了を待機するマーカーコマンドを挿入。
+リストが空の場合、前にコマンドキューに挿入した全ての
+コマンドが完了するのを待機。このイベントは待機すべきイ
+ベントを戻し、event_wait_list内の全イベントまたは以前
+に挿入（このコマンドがキューに挿入される前に）した全コマ
+ンドが完了することを保証する。</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>引数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>command_queue</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">有効なコマンドキューを指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>num_events_
+in_wait_list</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_list
+で指定したイベントオ
+ブジェクトの個数を
+指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>event_wait_list</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">このコマンドが実行
+される前に完了されて
+いるイベントを指定。
+event_wait_list
+がNULLの場合、この
+コマンドはどのイベン
+トの完了待機もしない。
+
+event_wait_listが
+NULLの場合、
+num_events_in_
+wait_listは0となる
+必要がある。
+
+event_wait_listが
+NULLではない場合、
+event_wait_listが
+指す各イベントは有効
+となり、
+またnum_events_in_
+wait_listは0より大
+きな値となる必要がある。
+
+event_wait_listに
+指定したイベントは同
+期点としてふるまう。
+event_wait_list内の
+イベントと関連付けられ
+たOpenCLコンテキストと
+command_queueと関連
+付けられたOpenCLコン
+テキストは同じとなる必
+要がある。
+
+event_wait_listと関
+連付けられたメモリ領域
+は関数が戻った後に、再
+利用か解放できる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>event</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">複製コマンドを識別する
+イベントオブジェクトが戻
+され、コマンド完了の確
+認やコマンド完了の待機
+に使える。
+
+eventがNULLの場合、ア
+プリケーションはコマンド
+の状況確認やコマンド完
+了待ちができなくなる。
+
+event_wait_listと
+eventがNULLでない場合、
+eventはevent_wait_
+list配列の要素を参照す
+べきでない。
+
+clEnqueueBarrier
+WithWaitListを代わり
+に使うことができる。
+event_wait_listと
+event引数NULLでない場合、
+event引数はevent_
+wait_list内の要素を参
+照すべきでない。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>成功した場合の戻り値</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>CL_SUCCESS</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>失敗した場合の戻り値</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+COMMAND_QUEUE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queueが有効
+なコマンドキューでな
+い場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+CONTEXT</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queueと
+event_wait_list内の
+イベントに関連付けられ
+たコンテキストがおなじ
+でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+EVENT_WAIT_LIST</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_listが
+NULLで、
+num_events_in_
+wait_list &gt; 0の場合。
+
+event_wait_listが
+NULLでなくnum_events_
+in_wait_listが0の場合。
+
+event_wait_list内の
+イベントオブジェクトが有
+効なイベントでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_OF_
+RESOURCES</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_OF_
+HOST_MEMORY</em></span></p></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clenqueuebarrierwithwaitlist"></a>B.37.2. clEnqueueBarrierWithWaitList</h3></div></div></div><div class="table"><a id="clEnqueueBarrierWithWaitList"></a><p class="title"><strong>Table B.101. 表：clEnqueueBarrierWithWaitList</strong></p><div class="table-contents"><table class="table" summary="表：clEnqueueBarrierWithWaitList" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>関数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>cl_int</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clEnqueueBarrierWithWaitList (
+    cl_command_queue command_queue,
+    cl_uint num_events_in_wait_list,
+    const cl_event *event_wait_list,
+    cl_event *event
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>イベントリストが完了を待機するバリアーコマン
+ドを挿入。</em></span></p>
+<p><span class="emphasis"><em>リストが空の場合、前にコマンドキューに挿入した全
+てのコマンドが完了するのを待機。このコマンドはコ
+マンド実行をブロック。つまり、コマンドが終了する
+まで、以降に挿入されたコマンドは実行されない。この
+イベントは待機すべきイベントを戻し、event_wait_
+list内の全イベントまたは以前に挿入（このコマンドが
+キューに挿入される前に）した全コマンドが完了するこ
+とを保証する。</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>引数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>command_queue</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">有効なコマンドキューを指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>num_events_
+in_wait_list</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_list
+で指定したイベントオブ
+ジェクトの数を指定
+します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>event_wait_
+list</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">このコマンドが実行
+される前に完了されて
+いるイベントを指定。
+event_wait_listが
+NULLの場合、このコマン
+ドはどのイベントの完了
+待機もしない。
+
+event_wait_listが
+NULLの場合、num_events_
+in_wait_listは0となる
+必要がある。
+
+event_wait_listがNULL
+ではない場合、event_
+wait_listが指す各イベント
+は有効となり、またnum_
+events_in_wait_listは0
+より大きな値となる
+必要がある。
+
+event_wait_listに
+指定したイベントは同
+期点としてふるまう。
+event_wait_list内の
+イベントと関連付けられ
+たOpenCLコンテキスト
+と command_queueと関
+連付けられたOpenCLコン
+テキストは同じとなる必
+要がある。
+
+event_wait_listと関
+連付けられたメモリ領域
+は関数が戻った後に、再
+利用か解放できる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>event</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">複製コマンドを識別
+するイベントオブジェ
+クトが戻され、コマンド
+完了の確認やコマンド完
+了の待機に使える。
+
+eventがNULLの場合、
+アプリケーションはコ
+マンドの状況確認やコ
+マンド完了待ちがで
+きなくなる。
+
+event_wait_list
+とeventがNULLでな
+い場合、eventは
+event_wait_list
+配列の要素を参照す
+べきでない。
+
+clEnqueueBarrier
+WithWaitListを代
+わりに使うことがで
+きる。event_wait_
+listとevent引数
+NULLでない場合、
+event引数はevent_
+wait_list内の要素を
+参照すべきでない。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>成功した場合の戻り値</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>CL_SUCCESS</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>失敗した場合の戻り値</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+COMMAND_QUEUE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queueが
+有効なコマンドキュ
+ーでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+CONTEXT</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_list
+内のイベントと
+command_queueに
+関連付けられたコン
+テキストが同じで
+ない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+EVENT_WAIT_LIST</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_list
+がNULLで、
+num_events_in_
+wait_list &gt; 0の場合。
+
+event_wait_listが
+NULLでなくnum_
+events_in_wait_listが0
+の場合。
+event_wait_list
+内のイベントオブジェ
+クトが有効なイベン
+トでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_OF_
+RESOURCES</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_OF_
+HOST_MEMORY</em></span></p></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apbs36.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apb.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apbs38.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

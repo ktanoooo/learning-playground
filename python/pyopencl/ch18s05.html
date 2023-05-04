@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>18.5. Stride型のアルゴリズム</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch18.html" title="Chapter 18. ヒストグラム" /><link rel="prev" href="ch18s04.html" title="18.4. ストライドとBank Conflict" /><link rel="next" href="ch18s06.html" title="18.6. バンクコンフリクトの緩和対策の実装例" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch18s04.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch18s06.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_stride型のアルゴリズム"></a>18.5. Stride型のアルゴリズム</h2></div></div></div><p>Stride型のアルゴリズムは前の2つの項目で一通り解説してきました。この項目では実装をしてみたいと思います。</p><p>まずヒストグラム集計のパラメータを以下のように設定します。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+ローカルワークサイズ＝4（ローカルスレッド数、LOCAL_SIZE）
+</li><li class="listitem">
+ワークグループサイズ＝16（共有ローカルメモリの数、WG_SIZE）
+</li><li class="listitem">
+カテゴリ数=256（コードではBIN_SIZE）
+</li></ul></div><p>集計をする元データは、4*16*256=16384とします。</p><p>元データ、共有ローカルメモリ、出力データはint型とします。共有ローカルメモリ（shared_local_memory）は256x4の配列となるため、各ワークグループに割り当てられるメモリの容量は、4KBとなります。16個のワークグループで使うメモリ容量は64KBとなり、検証機となるIntelのHD Graphics 4000で使う容量最大限を使う計算となります。</p><p><strong>HistogramBankStride4kbslm.py. </strong>
+</p><pre xmlns="" class="prettyprint">import pyopencl as cl
+import numpy as np
+from numpy.random import *
+
+# Set the seed to 100
+np.random.seed(100)
+
+INT_BYTES = 4
+BIN_SIZE = 256
+LOCAL_SIZE = 4
+WG_SIZE = 16
+DATA_SIZE = BIN_SIZE * LOCAL_SIZE * WG_SIZE
+data = randint(0, 1, DATA_SIZE).astype(np.uint32)
+out = np.zeros(BIN_SIZE*LOCAL_SIZE).astype(np.uint32)
+out.reshape((LOCAL_SIZE, BIN_SIZE))
+
+devices = [cl.get_platforms()[0].get_devices(cl.device_type.GPU)[0]]
+
+ctx = cl.Context(devices)
+queue = cl.CommandQueue(ctx)
+mf = cl.mem_flags
+data_mem = cl.Buffer(ctx, mf.USE_HOST_PTR, hostbuf=data)
+out_mem = cl.Buffer(ctx, mf.WRITE_ONLY, size=out.nbytes)
+
+program = cl.Program(ctx, """
+    #define BIN_SIZE 256
+
+    //4KB = 4 threads
+    //16 WG
+
+    __kernel void histogram(
+            __global uint4* data,
+            __local uint* shared_local_memory,
+            __global uint* buckets) {
+
+        size_t lid = get_local_id(0);
+
+        size_t group_id = get_group_id(0);
+        size_t local_size = get_local_size(0);
+
+        int offset = lid % 2; // 0,1
+        int stride = 2 * offset; // 0,2
+        int bank_number = lid &gt;&gt; 1; // 0,1
+
+        __local uchar4* input = (__local uchar4*) shared_local_memory;
+
+        for(int i = 0; i &lt; BIN_SIZE/4; ++i)
+            input[local_size * i + lid] = 0;
+        barrier(CLK_LOCAL_MEM_FENCE);
+
+        for(int i = 0; i &lt; BIN_SIZE /4; ++i) {
+
+             uint4 value = data[
+                group_id * local_size * (BIN_SIZE / 4) + i *
+                local_size + lid];
+             // (0...15) * 4 * 256 / 4 + (0..63) * 4 + lid
+
+             shared_local_memory[value.s0 * local_size + stride + bank_number]++; // value.s0, s1, s2, s3 is random, may update same position
+             shared_local_memory[value.s1 * local_size + stride + bank_number]++;
+             shared_local_memory[value.s2 * local_size + stride + bank_number]++;
+             shared_local_memory[value.s3 * local_size + stride + bank_number]++;
+
+        }
+        barrier(CLK_LOCAL_MEM_FENCE);
+
+        if(lid == 0) { // each work-group only has 1 work-item executing this code block
+             for(size_t i = 0; i &lt; BIN_SIZE; i++) {
+               int result = 0;
+               for(size_t j = 0; j &lt; local_size; j++) {
+                 result += shared_local_memory[i * local_size + j];
+                 // [0..255]*4 + 0...3 =&gt; min 0, max 1023
+               }
+               buckets[group_id * BIN_SIZE  + i] = result; // 0..15 * 256 + 0...255
+             }
+        }
+    }
+    """).build()
+
+kernel = cl.Kernel(program, name="histogram")
+
+kernel.set_arg(0, data_mem)
+# size to be specified in bytes (ie., 32 bits -&gt; 4 bytes)
+kernel.set_arg(1, cl.LocalMemory(INT_BYTES*BIN_SIZE*LOCAL_SIZE))
+kernel.set_arg(2, out_mem)
+
+cl.enqueue_nd_range_kernel(
+    queue=queue,
+    kernel=kernel,
+    global_work_size=(WG_SIZE * LOCAL_SIZE, 1, 1),
+    local_work_size=(LOCAL_SIZE, 1, 1))
+
+out = cl.enqueue_map_buffer(
+    queue=queue,
+    buf=out_mem,
+    flags=mf.WRITE_ONLY,
+    offset=0,
+    shape=(LOCAL_SIZE, BIN_SIZE,),
+    dtype=np.uint32
+)
+
+print(out[0][0][0:256])
+print(out[0])</pre><p>
+</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch18s04.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch18.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch18s06.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

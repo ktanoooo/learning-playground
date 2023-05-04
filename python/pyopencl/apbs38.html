@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>B.38. 組み込み関数</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="apb.html" title="Appendix B. OpenCL 1.2 API Reference" /><link rel="prev" href="apbs37.html" title="B.37. マーカー・バリアー・イベント待機" /><link rel="next" href="apbs39.html" title="B.39. 整数関数" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="apbs37.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apbs39.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_組み込み関数_2"></a>B.38. 組み込み関数</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_ワークアイテム関数"></a>B.38.1. ワークアイテム関数</h3></div></div></div><div class="table"><a id="workitem"></a><p class="title"><strong>Table B.102. 表：ワークアイテム・グループ関数</strong></p><div class="table-contents"><table class="table" summary="表：ワークアイテム・グループ関数" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> 関数 </pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> 解説</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> uint get_work_dim()</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">指定した次元数を返します。
+次元数はclEnqueueND
+RangeKernelのwork_dim
+引数で指定したものです。
+clEnqueueTaskの場合は、
+常に1を返します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> size_t get_global_
+size(uint dimindx)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> dimindexで指定した次
+元のグローバル・ワーク
+アイテム（work item）
+の数を返します。clEnqueue
+NDRangeKernelの
+global_work_size引数で
+指定したものが該当します。
+dimindexの指定可能値は
+0〜get_work_dim()-1で、
+これ以外の値については1を
+返します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> size_t get_
+global_id(uint dimindx)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> dimindexで指定した
+次元で固有のグローバル・
+ワークアイテム（work
+item）IDを返します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> size_t get_local_
+size(uint dimindx)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> dimindexで指定した次
+元のローカル・ワークア
+イテム（work item）の数
+を返します。clEnqueueND
+RangeKernelのlocal_
+work_size引数で指定した
+ものが該当します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> size_t get_local_
+id(uint dimindx)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> dimindexで指定した次元
+で固有のローカル・ワーク
+アイテム（work item）
+IDを返します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> size_t get_num_
+groups(uint dimindx)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> dimindexで指定した
+次元のワークグループ
+（work group）の数を返
+します。clEnqueueND
+RangeKernelのlocal_
+work_size引数で指定し
+たものが該当します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> size_t get_group_
+id(uint dimindx)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> dimindexで指定した
+次元でワークグループ（
+work group）IDを返し
+ます。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> size_t get_global_
+offset(uint dimindx)</pre></td><td style="" align="left" valign="top"><pre class="literallayout"> dimindexで指定した
+次元のオフセット（
+offset）を返します。
+clEnqueueNDRange
+Kernelのglobal_work_
+offset引数で指定したも
+のが該当します。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_数学関数_2"></a>B.38.2. 数学関数</h3></div></div></div><div class="table"><a id="maths"></a><p class="title"><strong>Table B.103. 表：数学関数</strong></p><div class="table-contents"><table class="table" summary="表：数学関数" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><thead><tr><th style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"> 関数 </th><th style="border-bottom: 1px solid #527bbd; " align="left" valign="top"> 解説</th></tr></thead><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype acos (gentype)
+￼
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">Arc cosine関数
+（逆三角関数）。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype acosh (gentype)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">Inverse hyperbolic
+cosine関数(逆双曲線関数)。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype acospi (gentype x)
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">acos (x) / πを
+計算します。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype asin (gentype)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">逆余弦（Arc sine）を計算します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype asinh (gentype)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">逆双曲線正弦(Inverse
+hyperbolic sine)を計算します。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype asinpi (gentype x)
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">asin (x) / πを
+計算します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype atan (gentype y_over_x)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">逆正接（Arc tangent）
+を計算します。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype atan2 (gentype y, gentype x)￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">atan(y / x)を
+計算します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype atanh (gentype)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">逆双曲線正接（Hyperbolic
+arc tangent)を計算します。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype atanpi (gentype x)￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">atan (x) / πを
+計算します。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype atan2pi (gentype y, gentype x)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">atan2 (y, x) / πを
+計算します。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype cbrt (gentype)￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">立方根・三乗根を計算し
+ます。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype ceil (gentype)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">正の無限大への丸めモー
+ドで天井値を計算。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype copysign (gentype x, gentype y)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">xの符号をyの符号に合
+わせて返します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype cos (gentype)￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">余弦（cosine）を計算
+します。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype cosh (gentype)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">双曲線余弦（hyperbolic
+cosine）を計算します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype cospi (gentype x)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cos (π x)を計算します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype erfc (gentype)￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">相補誤差関数を計算します。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype erf (gentype)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">誤差関数の計算をします。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype exp (gentype x)￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">eを底とする指数関数の
+計算をします。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype exp2 (gentype)￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">2を底とする指数関数の
+計算をします。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype exp10 (gentype)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">10を底とする指数関数
+の計算をします。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype expm1 (gentype x)
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">exp- 1.0の計算を
+します。
+￼
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype fabs (gentype)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">浮動小数点数の絶対
+値を計算します。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype fdim (gentype x, gentype y)￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">x &gt; yのとき、x - y
+x &lt;= yのとき、+0
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype floor (gentype)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">負の無限大への丸め
+モードで床関数を計算</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype fma (gentype a, gentype b, gentype c)￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">aとbの無限精度の積と
+cの和(a*b+c)を丸めた値
+を計算します。途中の積
+を求める過程では丸めず、
+エッジケースにおける振る
+舞いは IEEE754-2008に
+準拠します。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype fmax (gentype x, gentype y)
+gentypef fmax (gentypef x, float y)
+gentyped fmax (gentyped x, double y)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">x &lt; yのときに、y
+それ以外のときに、x
+を返します。引数の片方
+がNaNのときは、もう片方
+の値を返します。
+両方の引数がNaNのと
+きは、NaNを返します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype fmin(gentype x,gentype y)
+gentypef fmin(gentypef x, float y)
+gentyped fmin(gentyped x, double y)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">y &lt; xのときに、y
+それ以外のときに、x
+を返します。引数の片方がNaNのときは、もう片方の値を返します。
+両方の引数がNaNのときは、NaNを返します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype fmod(gentype x,gentype y)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">x – y * trunc(x/y)
+を計算します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> gentype fract(gentype x, global gentype *iptr)
+gentype fract (gentype x, local gentype *iptr)
+gentype fract (gentype x, private gentype *iptr)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">fmin(x – floor(x),
+0x1.fffffep-1f)を計算します。
+floor(x)はiptrで返されます。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype frexp(gentype x, global intn *exp)
+gentype frexp (gentype x, local intn *exp)
+gentype frexp (gentype x, private intn *exp)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">x の仮数(mantissa、小数点
+以下)と指数を計算します。各要
+素に返される仮数は[1/2, 1)か
+0の間の値となります。xの各値
+は（仮数 * 2^exp）となります。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype hypot(gentype x, gentype y)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">オーバーフローまたはアンダ
+ーフローを回避しつつ、
+x^2 + y^2の平方根値を求
+めます。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> intn ilogb(gentype x)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> xの指数を整数値で返します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> gentype ldexp(gentypex, intn exp)
+gentype ldexp(gentype x, int exp)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> xの指数を整数値として計
+算します。x * 2^expの計
+算結果を返します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> gentype lgamma(gentype x)
+gentype lgamma_r(gentype x, global intn *signp)
+gentype lgamma_r(gentype x, local intn *signp)
+gentype lgamma_r(gentype x, private intn *signp)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">ガンマ関数の自然対数（log
+Γ(x)）を計算します。
+lgamma_rのsignp引数のポ
+インタは算出したガンマ関数
+の値の符号を返します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype log(gentype x)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">xの自然対数を計算します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype log2(gentype x)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">xの対数（底は2）を計算します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype log10(gentype x)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">xの対数（底は10）を計算します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype log1p(gentype x)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">`1.0 + x`の自然対数、
+`log_e(1.0 + x)`を
+計算します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype logb(gentype x)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">xの指数を計算
+（log_r|x|の整数部分）
+します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype mad(gentype a, gentype b, gentype c)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">madは(a*b+c)の近似計算
+をします。精度よりも速度を
+重視するときに使います。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype maxmag(gentype x, gentype y)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">|x| &gt; |y|のときに、x
+|y| &gt; |x|のときに、y
+それ以外はfmax(x, y)
+を計算します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype minmag(gentype x, gentype y)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">|x| &lt; |y|のときに、x
+|y| &lt; |x|のときに、y
+それ以外はfmin(x, y)を
+計算します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype modf(gentype x, global gentype *iptr)
+gentype modf(gentype x, local gentype *iptr)
+gentype modf(gentype x, private gentype *iptr)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">浮動小数点を分解します。
+modf関数は引数xを整数と
+少数部分に分けます。各部分
+は引数と同じ符号を持ちます。
+iptrポインタが指すオブジェ
+クトに算出した整数部分を保
+存し、少数部分を返します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">float nan(uint nancode)
+floatn nan(uintn nancode)
+double nan(uint nancode)
+doublen nan(uintn nancode)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">quiet NaN(qNaN)を返します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype nextafter(gentype x, gentype y);</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">単精度浮動小数点または倍
+精度浮動小数点でy方向のx
+の次の数値を計算します。
+
+yがxより小さければ、xより
+小さい値の最大浮動小数点
+値を返します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype pow(gentype x, gentype y)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">xのy乗を計算します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype pown(gentype x, intn y)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">xのy乗を計算します。
+yは整数とする。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype powr(gentype x, gentype y)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">x &gt;= 0の制限下で
+xのy乗を計算します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype remainder(gentype x, gentype y)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">r = x – n * yを計算
+します。nはx/yに最も近い
+整数です。もしx/yに最も
+近い整数が２つあるときは、
+偶数値を選びます。rが0の
+ときは、xと同じ符号に
+なります。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">floatn remquo (floatn x, floatn y,
+__global intn *quo)
+floatn remquo (floatn x, floatn y,
+__local intn *quo)
+floatn remquo (floatn x, floatn y,
+__private intn *quo)
+float remquo (float x, float y,
+__global int *quo)
+float remquo (float x, float y,
+__local int *quo)
+float remquo (float x, float y,
+__private int *quo)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> r = x - k*yを計算します。
+kはx/yに最も近い整数です。
+もしx/yに最も近い整数が２つ
+あるときは、偶数値を選びます。
+rが0のときは、xと同じ符号に
+なります。reminder()と異
+なり、x/yの商（整数）の
+下位7ビットを計算し、符号
+はx/yの符号と同じになりま
+す。quoポインタが指すオブ
+ジェクトに返されます。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">doublen remquo (doublen x,
+    doublen y,
+    __global intn *quo)
+doublen remquo (doublen x,
+    doublen y,
+    __local intn *quo)
+doublen remquo (doublen x,
+    doublen y,
+    __private intn *quo)
+double remquo (double x,
+    double y, __global int *quo)
+double remquo (double x,
+    double y,
+    __local int *quo)
+double remquo (double x,
+    double y,
+    __private int *quo)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">r = x - k*yを計算します。
+kはx/yに最も近い整数です。も
+しx/yに最も近い整数が２つあると
+きは、偶数値を選びます。rが0の
+ときは、xと同じ符号になります。
+reminder()と異なり、x/yの商
+（整数）の下位7ビットを計算し、
+符号はx/yの符号と同じになります。
+quoポインタが指すオブジェクト
+に返されます。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype rint (gentype)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">最近接偶数への丸め
+(round to the
+nearest even) モードで
+整数値への丸めを行います。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">floatn rootn (floatn x, intn y)
+float rootn (float x, int y)
+doublen rootn (doublen x, intn y)
+doublen rootn (double x, int y)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">xの（1/y）乗を計算
+します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype round (gentype x)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">丸め方向と関係なくxに最
+も近い整数値への丸め(中間
+値は０より遠い方向)を行います。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype rsqrt (gentype)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">平方根の逆数を計算します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype sin (gentype)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">正弦（sine）を計算します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype sincos (gentype x,
+__global gentype *cosval)
+gentype sincos (gentype x,
+__local gentype *cosval)
+gentype sincos (gentype x,
+__private gentype *cosval)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">正弦（sine）と余弦（cosine）
+を計算します。正弦を戻り値
+として返し、余弦をcosvalポ
+インタを指すオブジェクトに
+返します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype sinh (gentype)
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">双曲線正弦（ハイパボリック
+サイン）を計算します。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype sinpi (gentype x)
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">sin (π x)を計算します。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype sqrt (gentype)
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">平方根を計算します。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype tan (gentype)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">正接（tangent）を計算します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype tanh (gentype)
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">双曲線正接（hyperbolic
+tangent）を計算します。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype tanpi (gentype x)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">tan (π x)の計算をします。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype tgamma (gentype)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">ガンマ関数の計算をします。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype trunc (gentype)</pre></td><td style="" align="left" valign="top"><pre class="literallayout">0への丸め (rounding
+toward zero)モードで整数
+への丸めを計算します。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_half型_native型数学関数_2"></a>B.38.3. half型、native型数学関数</h3></div></div></div><div class="table"><a id="half_maths"></a><p class="title"><strong>Table B.104. 表：half型、native型の数学関数</strong></p><div class="table-contents"><table class="table" summary="表：half型、native型の数学関数" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><thead><tr><th style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top">関数</th><th style="border-bottom: 1px solid #527bbd; " align="left" valign="top">詳細</th></tr></thead><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype half_cos (gentype x)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">余弦（cosine）の計算
+をします。引数xの範囲は
+-216 ... +216とします。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype half_divide (gentype x, gentype y)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">x / yを計算します。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype half_exp (gentype x)
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">eを底とする指数関数
+の計算をします。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype half_exp2 (gentype x)
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">2を底とする指数関数
+の計算をします。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype half_exp10 (gentype x)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">10を底とする指数関数の計算をします。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype half_log (gentype x)
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">自然対数を計算します。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype half_log2 (gentype x)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">2を底とする対数の計算
+をします。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype half_log10 (gentype x)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">10を底とする対数の計算
+をします。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype half_powr (gentype x, gentype y)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">x &gt;= 0の制限下でxのy
+乗を計算します。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype half_recip (gentype x)
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">逆数の計算をします。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype half_rsqrt (gentype x)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">平方根の逆数を計算します。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype half_sin (gentype x)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">正弦（sine）の計算を
+します。引数xの範囲は
+-216 ... +216とします。
+
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype half_sqrt (gentype x)
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">平方根を計算します。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype half_tan (gentype x)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">正接（tangent)の計算
+をします。引数xの範囲は
+-216 ... +216とします。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype native_cos (gentype x)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">余弦（cosine）の計算
+をします。範囲は実装シ
+ステムによります。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype native_divide (gentype x, gentype y)
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">x / yの計算をします。
+範囲は実装システムに
+よります。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype native_exp (gentype x)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">eを底とする指数関数の
+計算をします。引数xの
+範囲は実装システムによ
+り異なります。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype native_exp2 (gentype x)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">2を底とする指数関数の
+計算をします。引数xの
+範囲は実装システムによ
+り異なります。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype native_exp10 (gentype x)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">10を底とする対数の計
+算をします。引数xの範
+囲は実装システムにより
+異なります。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype native_log (gentype x)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">自然対数を計算します。
+範囲は実装システムによ
+り異なります。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype native_log2 (gentype x)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">2を底とする対数の計算
+をします。範囲は実装シ
+ステムにより異なります。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype native_log10 (gentype x)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">10を底とする対数の
+計算をします。範囲は実
+装システムにより異なり
+ます。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype native_powr (gentype x, gentype y)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">x &gt;= 0の制限下でxの
+y乗を計算します。引数x
+とyの範囲は実装システム
+により異なります。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype native_recip (gentype x)
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">逆数の計算をします。
+範囲は実装システムによ
+り異なります。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype native_rsqrt (gentype x)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">平方根の逆数を計算し
+ます。範囲は実装シス
+テムにより異なります。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype native_sin (gentype x)
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">正弦（sine）の計算
+をします。範囲は実装
+システムにより異なり
+ます。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype native_sqrt (gentype x)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">平方根を計算します。
+範囲は実装システムに
+より異なります。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype native_tan (gentype x)
+￼</pre></td><td style="" align="left" valign="top"><pre class="literallayout">正接（tangent)の計
+算をします。範囲は実装
+システムにより異なり
+ます。
+￼</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_浮動小数点演算"></a>B.38.4. 浮動小数点演算</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_浮動小数点境界値_2"></a>浮動小数点境界値</h4></div></div></div><div class="table"><a id="flt_edge"></a><p class="title"><strong>Table B.105. 表：浮動小数点境界値</strong></p><div class="table-contents"><table class="table" summary="表：浮動小数点境界値" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><thead><tr><th style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top">関数</th><th style="border-bottom: 1px solid #527bbd; " align="left" valign="top">詳細</th></tr></thead><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">MAXFLOAT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">単精度浮動小数点数
+の有限の最大値です。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">HUGE_VALF</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">+infinityと等号する
+float型の定数です。
+数値関数のエラー値とし
+て使われます。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">INFINITY</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">正の符号または符号な
+しの無限を表すfloat型
+の定数。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">NAN</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">quiet NaN（qNaN）
+を表すfloat型の定数。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">HUGE_VAL</pre></td><td style="" align="left" valign="top"><pre class="literallayout">+infinityと等号する
+double型の定数です。
+数値関数のエラー値とし
+て使われます。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_浮動小数点数"></a>浮動小数点数</h4></div></div></div><p><a id="flt_macro"></a><strong>表：浮動小数点マクロ. </strong>
+</p><pre xmlns="" class="prettyprint">#define FLT_DIG          6
+#define FLT_MANT_DIG     24
+#define FLT_MAX_10_EXP   +38
+#define FLT_MAX_EXP      +128
+#define FLT_MIN_10_EXP   -37
+#define FLT_MIN_EXP      -125
+#define FLT_RADIX        2
+#define FLT_MAX          0x1.fffffep127f
+#define FLT_MIN          0x1.0p-126f
+#define FLT_EPSILON      0x1.0p-23f</pre><p>
+</p><div class="table"><a id="flt_interop"></a><p class="title"><strong>Table B.106. 表：浮動小数点との互換性</strong></p><div class="table-contents"><table class="table" summary="表：浮動小数点との互換性" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><thead><tr><th style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top">OpenCL Cマクロ</th><th style="border-bottom: 1px solid #527bbd; " align="left" valign="top">OpenCL APIマクロ
+￼</th></tr></thead><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">FLT_DIG</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_FLT_DIG
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">FLT_MANT_DIG
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_FLT_MANT_DIG</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">FLT_MAX_10_EXP</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_FLT_MAX_10_EXP
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">FLT_MAX_EXP</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_FLT_MAX_EXP</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">FLT_MIN_10_EXP</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_FLT_MIN_10_EXP
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">FLT_MIN_EXP
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_FLT_MIN_EXP</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">FLT_RADIX</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_FLT_RADIX</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">FLT_MAX</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_FLT_MAX
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">FLT_MIN</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_FLT_MIN
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">FLT_EPSILSON
+￼</pre></td><td style="" align="left" valign="top"><pre class="literallayout">CL_FLT_EPSILON</pre></td></tr></tbody></table></div></div><br class="table-break" /><div class="table"><a id="flt_constant"></a><p class="title"><strong>Table B.107. 表：浮動小数点定数</strong></p><div class="table-contents"><table class="table" summary="表：浮動小数点定数" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><thead><tr><th style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top">定数
+￼</th><th style="border-bottom: 1px solid #527bbd; " align="left" valign="top">詳細
+￼</th></tr></thead><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">M_E_F￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">eの値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">M_LOG2E_F</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">log2eの値
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">M_LOG10E_F
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">log10eの値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">M_LN2_F</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">loge2の値
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">M_LN10_F
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">loge10の値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">M_PI_F</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">πの値
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">M_PI_2_F
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">π / 2の値
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">M_PI_4_F
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">π / 4の値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">M_1_PI_F</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">1 / πの値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">M_2_PI_F</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">2 / πの値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">M_2_SQRTPI_F</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">2 / √πの値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">M_SQRT2_F</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">√2の値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">M_SQRT1_2_F</pre></td><td style="" align="left" valign="top"><pre class="literallayout">1 / √2の値</pre></td></tr></tbody></table></div></div><br class="table-break" /></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_倍精度_2"></a>B.38.5. 倍精度</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：倍精度型マクロ」（<a class="xref" href="apbs38.html#dbl_macro" title="表：倍精度型マクロ">表：倍精度型マクロ</a>）と「表：倍精度型の互換性」（<a class="xref" href="apbs38.html#dbl_interop" title="Table B.108. 表：倍精度型の互換性">Table B.108, “表：倍精度型の互換性”</a>）と「表：倍精度定数」（<a class="xref" href="apbs38.html#dbl_constant" title="Table B.109. 表：倍精度定数">Table B.109, “表：倍精度定数”</a>）を参照ください。</p></div><p><a id="dbl_macro"></a><strong>表：倍精度型マクロ. </strong>
+</p><pre xmlns="" class="prettyprint">#define DBL_DIG 15
+#define DBL_MANT_DIG 53
+#define DBL_MAX_10_EXP +308
+#define DBL_MAX_EXP +1024
+#define DBL_MIN_10_EXP -307
+#define DBL_MIN_EXP -1021
+#define DBL_MAX 0x1.fffffffffffffp1023
+#define DBL_MIN 0x1.0p-1022
+#define DBL_EPSILON 0x1.0p-52</pre><p>
+</p><div class="table"><a id="dbl_interop"></a><p class="title"><strong>Table B.108. 表：倍精度型の互換性</strong></p><div class="table-contents"><table class="table" summary="表：倍精度型の互換性" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><thead><tr><th style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top">OpenCL Cマクロ
+￼</th><th style="border-bottom: 1px solid #527bbd; " align="left" valign="top">OpenCL APIマクロ
+￼</th></tr></thead><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">DBL_DIG</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_DBL_DIG
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">DBL_MANT_DIG</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_DBL_MANT_DIG
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">DBL_MAX_10_EXP
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_DBL_MAX_10_EXP</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">DBL_MAX_EXP</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_DBL_MAX_EXP
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">DBL_MIN_10_EXP</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_DBL_MIN_10_EXP
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">DBL_MIN_EXP</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_DBL_MIN_EXP
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">DBL_MAX</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_DBL_MAX
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">DBL_MIN</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_DBL_MIN
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">DBL_EPSILSON
+￼</pre></td><td style="" align="left" valign="top"><pre class="literallayout">CL_DBL_EPSILON</pre></td></tr></tbody></table></div></div><br class="table-break" /><div class="table"><a id="dbl_constant"></a><p class="title"><strong>Table B.109. 表：倍精度定数</strong></p><div class="table-contents"><table class="table" summary="表：倍精度定数" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><thead><tr><th style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top">定数</th><th style="border-bottom: 1px solid #527bbd; " align="left" valign="top">詳細</th></tr></thead><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">M_E</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">eの値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">M_LOG2E
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">log2eの値
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">M_LOG10E</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">log10eの値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">M_LN2</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">loge2の値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">M_LN10</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">loge10の値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">M_PI</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">πの値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">M_PI_2</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">π / 2の値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">M_PI_4</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">π / 4の値
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">M_1_PI</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">1 / πの値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">M_2_PI</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">2 / πの値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">M_2_SQRTPI</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">2 / √πの値
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">M_SQRT2
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">√2の値
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">M_SQRT1_2</pre></td><td style="" align="left" valign="top"><pre class="literallayout">1 / √2の値</pre></td></tr></tbody></table></div></div><br class="table-break" /></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apbs37.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apb.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apbs39.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

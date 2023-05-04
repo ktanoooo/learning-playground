@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>B.15. イメージオブジェクト</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="apb.html" title="Appendix B. OpenCL 1.2 API Reference" /><link rel="prev" href="apbs14.html" title="B.14. バッファオブジェクトのマップ" /><link rel="next" href="apbs16.html" title="B.16. イメージの読み込みと書き込み" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="apbs14.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apbs16.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_イメージオブジェクト_2"></a>B.15. イメージオブジェクト</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clcreateimage"></a>B.15.1. clCreateImage</h3></div></div></div><div class="table"><a id="clCreateImage"></a><p class="title"><strong>Table B.37. 表：clCreateImage</strong></p><div class="table-contents"><table class="table" summary="表：clCreateImage" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">関数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_mem</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clCreateImage (
+    cl_context context,
+    cl_mem_flags flags,
+    const cl_image_format *image_format,
+    const cl_image_desc *image_desc,
+    void *host_ptr,
+    cl_int *errcode_ret
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 1Dイメージ、1Dイメージバッファ、
+1Dイメージ配列、2Dイメージ、
+2Dイメージ配列、3Dイメージオブジェクトを生成。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 引数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">context</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">有効なOpenCL
+コンテキスト。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">flags</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">生成されるイメー
+ジメモリオブジェクト
+の割当・確保に使うメ
+モリ領域と使用情報を
+指定するビットフィー
+ルド。
+
+CL_MEM_OBJECT_
+IMAGE1D_BUFFERを除
+いた全てのイメージ型
+に対して、指定された
+フラグの値が０の場合、
+デフォルト値はCL_MEM_
+READ_WRITEとなります。
+
+CL_MEM_OBJECT_
+IMAGE1D_BUFFERのイメ
+ージ型に対して、CL_MEM_
+READ_WRITE、CL_MEM_
+READ_ONLY、CL_MEM_
+WRITE_ONLYがフラグに指
+定されない場合、バッファ
+に関連付けられたメモリア
+クセス修飾子から継承されます。
+
+CL_MEM_USE_HOST_
+PTR、CL_MEM_ALLOC_
+HOST_PTR、 CL_MEM_
+COPY_HOST_PTRはフラグ
+に指定できませんが、
+バッファに関連付けられた
+メモリ修飾子からの継承
+ができます。
+
+CL_MEM_HOST_
+WRITE_ONLY、CL_MEM_
+HOST_READ_ONLY、
+CL_MEM_HOST_NO_
+ACCESSがフラグに指定
+されていない場合、
+バッファに関連付けられ
+たメモリアクセス修飾子
+から継承されます。
+
+
+フラグについては
+&lt;&lt;cl_mem_flags&gt;&gt;
+を参照ください。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">image_format</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">確保する領域内に格納
+するイメージ形式プロ
+パティを記述する構造
+体へのポインタを指定。
+
+&lt;&lt;cl_image_format&gt;&gt;
+を参照ください。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">image_desc</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">確保する領域内に格
+納するイメージの型
+と次元数を記述する
+構造体へのポインタ
+を指定。
+
+&lt;&lt;cl_image_desc&gt;&gt;
+を参照ください。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">host_ptr</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">アプリケーション
+が確保済みのイメージ
+データを指すポインタ
+を指定。
+
+3Dイメージまたは2D
+イメージ配列に対して、
+host_ptrが指定する
+イメージデータは2D画
+像スライスが連続して
+順番に並んだ状態で格
+納されます。各2Dイメー
+ジは走査線が連続して順番
+に並んだものです。各走
+査線は、画素が順番に並
+んだ状態で保存される。
+
+2Dイメージに対しては、
+host_ptrが指定する
+イメージデータは走査線
+が連続して順番に並んだ
+状態で格納されます。
+各走査線は、画素が順番
+に並んだ状態で保存される。
+
+1Dイメージ配列に対して
+は、host_ptrが指定す
+るイメージデータは1Dイ
+メージが順番に並んだ状
+態で格納されます。各1D
+イメージまたは1Dイメー
+ジバッファは画素が順番に
+並んだ状態の単一走査線となります。
+
+&lt;&lt;host_ptr&gt;&gt;を参照
+ください。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">errcode_ret</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">適切なエラーコード
+を戻す。errcode_ret
+がNULLの場合、エラー
+コードは戻らない。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 成功した場合の戻り値</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> CL_SUCCESS</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 失敗した場合の戻り値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+CONTEXT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">contextが有効な
+OpenCLコンテキスト
+でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">flagsに指定した値が
+有効でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_IMAGE_
+FORMAT_DESCRIPTOR</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">image_formatに指定
+した値が有効でない場合。
+またはimage_formatが
+NULLの場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+IMAGE_DESCRIPTOR</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">image_descに指定し
+た値が有効でない場合。
+またはimage_descが
+NULLの場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+IMAGE_SIZE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">コンテキスト内の全て
+のデバイスに対して、
+image_descで指定した
+イメージの次元数が、
+最大イメージ次元数を超
+えた場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+HOST_PTR</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">host_ptrがNULLの
+場合で、CL_MEM_USE_
+HOST_PTRまたはCL_
+MEM_COPY_HOST_PTR
+のいずれかのflagsが
+設定されている場合。
+
+host_ptrがNULLでな
+い場合で、CL_MEM_
+COPY_HOST_PTRまたは
+CL_MEM_USE_HOST_
+PTRのいずれかのflags
+が設定されていない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">1Dイメージバッファを生成、
+バッファオブジェクトを
+CL_MEM_WRITE_ONLYで
+生成、flagsをCL_MEM_
+READ_WRITEまたはCL_
+MEM_READ_ONLYに設定
+した場合。
+
+バッファオブジェクトを
+CL_MEM_READ_ONLYを
+生成、flagsをCL_MEM_
+READ_WRITEまたはCL_
+MEM_WRITE_ONLYにする
+か、flagsをCL_MEM_
+USE_HOST_PTR、CL_MEM_
+ALLOC_HOST_PTR、 CL_
+MEM_COPY_HOST_PTRの
+いずれかに設定した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">1Dイメージバッファを
+生成、バッファオブジ
+ェクトをCL_MEM_HOST_
+WRITE_ONLYで生成、
+flagsをCL_MEM_HOST_
+READ_ONLYに設定した場合。
+
+バッファオブジェクト
+をCL_MEM_HOST_
+READ_ONLYで生成、
+flagsを CL_MEM_
+HOST_WRITE_ONLYに
+設定した場合。
+
+バッファオブジェクトを
+CL_MEM_HOST_NO_
+ACCESSで生成、flags
+をCL_MEM_HOST_READ_
+ONLYまたはCL_MEM_
+HOST_WRITE_ONLYに
+設定した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_IMAGE_FORMAT_
+NOT_SUPPORTED</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">image_formatがサポ
+ートされてない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_MEM_OBJECT_
+ALLOCATION_FAILURE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">イメージオブジェクト
+のメモリ領域の確保に
+失敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+OPERATION</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">イメージをサポートす
+るデバイスがコンテキ
+ストに存在しない場合。
+（CL_DEVICE_IMAGE_
+SUPPORTがCL_FALSE）</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+RESOURCES</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とするリソー
+ス確保に失敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+HOST_MEMORY</pre></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL実
+装が必要とするリソー
+ス確保に失敗した場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_イメージデータのバッファ_2"></a>B.15.2. イメージデータのバッファ</h3></div></div></div><div class="table"><a id="host_ptr"></a><p class="title"><strong>Table B.38. 表：host_ptrバッファサイズ</strong></p><div class="table-contents"><table class="table" summary="表：host_ptrバッファサイズ" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">イメージ型</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">host_ptrが指すバッファのサイズ
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_MEM_OBJECT_IMAGE1D
+￼
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">&gt;= image_row_pitch
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_MEM_OBJECT_IMAGE1D_BUFFER</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">&gt;= image_row_pitch
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_MEM_OBJECT_IMAGE2D
+￼
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">&gt;= image_row_pitch
+* image_height
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_MEM_OBJECT_IMAGE3D</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">&gt;= image_slice_pitch
+* image_depth
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_MEM_OBJECT_IMAGE1D_ARRAY
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">&gt;= image_slice_pitch
+* image_array_size
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_MEM_OBJECT_IMAGE2D_ARRAY
+￼
+￼</pre></td><td style="" align="left" valign="top"><pre class="literallayout">&gt;= image_slice_pitch
+* image_array_size</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_cl_image_format"></a>B.15.3. cl_image_format</h3></div></div></div><div class="table"><a id="cl_image_format"></a><p class="title"><strong>Table B.39. 表：cl_image_format</strong></p><div class="table-contents"><table class="table" summary="表：cl_image_format" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> cl_image_format</pre></td></tr><tr><td style="" align="left" valign="top"><pre class="literallayout">     typedef struct _cl_image_format {
+          cl_channel_order    image_channel_order;
+          cl_channel_type     image_channel_data_type;
+     } cl_image_format;</pre></td></tr></tbody></table></div></div><br class="table-break" /><div class="table"><a id="image_channel_order"></a><p class="title"><strong>Table B.40. 表：image_channel_order</strong></p><div class="table-contents"><table class="table" summary="表：image_channel_order" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout"> channel_orderに
+指定可能な列挙値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_R, CL_Rx または CL_A
+￼CL_INTENSITY.</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">この型式は
+image_channel_data_type
+=　CL_UNORM_INT8,
+CL_UNORM_INT16,
+CL_SNORM_INT8,
+CL_SNORM_INT16,
+CL_HALF_FLOAT
+または CL_FLOATの
+場合のみ使えます。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_LUMINANCE.</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">この型式は
+image_channel_data_type
+=　CL_UNORM_INT8,
+CL_UNORM_INT16,
+CL_SNORM_INT8,
+CL_SNORM_INT16,
+CL_HALF_FLOAT
+または CL_FLOATの
+場合のみ使えます。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_RG, CL_RGx または CL_RA
+CL_RGB または CL_RGBx.</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">この型式は
+image_channel_data_type
+=　CL_UNORM_SHORT_565,
+CL_UNORM_SHORT_555また
+は CL_UNORM_INT_101010
+の場合のみ使えます。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_RGBA
+CL_ARGB, CL_BGRA</pre></td><td style="" align="left" valign="top"><pre class="literallayout">この型式は
+image_channel_data_type
+=　CL_UNORM_INT8,
+CL_SNORM_INT8,
+CL_SIGNED_INT8
+または CL_UNSIGNED_INT8
+の場合のみ使えます。</pre></td></tr></tbody></table></div></div><br class="table-break" /><div class="table"><a id="image_channel_data_type"></a><p class="title"><strong>Table B.41. 表：image_channel_data_type</strong></p><div class="table-contents"><table class="table" summary="表：image_channel_data_type" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">イメージチャネルのデータ型</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">詳細
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_SNORM_INT8</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">各チャネル要素は、
+正規化符号付8ビット整数値。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_SNORM_INT16
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">各チャネル要素は、
+正規化符号付16ビット整数値。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_UNORM_INT8
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">各チャネル要素は、
+正規化符号無8ビット整数値。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_UNORM_INT16</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">各チャネル要素は、
+正規化符号無16ビット整数値。
+￼
+￼
+￼
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_UNORM_SHORT_565</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">正規化5-6-5 3チャネル
+RGBイメージ。チャネル配置
+は、CL_RGBまたはCL_RGBx
+となる必要がある。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_UNORM_SHORT_555</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">正規化x-5-5-5 4チャネル
+xRGBイメージ。チャネル配置は、
+CL_RGBまたはCL_RGBxとなる
+必要がある。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_UNORM_INT_101010</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">正規化x-10-10-10 4チャネル
+xRGBイメージ。チャネル配置は、
+CL_RGBまたはCL_RGBxとなる
+必要がある。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_SIGNED_INT8</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">各チャネル要素は、
+非正規化符号付8ビット整数値。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_SIGNED_INT16
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">各チャネル要素は、
+非正規化符号付16ビット整数値。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_SIGNED_INT32</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">各チャネル要素は、
+非正規化符号付32ビット整数値。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_UNSIGNED_INT8</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">各チャネル要素は、
+非正規化符号無8ビット整数値。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_UNSIGNED_INT16
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">各チャネル要素は、
+非正規化符号無16ビット整数値。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_UNSIGNED_INT32</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">各チャネル要素は、
+非正規化符号無32ビット整数値。
+
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_HALF_FLOAT
+￼
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">各チャネル要素は、
+16ビット半精度浮動小数点値。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_FLOAT
+￼</pre></td><td style="" align="left" valign="top"><pre class="literallayout">各チャネル要素は、
+単精度浮動小数点値。
+￼</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_イメージ記述子"></a>B.15.4. イメージ記述子</h3></div></div></div><div class="table"><a id="cl_image_desc"></a><p class="title"><strong>Table B.42. 表：cl_image_desc</strong></p><div class="table-contents"><table class="table" summary="表：cl_image_desc" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout"> cl_image_desc</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">     typedef struct _cl_image_desc {
+          cl_mem_object_type  image_type,
+          size_t              image_width;
+          size_t              image_height;
+          size_t              image_depth;
+          size_t              image_array_size;
+          size_t              image_row_pitch;
+          size_t              image_slice_pitch;
+          cl_uint             num_mip_levels;
+          cl_uint             num_samples;
+          cl_mem              buffer;
+     } cl_image_desc;</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">image_typeは（文字通り）
+イメージ型を記述し、
+CL_MEM_OBJECT_IMAGE1D、
+CL_MEM_OBJECT_IMAGE1D_BUFFER、CL_MEM_OBJECT_IMAGE1D_ARRAY、
+CL_MEM_OBJECT_IMAGE2D、
+CL_MEM_OBJECT_IMAGE2D_ARRAY、
+CL_MEM_OBJECT_IMAGE3Dの
+いずれかとなる必要がある。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">image_width</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">イメージの幅（ピクセルで表す）。
+
+2Dイメージと2Dイメージ
+配列に対して、イメージ
+幅は
+&gt;=1、
+&lt;=CL_DEVICE_IMAGE2D_
+MAX_WIDTHとなる。
+
+3Dイメージに対して、
+イメージ幅は、
+&gt;=1、
+&lt;= CL_DEVICE_IMAGE3D_
+MAX_WIDTH
+となる。
+
+1Dイメージバッファに
+対して、イメージ幅は
+&gt;=1、
+&lt;= CL_DEVICE_IMAGE_
+MAX_BUFFER_SIZE
+となる。
+
+1Dイメージと1Dイメージ配列
+に対して、イメージ幅は
+&gt;=1、
+&lt;= CL_DEVICE_IMAGE_
+MAX_BUFFER_SIZE
+となる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">image_height</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">イメージの高さ（ピクセル
+で表す）を指定。これはイメ
+ージが2D、3Dまたは2Dイメ
+ージ配列の場合に限り使わ
+れる。
+
+2Dイメージまたはイメージ
+配列に対して、イメージの
+高さは
+&gt;=1、
+&lt;= CL_DEVICE_IMAGE2D_
+MAX_HEIGHTとなる。
+
+3Dイメージに対して、
+イメージの高さは
+&gt;=1、
+&lt;= CL_DEVICE_IMAGE3D_
+MAX_HEIGHTとなる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">image_depth</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">イメージの奥行き（ピクセ
+ルで表す）。これはイメージ
+が3Dイメージの場合に使われ
+る。値は
+&gt;= 1、
+&lt;= CL_DEVICE_IMAGE3D_
+MAX_DEPTH
+となる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">image_array_size</pre></td><td style="" align="left" valign="top"><pre class="literallayout">イメージ配列内のイメージ
+の個数。イメージが1D、2Dイ
+メージ配列の場合に限り使わ
+れる。値は、
+&gt;= 1、
+&lt;= CL_DEVICE_IMAGE_
+MAX_ARRAY_SIZEとなる。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clgetsupportedimageformats"></a>B.15.5. clGetSupportedImageFormats</h3></div></div></div><div class="table"><a id="clGetSupportedImageFormats"></a><p class="title"><strong>Table B.43. 表：clGetSupportedImageFormats</strong></p><div class="table-contents"><table class="table" summary="表：clGetSupportedImageFormats" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>関数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>cl_int</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clGetSupportedImageFormats (
+    cl_context context,
+    cl_mem_flags flags,
+    cl_mem_object_type image_type,
+    cl_uint num_entries,
+    cl_image_format *image_formats,
+    cl_uint *num_image_formats
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>コンテキスト内のデバイスがサポートするイメ
+ージ型式の和集合を戻す。イメージメモリオブジェク
+トに関する以下の情報を指定した場合にOpenCL実装
+がサポートするイメージ形式の一覧取得に使うことが
+できる。</em></span></p>
+<p><span class="emphasis"><em>・OpenCLコンテキスト
+・イメージ型 - 1Dまたは2Dまたは3Dイメージ、1D
+イメージバッファ、1D/2Dイメージ配列
+・イメージオブジェクトの領域確保に関する情報</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>引数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>context</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">イメージオブジェクト
+を生成する有効なOpenCL
+コンテキストを指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>flags</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">イメージオブジェクトの
+割当に使うメモリ領域や、
+バッファオブジェクトの使
+用情報を指定するビット
+フィールド。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>image_type</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">イメージ型を記述。
+CL_MEM_OBJECT_IMAGE1D、
+CL_MEM_OBJECT_IMAGE1D_BUFFER、
+CL_MEM_OBJECT_IMAGE2D、
+CL_MEM_OBJECT_IMAGE3D、
+CL_MEM_OBJECT_IMAGE1D_ARRAY
+または
+CL_MEM_OBJECT_IMAGE2D_ARRAY
+の指定ができる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>num_entries</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">image_formatsが指す
+メモリ領域に戻せるエントリの
+個数を指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>image_formats</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">サポートするイメージ形式
+の一覧が戻されるメモリ領域
+へのポインタを指定。戻され
+るエントリは、OpenCL実装
+がサポートする
+cl_image_format構造体。
+image_formatsがNULLの場
+合は無視される。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>num_image_
+formats</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">contextおよびflags
+で指定した条件でサポート
+されるイメージ形式の数を戻
+す。num_image_formats
+がNULLの場合は無視される。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>成功した場合の戻り値</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>CL_SUCCESS</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>失敗した場合の戻り値</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+CONTEXT</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">contextが有効な
+OpenCLコンテキストで
+ない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+VALUE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">flagsもしくはimage_type
+に指定した値が有効なもので
+ない場合。num_entries
+が0でimage_formatsが
+NULLでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_
+OF_RESOURCES</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL実装
+が必要とするリソース確保
+に失敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_OF_
+HOST_MEMORY</em></span></p></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL実装
+が必要とするリソース確保
+に失敗した場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_サポートするイメージ型式_2"></a>B.15.6. サポートするイメージ型式</h3></div></div></div><div class="informaltable"><a id="image_formats"></a><table class="informaltable" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">image_num_channels</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">image_channel_order
+￼
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">image_channel_
+data_type
+￼
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">4</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_RGBA</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_UNORM_INT8
+CL_UNORM_INT16
+CL_SIGNED_INT8
+CL_SIGNED_INT16
+CL_SIGNED_INT32
+CL_UNSIGNED_INT8
+CL_UNSIGNED_INT16
+CL_UNSIGNED_INT32
+CL_HALF_FLOAT
+CL_FLOAT</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">4
+￼</pre></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_BGRA
+￼
+￼</pre></td><td style="" align="left" valign="top"><pre class="literallayout">CL_UNORM_INT8</pre></td></tr></tbody></table></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apbs14.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apb.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apbs16.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

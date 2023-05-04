@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>13.23. メモリストライド</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch13.html" title="Chapter 13. OpenCLの概要" /><link rel="prev" href="ch13s22.html" title="13.22. Stalls(ストール)" /><link rel="next" href="ch13s24.html" title="13.24. 2次元アクセスパターン" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch13s22.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch13s24.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_メモリストライド"></a>13.23. メモリストライド</h2></div></div></div><p>メモリストライドはキャッシュ等の限られた幅の領域に密集したメモリ集積回路において、隣接したアドレスを一定の範囲において飛び地を作りながら処理することを指します。</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_キャッシュライン"></a>13.23.1. キャッシュライン</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：ワークアイテム・グループ関数」（<a class="xref" href="apbs38.html#workitem" title="Table B.102. 表：ワークアイテム・グループ関数">Table B.102, “表：ワークアイテム・グループ関数”</a>）を参照ください。</p></div><p>メモリストライドは不連続にキャッシュの領域をまたぐことを指し、グローバルメモリ、コンスタントメモリにアクセスする際に発生します。メモリへのアクセスは例外なしに、連続的にアクセスするのが望ましいとされていますが、まさにストライド（キャッシュラインをまたぎ越す）が発生する状況です。</p><pre xmlns="" class="prettyprint">__global int* globalArray = ...;
+int tmp;
+int gid = get_global_id(0);
+tmp = globalArray[ gid ];</pre><p>行ワークグループ: &lt; 16, 1, 1 &gt;を使うと、1 cachelineに16のワークアイテムを詰め込むことができます。これがint型の場合であれば、16*sizeof(int)、つまりL3キャッシュの領域64バイトを使用をします。これはメモリのフル帯域を使用するベストな例です。</p><div class="figure"><a id="idm4104"></a><p class="title"><strong>Figure 13.9. 図：キャッシュライン(1 cacheline, 16 work-items)</strong></p><div class="figure-contents"><div class="mediaobject"><img src="images/CacheCase1.png" alt="width=600" /></div></div></div><br class="figure-break" /><pre xmlns="" class="prettyprint">__global int* globalArray = ...;
+int tmp;
+int gid = get_global_id(0);
+tmp = globalArray[ gid + 1 ];</pre><p>この例では、メモリの読み込みはアラインされていません。そのため１つ余分なキャッシュラインを使用してしまいます。この例ではフル帯域の半分の読み込みパフォーマンスとなります。</p><div class="figure"><a id="idm4113"></a><p class="title"><strong>Figure 13.10. 図：キャッシュライン(2 cacheline, 16 work-items)</strong></p><div class="figure-contents"><div class="mediaobject"><img src="images/CacheCase3.png" alt="width=600" /></div></div></div><br class="figure-break" /><pre xmlns="" class="prettyprint">__global int* globalArray = ...;
+int tmp;
+int gid_1 = get_global_id(0);
+int gid_2 = get_global_id(1);
+int gsize = get_global_size(0);
+tmp = globalArray[ gid_1 + gid_2 * gsize ];</pre><p>２次元ワークグループ（4, 2, 1）のケースでは、メモリの読み込みは下図のようになり、4つのキャッシュラインを使用します。この例ではフル帯域の1/4の読み込みパフォーマンスとなります。</p><div class="figure"><a id="idm4122"></a><p class="title"><strong>Figure 13.11. 図：キャッシュライン(4 cacheline, 8 work-items)</strong></p><div class="figure-contents"><div class="mediaobject"><img src="images/CacheCase2.png" alt="width=100" /></div></div></div><br class="figure-break" /><pre xmlns="" class="prettyprint">__global int* globalArray = ...;
+int tmp;
+int gid = get_global_id(0);
+tmp = globalArray[ gid * 16 ];
+//tmp = globalArray[ gid * 32 ];</pre><p>このケースは各ワークアイテムが新たなcachelineを使用するメモリストライドが発生します。この例ではフル帯域の1/16の読み込みパフォーマンスとなります。</p><div class="figure"><a id="idm4131"></a><p class="title"><strong>Figure 13.12. 図：キャッシュライン(4 cacheline, 4 work-items)</strong></p><div class="figure-contents"><div class="mediaobject"><img src="images/CacheCase4.png" alt="width=400" /></div></div></div><br class="figure-break" /><pre xmlns="" class="prettyprint">__global int* globalArray = ...;
+int tmp;
+int gid = get_global_id(0);
+tmp = globalArray[ gid * 8 ];</pre><p>このケースは２つのワークアイテム新たなcachelineを使用するメモリストライドが発生します。この例ではフル帯域の1/8の読み込みパフォーマンスとなります。</p><div class="figure"><a id="idm4140"></a><p class="title"><strong>Figure 13.13. 図：キャッシュライン(4 cacheline, 8 work-items)</strong></p><div class="figure-contents"><div class="mediaobject"><img src="images/CacheCase5.png" alt="width=400" /></div></div></div><br class="figure-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="bank"></a>13.23.2. バンク</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：ワークアイテム・グループ関数」（<a class="xref" href="apbs38.html#workitem" title="Table B.102. 表：ワークアイテム・グループ関数">Table B.102, “表：ワークアイテム・グループ関数”</a>）を参照ください。</p></div><p>Bank Conflict（バンクコンフリクト）はローカルメモリ特有のアドレス空間におけるインデックス（バンク）の重複が、パフォーマンスを落とす現象です。</p><p>ローカルメモリはグローバルメモリのキャッシュ（LLC等）とは異なり、メモリの帯域は固有のバンクに割り振られています。グローバルメモリではキャッシュラインにアラインすることでフル帯域を使うことができるのに対して、バンクでは固有のIDがアサインされている限り、読み込み時にフル帯域を使用できます。</p><pre xmlns="" class="prettyprint">__local int* localArray = ...;
+int tmp;
+int gid = get_global_id(0);
+tmp = localArray[ gid ];</pre><p>この例では16個の固有バンクを使います。バンクの重複がないためフル帯域を実現できます。</p><div class="figure"><a id="idm4156"></a><p class="title"><strong>Figure 13.14. 図：フル帯域</strong></p><div class="figure-contents"><div class="mediaobject"><img src="images/BankCase1.png" alt="width=600" /></div></div></div><br class="figure-break" /><pre xmlns="" class="prettyprint">__local int* localArray = ...;
+int tmp;
+int gid = get_global_id(0)
+tmp = localArray[ gid + 1 ];</pre><p>この例では16個の固有バンクを使いますので、フル帯域を実現できます。</p><div class="figure"><a id="idm4165"></a><p class="title"><strong>Figure 13.15. 図：フル帯域</strong></p><div class="figure-contents"><div class="mediaobject"><img src="images/BankCase2.png" alt="width=600" /></div></div></div><br class="figure-break" /><pre xmlns="" class="prettyprint">__local int* localArray = ...;
+int tmp;
+int gid = get_global_id(0);
+tmp = localArray[ gid &amp; ~1 ];</pre><p>この例では、8つの固有バンクですが、各バンクで同じアドレスを使い、バンクコンフリクトが発生しません。この例はやや特殊なのですが、フル帯域を実現できます。</p><div class="figure"><a id="idm4174"></a><p class="title"><strong>Figure 13.16. 図：フル帯域</strong></p><div class="figure-contents"><div class="mediaobject"><img src="images/BankCase3.png" alt="width=600" /></div></div></div><br class="figure-break" /><pre xmlns="" class="prettyprint">__local int* localArray = ...;
+int tmp;
+int gid = get_global_id(0);
+tmp = localArray[ gid * 2 ];</pre><p>このケースでは、８つの固有なバンクを使用します。従ってフル帯域の半分の読み込みパフォーマンスとなります。</p><div class="figure"><a id="idm4183"></a><p class="title"><strong>Figure 13.17. 図：半帯域</strong></p><div class="figure-contents"><div class="mediaobject"><img src="images/BankCase4.png" alt="width=600" /></div></div></div><br class="figure-break" /><pre xmlns="" class="prettyprint">__local int* localArray = ...;
+int tmp;
+int gid = get_global_id(0);
+tmp = localArray[ gid * 16 ];</pre><p>このケースはカラムにアクセスする際に頻繁におきます。ここでは、16の要素のストライドをすることで、バンクコンフリクトが発生します。このアクセスパターンでは読み込みでフル帯域の1/16のパフォーマンスとなります。</p><div class="figure"><a id="idm4192"></a><p class="title"><strong>Figure 13.18. 図：1/16帯域(16 Bank Conflicts)</strong></p><div class="figure-contents"><div class="mediaobject"><img src="images/BankCase5.png" alt="width=400" /></div></div></div><br class="figure-break" /><pre xmlns="" class="prettyprint">__local int* localArray = ...;
+int tmp;
+int gid = get_global_id(0);
+tmp = localArray[ gid * 17 ];</pre><p>このケースは前の例と同様にカラムにアクセスする際に頻繁におきます。ここでは、17の要素のストライドをすることで、バンクコンフリクトを避けています。このアクセスパターンでは読み込みでフル帯域を使用できます。</p><div class="figure"><a id="idm4201"></a><p class="title"><strong>Figure 13.19. 図：フル帯域</strong></p><div class="figure-contents"><div class="mediaobject"><img src="images/BankCase6.png" alt="width=400" /></div></div></div><br class="figure-break" /></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch13s22.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch13.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch13s24.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

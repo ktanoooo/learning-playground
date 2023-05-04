@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>B.25. プログラムのリンク</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="apb.html" title="Appendix B. OpenCL 1.2 API Reference" /><link rel="prev" href="apbs24.html" title="B.24. プログラムのリンク、コンパイル" /><link rel="next" href="apbs26.html" title="B.26. コンパイラ（ビルド）オプション" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="apbs24.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apbs26.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_プログラムのリンク"></a>B.25. プログラムのリンク</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_cllinkprogram"></a>B.25.1. clLinkProgram</h3></div></div></div><div class="table"><a id="clLinkProgram"></a><p class="title"><strong>Table B.69. 表：clLinkProgram</strong></p><div class="table-contents"><table class="table" summary="表：clLinkProgram" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">関数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_program</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clLinkProgram (
+    cl_context context,
+    cl_uint num_devices,
+    const cl_device_id *device_list,
+    const char *options,
+    cl_uint num_input_programs,
+    const cl_program *input_programs,
+    void (CL_CALLBACK *pfn_notify)(
+        cl_program program, void *user_data),
+    void *user_data,
+    cl_int *errcode_ret)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">全ての（または特定の）デバイスに対してコンパ
+イルされたプログラムオブジェクトとライブラリの集
+まりをリンクし、実行可能プログラムを生成する。
+
+clLinkProgramはこの
+実行可能プログラムを含む
+新たなプログラムオブジェ
+クトを生成する。実行可能
+バイナリは
+`clGetProgramInfo(`
+`program, `
+`CL_PROGRAM_BINARIES, ...)`
+関数を使い検索でき、新たな
+プログラムオブジェクトを生
+成するためにclCreate
+ProgramWithBinaryに
+指定できる。
+
+戻ってきたプログラム
+オブジェクトに関連付け
+られたデバイスは、
+device_listで指定され
+たデバイスのリストとなる。
+device_listがNULLの
+場合は、contextに関連付
+けられたデバイスのリスト
+になる。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 引数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">context</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">有効なOpenCLコンテ
+キストを指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">device_list</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">コンテキスト内のデバ
+イスのリストを指すポ
+インタ。device_list
+がNULL値の場合、全ての
+contextに関連付けられ
+たデバイスに対してリンク
+が行なわれる。
+device_listが非NULL
+値の場合は、リストに
+指定したデバイスに対し
+てリンクを行なう。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">num_devices</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">device_listにあ
+るデバイスの個数。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">options</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">実行可能プログラム
+をビルドする際に適用
+するリンクオプション
+を指定するNULL終端文
+字列へのポインタを指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">num_input_
+programs</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">input_programsに
+参照される配列内にあ
+るプログラムの数を指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">input_
+programs</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">実行可能プログラム
+を作るためにリンク
+されるコンパイルされ
+たバイナリまたはライ
+ブラリからなるプログ
+ラムオブジェクトの配列
+を指定。device_list
+の各デバイスに対して、
+またはdevice_listが
+NULLの場合、以下の
+ケースが起きる可能性
+があります。
+
+input_programsで
+指定された全ての
+プログラムがコンパイル
+されたバイナリまたは
+ライブラリとなる。
+この場合、デバイスに
+対して実行可能プログラム
+を生成するためにリンク
+を行ないます。
+
+プログラムがコンパイル
+されたバイナリまたは
+ライブラリを含まない。
+この場合、デバイスに
+対して実行可能プログ
+ラムは生成されません。
+またリンクもしません。
+
+それ以外の場合は、
+CL_INVALID_
+OPERATIONエラー
+を戻す。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">pfn_notify</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">通知ルーチンへの
+関数ポインタ。通知ル
+ーチンはアプリケーシ
+ョンが登録できるコー
+ルバック関数であり、
+実行可能プログラムが
+リンクされた際に成功
+失敗に関わらず呼び出
+される。
+
+pfn_notifyがNULLで
+ない場合、
+clLinkProgram は
+リンクの完了を待つ
+必要が無くなりすぐに
+戻ることができる。
+コンテキスト、ソース
+やバイナリが
+コンパイル・ビルドさ
+れたプログラム、デバ
+イスのリストおよび指定
+されたビルドオプション
+が全て有効な場合、ビル
+ド処理は開始可能となる。
+
+pfn_notifyがNULLの
+場合、clLinkProgram
+はリンクが完了するま
+で戻らない。このコール
+バック関数は非同期的
+に呼び出される。コール
+バック関数がスレッドセ
+ーフであることを保証す
+るのはアプリケーション
+側の責任です。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">user_data</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">pfn_notifyを呼び
+出す際、user_data引
+数として渡します。
+NULL値を指定可能。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 成功した場合の戻り値</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> CL_SUCCESS</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 失敗した場合の戻り値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+CONTEXT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">contextが有効なコン
+テキストでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">device_listがNULLで、
+num_devicesが0より
+大きい場合。
+
+device_listがNULL
+でなく、num_devices
+が0の場合</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">num_input_programs
+が0で、input_programs
+がNULLの場合。
+
+num_input_programs
+が0で、input_programs
+がNULLでない場合。
+
+num_input_programs
+が0でなく、
+input_programsが
+NULLの場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+PROGRAM</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">input_programsで
+指定されたプログラムが
+有効なプログラムオブ
+ジェクトでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">pfn_notifyがNULL
+なのに、user_dataが
+NULLでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+DEVICE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">device_listのリス
+ト内にあるOpenCLデバ
+イスがcontextに関連付
+けられたデバイスのリス
+トの中にない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+LINKER_OPTIONS</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">リンカーオプション
+が無効な場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+OPERATION</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">clCompileProgram
+またはclBuildProgram
+を事前に呼び出した
+device_list内の全て
+のデバイスに対しての、
+実行可能プログラムの
+コンパイルまたはビルド
+が終了していない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+OPERATION</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">コンパイルされた
+バイナリまたは
+ライブラリを含む
+デバイスの規則が守
+られない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_LINKER_
+NOT_AVAILABLE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">リンカーが利用
+可能でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_LINK_
+PROGRAM_FAILURE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">コンパイルされた
+バイナリ及び（又は）
+ライブラリをリンク
+するのに失敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_
+OF_RESOURCES</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+HOST_MEMORY</pre></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apbs24.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apb.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apbs26.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

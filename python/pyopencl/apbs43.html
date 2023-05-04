@@ -1,0 +1,1047 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>B.43. ベクトルデータ読み出し・変換関数</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="apb.html" title="Appendix B. OpenCL 1.2 API Reference" /><link rel="prev" href="apbs42.html" title="B.42. 比較関数" /><link rel="next" href="apbs44.html" title="B.44. OpenCL-Cイメージ処理関数" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="apbs42.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apbs44.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_ベクトルデータ読み出し_変換関数_2"></a>B.43. ベクトルデータ読み出し・変換関数</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_ベクトルload関数"></a>B.43.1. ベクトルload関数</h3></div></div></div><div class="table"><a id="load"></a><p class="title"><strong>Table B.118. 表：ロードと保存</strong></p><div class="table-contents"><table class="table" summary="表：ロードと保存" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><thead><tr><th style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"> 関数 </th><th style="border-bottom: 1px solid #527bbd; " align="left" valign="top"> 解説</th></tr></thead><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentypen vloadn(
+    size_t offset,
+    const global gentype *p)
+gentypen vloadn(
+    size_t offset,
+    const local gentype *p)
+gentypen vloadn(
+    size_t offset,
+    const constant gentype *p)
+gentypen vloadn(
+    size_t offset,
+    const private gentype *p)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">`sizeof(gentypen)`
+バイトのデータ
+`（p + (offset * n)`
+のアドレスで読み込み）
+を返します。
+
+gentypeがcharまたは
+ucharのときは、
+`(p + (offset * n))`
+として計算されるアドレス
+は8-bitとして揃う(アラ
+インメントをとる)必要が
+あります。
+
+gentypeがshortまたは
+ushortのときは、
+16-bit長で揃えます。
+int、uint、floatのと
+きは、32-bit長で揃えま
+す。long、ulong、
+doubleのときは、64-bit
+長で揃えます。
+
+vloadnはアラインメント
+のとれてないベクトルの
+ロードに使います。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> void vstoren(
+    gentypen data,
+    size_t offset,
+    global gentype *p)
+void vstoren(
+    gentypen data,
+    size_t offset,
+    local gentype *p)
+void vstoren(
+    gentypen data,
+    size_t offset,
+    private gentype *p)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> sizeof(gentypen)
+のデータを
+`(p + (offset * n))`
+のアドレスに書き込みます。
+
+gentypeがcharまたは
+ucharのときは、
+`(p + (offset * n))`
+として計算されるアドレス
+は8-bitとして揃う(アラ
+インメントをとる)必要が
+あります。
+
+gentypeがshortまたは
+ushortのときは、
+16-bit長で揃えます。
+int、uint、floatのとき
+は、32-bit長で揃えます。
+long、ulong、double
+のときは、64-bit長で
+揃えます。
+
+vstorenはアラインメント
+のとれてないベクトルの
+書き込みに使います。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> floatn vload_halfn(
+    size_t offset,
+    const global half *p)
+floatn vload_halfn(
+    size_t offset,
+    const local half *p)
+floatn vload_halfn(size_t offset,
+    const constant half *p)
+floatn vload_halfn(size_t offset,
+    const private half *p)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">sizeof(halfn)バイトの
+データ`（p + (offset * n)`
+のアドレスで読み込み）
+を返します。
+
+読み込んだデータはhalfn
+として解釈されます。そし
+てhalfnの値はfloatnに
+変換され、floatnの値が
+返されます。
+`（p + (offset * n)`
+のアドレスは、16-bit長
+で揃える必要があります。
+
+vload_halfnはアラインメ
+ントのとれてないベクトルの
+ロードをし、floatのベク
+トルを返します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> void vstore_half(
+    float data,
+    size_t offset,
+    global half *p)
+void vstore_half_rte(
+    float data,
+    size_t offset,
+    global half *p)
+void vstore_half_rtz(
+    float data,
+    size_t offset,
+    global half *p)
+void vstore_half_rtp(
+    float data,
+    size_t offset,
+    global half *p)
+void vstore_half_rtn(
+    float data,
+    size_t offset,
+    global half *p)
+void vstore_half(
+    float data,
+    size_t offset,
+    local half *p)
+void vstore_half_rte(
+    float data,
+    size_t offset,
+    local half *p)
+void vstore_half_rtz(
+    float data,
+    size_t offset,
+    local half *p)
+void vstore_half_rtp(
+    float data,
+    size_t offset,
+    local half *p)
+void vstore_half_rtn(
+    float data,
+    size_t offset,
+    local half *p)
+void vstore_half(
+    float data,
+    size_t offset,
+    private half *p)
+void vstore_half_rte(
+    float data,
+    size_t offset,
+    private half *p)
+void vstore_half_rtz(
+    float data,
+    size_t offset,
+    private half *p)
+void vstore_half_rtp(
+    float data,
+    size_t offset,
+    private half *p)
+void vstore_half_rtn(
+    float data,
+    size_t offset,
+    private half *p)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">適当な丸めモードを使い
+dataはhalfに変換されます。
+half値は`(p + offset)`
+のメモリーアドレスに書き込
+まれます。
+
+`(p + offset)`は16-bit
+長にそろえる必要があります。
+
+vstore_halfの既定の丸め
+モードは、最近接偶数への
+丸め (round to the
+nearest even、接尾が_rte) です。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> void vstore_halfn(
+    floatn data,
+    size_t offset,
+    global half *p)
+void vstore_halfn_rte(
+    floatn data,
+    size_t offset,
+    global half *p)
+void vstore_halfn_rtz(
+    floatn data,
+    size_t offset,
+    global half *p)
+void vstore_halfn_rtp(
+    floatn data,
+    size_t offset,
+    global half *p)
+void vstore_halfn_rtn(
+    floatn data,
+    size_t offset,
+    global half *p)
+void vstore_halfn(
+    floatn data,
+    size_t offset,
+    local half *p)
+void vstore_halfn_rte(
+    floatn data,
+    size_t offset,
+    local half *p)
+void vstore_halfn_rtz(
+    floatn data,
+    size_t offset,
+    local half *p)
+void vstore_halfn_rtp(
+    floatn data,
+    size_t offset,
+    local half *p)
+void vstore_halfn_rtn(
+    floatn data,
+    size_t offset,
+    local half *p)
+void vstore_halfn(
+    floatn data,
+    size_t offset,
+    private half *p)
+void vstore_halfn_rte(
+    floatn data,
+    size_t offset,
+    private half *p)
+void vstore_halfn_rtz(
+    floatn data,
+    size_t offset,
+    private half *p)
+void vstore_halfn_rtp(
+    floatn data,
+    size_t offset,
+    private half *p)
+void vstore_halfn_rtn(
+    floatn data,
+    size_t offset,
+    private half *p)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">適当な丸めモードを使い
+floatn型のdataはhalfn
+に変換されます。halfnの
+値は`(p + (offset * n))`
+のメモリーアドレスに書き
+込まれます。
+`（p + (offset * n)`の
+アドレスは、16-bit長で揃
+える必要があります。
+
+vstore_halfnの既定の丸
+めモードは、最近接偶数へ
+の丸め (round to the
+nearest even、接尾が_rte) です。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">floatn vloada_halfn(
+    size_t offset,
+    const global half *p)
+floatn vloada_halfn(
+    size_t offset,
+    const local half *p)
+floatn vloada_halfn(
+    size_t offset,
+    const constant half *p)
+floatn vloada_halfn(
+    size_t offset,
+    const private half *p)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> `n = 1,2,4,8,16`のとき、
+`(p + (offset * n))`
+のアドレスのデータを
+`sizeof(halfn)`バイト読
+み込みます。アドレスは
+`sizeof(halfn)`をアライ
+ンメントをとる必要があります。
+
+`n = 3`のときは、
+`(p + (offset * 4))`の
+アドレスからhalf3のデータを
+読み込みます。アドレスは
+`sizeof(half) * 4`とアラ
+インメントをとる必要があります。
+
+読み込まれたデータはhalfn
+の値として解釈され、halfn
+の値はfloatnに変換され、
+返されます。
+
+vloada_halfnはアライメン
+トがとれたベクトルのロード
+をし、floatのベクトルを
+返します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> void vstorea_halfn(
+    floatn data,
+    size_t offset,
+    global half *p)
+void vstorea_halfn_rte(
+    floatn data,
+    size_t offset,
+    global half *p)
+void vstorea_halfn_rtz(
+    floatn data,
+    size_t offset,
+    global half *p)
+void vstorea_halfn_rtp(
+    floatn data,
+    size_t offset,
+    global half *p)
+void vstorea_halfn_rtn(
+    floatn data,
+    size_t offset,
+    global half *p)
+void vstorea_halfn(
+    floatn data,
+    size_t offset,
+    local half *p)
+void vstorea_halfn_rte(
+    floatn data,
+    size_t offset,
+    local half *p)
+void vstorea_halfn_rtz(
+    floatn data,
+    size_t offset,
+    local half *p)
+void vstorea_halfn_rtp(
+    floatn data,
+    size_t offset,
+    local half *p)
+void vstorea_halfn_rtn(
+    floatn data,
+    size_t offset,
+    local half *p)
+void vstorea_halfn(
+    floatn data,
+    size_t offset,
+    private half *p)
+void vstorea_halfn_rte(
+    floatn data,
+    size_t offset,
+    private half *p)
+void vstorea_halfn_rtz(
+    floatn data,
+    size_t offset,
+    private half *p)
+void vstorea_halfn_rtp(
+    floatn data,
+    size_t offset,
+    private half *p)
+void vstorea_halfn_rtn(
+    floatn data,
+    size_t offset,
+    private half *p)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">適当な丸めモードでfloatn
+のデータがhalfnに変換
+されます。
+
+`n = 1,2,4,8,16`のとき、
+halfnの値が
+`(p + (offset * n))`
+のアドレスに書き込まれます。
+アドレスは`sizeof(halfn)`
+をアラインメントをとる必
+要があります。
+
+`n = 3`のときは、halfn
+の値を`(p + (offset * 4))`
+のアドレスに書き込みます。
+アドレスは
+`sizeof(half) * 4`バイト
+とアラインメントをとる必要
+があります。
+
+vstorea_halfnの既定
+の丸めモードは、最近接
+偶数への丸め (round to
+the nearest even、
+接尾が_rte) です。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> void vstore_half(
+    double data,
+    size_t offset,
+    global half *p)
+void vstore_half_rte(
+    double data,
+    size_t offset,
+    global half *p)
+void vstore_half_rtz(
+    double data,
+    size_t offset,
+    global half *p)
+void vstore_half_rtp(
+    double data,
+    size_t offset,
+    global half *p)
+void vstore_half_rtn(
+    double data,
+    size_t offset,
+    global half *p)
+void vstore_half(
+    double data,
+    size_t offset,
+    local half *p)
+void vstore_half_rte(
+    double data,
+    size_t offset,
+    local half *p)
+void vstore_half_rtz(
+    double data,
+    size_t offset,
+    local half *p)
+void vstore_half_rtp(
+    double data,
+    size_t offset,
+    local half *p)
+void vstore_half_rtn(
+    double data,
+    size_t offset,
+    local half *p)
+void vstore_half(
+    double data,
+    size_t offset,
+    private half *p)
+void vstore_half_rte(
+    double data,
+    size_t offset,
+    private half *p)
+void vstore_half_rtz(
+    double data,
+    size_t offset,
+    private half *p)
+void vstore_half_rtp(
+    double data,
+    size_t offset,
+    private half *p)
+void vstore_half_rtn(
+    double data,
+    size_t offset,
+    private half *p)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">適当な丸めモードを使い
+double型のdataはhalfに
+変換されます。halfの値は
+`(p + offset)`のメモリー
+アドレスに書き込まれます。
+`（p + offset)`のアドレス
+は、16-bit長で揃える必要
+があります。
+
+vstore_halfの既定の丸め
+モードは、最近接偶数への
+丸め (round to the
+nearest even、接尾が
+_rte) です。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> void vstore_halfn(
+    doublen data,
+    size_t offset,
+    global half *p)
+void vstore_halfn_rte(
+    doublen data,
+    size_t offset,
+    global half *p)
+void vstore_halfn_rtz(
+    doublen data,
+    size_t offset,
+    global half *p)
+void vstore_halfn_rtp(
+    doublen data,
+    size_t offset,
+    global half *p)
+void vstore_halfn_rtn(
+    doublen data,
+    size_t offset,
+    global half *p)
+void vstore_halfn(
+    doublen data,
+    size_t offset,
+    local half *p)
+void vstore_halfn_rte(
+    doublen data,
+    size_t offset,
+    local half *p)
+void vstore_halfn_rtz(
+    doublen data,
+    size_t offset,
+    local half *p)
+void vstore_halfn_rtp(
+    doublen data,
+    size_t offset,
+    local half *p)
+void vstore_halfn_rtn(
+    doublen data,
+    size_t offset,
+    local half *p)
+void vstore_halfn(
+    doublen data,
+    size_t offset,
+    private half *p)
+void vstore_halfn_rte(
+    doublen data,
+    size_t offset,
+    private half *p)
+void vstore_halfn_rtz(
+    doublen data,
+    size_t offset,
+    private half *p)
+void vstore_halfn_rtp(
+    doublen data,
+    size_t offset,
+    private half *p)
+void vstore_halfn_rtn(
+    doublen data,
+    size_t offset,
+    private half *p)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">適当な丸めモードを使い
+doublen型のdataはhalfn
+に変換されます。halfn
+の値は
+`(p + (offset * n))`
+のメモリーアドレスに書
+き込まれます。
+`（p + (offset * n)`
+のアドレスは、16-bit長
+で揃える必要があります。
+
+vstore_halfnの既定の
+丸めモードは、最近接
+偶数への丸め (round to
+the nearest even、
+接尾が_rte) です。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">void vstorea_halfn(
+    doublen data,
+    size_t offset,
+    global half *p)
+void vstorea_halfn_rte(
+    doublen data,
+    size_t offset,
+    global half *p)
+void vstorea_halfn_rtz(
+    doublen data,
+    size_t offset,
+    global half *p)
+void vstorea_halfn_rtp(
+    doublen data,
+    size_t offset,
+    global half *p)
+void vstorea_halfn_rtn(
+    doublen data,
+    size_t offset,
+    global half *p)
+void vstorea_halfn(
+    doublen data,
+    size_t offset,
+    local half *p)
+void vstorea_halfn_rte(
+    doublen data,
+    size_t offset,
+    local half *p)
+void vstorea_halfn_rtz(
+    doublen data,
+    size_t offset,
+    local half *p)
+void vstorea_halfn_rtp(
+    doublen data,
+    size_t offset,
+    local half *p)
+void vstorea_halfn_rtn(
+    doublen data,
+    size_t offset,
+    local half *p)
+void vstorea_halfn(
+    doublen data,
+    size_t offset,
+    private half *p)
+void vstorea_halfn_rte(
+    doublen data,
+    size_t offset,
+    private half *p)
+void vstorea_halfn_rtz(
+    doublen data,
+    size_t offset,
+    private half *p)
+void vstorea_halfn_rtp(
+    doublen data,
+    size_t offset,
+    private half *p)
+void vstorea_halfn_rtn(
+    doublen data,
+    size_t offset,
+    private half *p)</pre></td><td style="" align="left" valign="top"><pre class="literallayout">適当な丸めモードで
+doublenのdataは
+halfnに変換されます。
+
+`n = 1,2,4,8,16`の
+とき、halfnの値が
+`(p + (offset * n))`
+のアドレスに書き込まれま
+す。アドレスは
+sizeof(halfn)をアラ
+インメントをとる必要があります。
+
+`n = 3`のときは、halfn
+の値を
+`(p + (offset * 4))`
+のアドレスに書き込み
+ます。アドレスは
+`sizeof(half) * 4`
+バイトとアラインメン
+トをとる必要があります。
+
+vstorea_halfnの
+既定の丸めモードは、
+最近接偶数への丸め
+(round to the
+nearest even、
+接尾が_rte) です。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_同期関数_2"></a>B.43.2. 同期関数</h3></div></div></div><div class="table"><a id="synchronization"></a><p class="title"><strong>Table B.119. 表：同期関数</strong></p><div class="table-contents"><table class="table" summary="表：同期関数" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><thead><tr><th style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top">関数
+￼
+￼</th><th style="border-bottom: 1px solid #527bbd; " align="left" valign="top">詳細
+￼</th></tr></thead><tbody><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">void barrier (
+    cl_mem_fence_flags flags)</pre></td><td style="" align="left" valign="top"><pre class="literallayout">カーネルを実行する
+ワークグループ内のワーク
+アイテムは、その他の
+全てのワークアイテムが
+バリアーを超えた処理
+（バリアー関数の後に
+記述された処理）に進む
+ために、この関数を実行
+する必要があります。この
+関数はカーネルを実行する
+全てのワークアイテムに
+よって呼び出されます。
+
+バリアーが条件文の中に
+あるときは、全てのワーク
+アイテムは条件文を通過
+する必要があります。
+
+バリアーがループ内にある
+ときは、バリアーを超え
+て次の反復処理に遷移する
+まえに全てのワークアイ
+テムは前の反復処理を終了
+する必要があります。
+
+バリアー関数はメモリフェ
+ンス（Memory Fence）を
+キューにいれて、ローカル
+メモリーまたはグローバ
+ルメモリー領域においてメ
+モリ操作の順序性を確保
+します。
+
+flags引数はメモリーアド
+レス領域を指定します。
+flagsには以下２つのリ
+テラルを設定できます。
+
+CLK_LOCAL_MEM_FENCE：
+関数はローカルメモリー
+の変数をフラッシュする
+か、メモリーフェンスを
+キューにいれて、ローカ
+ルメモリー領域において
+メモリ操作の順序性を
+確保します。
+
+CLK_GLOBAL_MEM_FENCE：
+メモリーフェンスをキュー
+にいれて、グローバルメ
+モリー領域においてメモ
+リ操作の順序性を確保し
+ます。例えばワークアイ
+テムがバッファーやイメ
+ージに書き込みして、
+更新したデータを読み込
+む際に使うことができま
+す。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_明示的メモリフェンス関数_2"></a>B.43.3. 明示的メモリフェンス関数</h3></div></div></div><div class="table"><a id="fence"></a><p class="title"><strong>Table B.120. 表：メモリフェンス関数</strong></p><div class="table-contents"><table class="table" summary="表：メモリフェンス関数" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><thead><tr><th style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top">関数￼</th><th style="border-bottom: 1px solid #527bbd; " align="left" valign="top">詳細
+￼
+￼</th></tr></thead><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">void mem_fence (
+    cl_mem_fence_flags flags)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">カーネルを実行する
+ワークアイテムのロー
+ドや保存の前後の順序を
+整列させます。これは
+メモリーフェンスの後
+に記述されたロードや保
+存が行われる前に、ロード
+や保存はメモリーに
+コミットされることを意
+味します。
+
+flags引数はメモリー
+アドレス領域を指定し、
+以下の２つのリテラル
+値を適用することが
+できます。
+
+CLK_LOCAL_MEM_FENCE
+CLK_GLOBAL_MEM_FENCE</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">void read_mem_fence (
+    cl_mem_fence_flags flags)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">ロード（読み込み）
+のみを整列します。
+
+flags引数はメモリー
+アドレス領域を指定し、
+以下の２つのリテラル
+値を適用することが
+できます。
+
+CLK_LOCAL_
+MEM_FENCE
+
+CLK_GLOBAL_
+MEM_FENCE</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">void write_mem_fence (
+    cl_mem_fence_flags flags)￼
+￼</pre></td><td style="" align="left" valign="top"><pre class="literallayout">保存（書き込み）
+のみを整列します。
+
+CLK_LOCAL_
+MEM_FENCE
+CLK_GLOBAL_
+MEM_FENCE</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_非同期複製_先読み関数_2"></a>B.43.4. 非同期複製・先読み関数</h3></div></div></div><div class="table"><a id="async_group"></a><p class="title"><strong>Table B.121. 表：非同期ワークグループ関数</strong></p><div class="table-contents"><table class="table" summary="表：非同期ワークグループ関数" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><thead><tr><th style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top">関数</th><th style="border-bottom: 1px solid #527bbd; " align="left" valign="top">詳細</th></tr></thead><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_t async_work_group_copy (
+    __local gentype *dst,
+    const __global gentype *src,
+    size_t num_gentypes,
+    event_t event)
+event_t async_work_group_copy (
+    __global gentype *dst,
+    const __local gentype *src,
+    size_t num_gentypes,
+    event_t event)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">num_gentypes数の
+gentype要素を、srcから
+dstに非同期コピーします。
+非同期コピーはワークグ
+ループ内の全てのワーク
+アイテムによって行われます。
+
+非同期コピーの終了を待機
+するwait_group_events
+で使うイベントオブジェクト
+(event_t)を返します。
+event引数を指定すると、
+それ以前に使ったasync_
+work_group_copyと関連づ
+けることができますが、関連
+させない場合はeventは0と
+します。
+
+event引数が0でない場合
+は、event引数にいれたイ
+ベントオブジェクトが返さ
+れます。
+
+この関数はコピーをする前
+にbarrierを使うときと
+は異なり、非明示的なソー
+スデータの同期はおこない
+ません。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_t async_work_group_strided_copy (
+    __local gentype *dst,
+    const __global gentype *src,
+    size_t num_gentypes,
+    size_t src_stride,
+    event_t event)
+event_t async_work_group_strided_copy (
+    __global gentype *dst,
+    const __local gentype *src,
+    size_t num_gentypes,
+    size_t dst_stride,
+    event_t event)
+￼
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">num_gentypes数の
+gentype要素を、srcか
+らdstに非同期採集（gather）
+します。src_strideは、
+srcから読み込んだ
+gentype型の要素内の
+ストライドを指します。
+dst_strideはdstに
+書き込まれるgentype型
+の要素内のストライドを指します。
+
+非同期コピーの終了を待機する
+wait_group_eventsで
+使うイベントオブジェクト
+(event_t)を返します。
+event引数を指定すると、
+それ以前に使ったasync_
+work_group_copyと関連
+づけることができますが、
+関連させない場合はevent
+は0とします。
+
+event引数が0でない場合は、
+event引数にいれたイベ
+ントオブジェクトが返さ
+れます。
+
+この関数はコピーをする
+前にbarrierを使うとき
+とは異なり、非明示的な
+ソースデータの同期はお
+こないません。
+
+src_strideまたは
+dst_strideが0に指定
+されたときの戻り値は
+未定義です。
+
+src_strideまたは
+dst_strideが、src
+またはdstポインタの
+コピー時のアドレス
+領域の上限を超えると
+きも未定義となります。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">void wait_group_events (
+    int num_events,
+    event_t *event_list)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">async_work_group_
+copyが処理を完了する
+ことを照合するイベン
+トの待機をします。
+event_list引数で指
+定したイベントオブジ
+ェクトは待機後に解放
+されます。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">void prefetch (
+    const __global gentype *p,
+    size_t num_gentypes)</pre></td><td style="" align="left" valign="top"><pre class="literallayout">num_gentypes *
+sizeof(gentype)
+バイトをグローバルキ
+ャッシュにプリフェッ
+チ（先取り）します。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_アトミック関数_2"></a>B.43.5. アトミック関数</h3></div></div></div><div class="table"><a id="atomic"></a><p class="title"><strong>Table B.122. 表：アトミック関数</strong></p><div class="table-contents"><table class="table" summary="表：アトミック関数" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><thead><tr><th style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top">関数</th><th style="border-bottom: 1px solid #527bbd; " align="left" valign="top">詳細</th></tr></thead><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">int atomic_add (
+    volatile __global int *p,
+    int val)
+unsigned int atomic_add (
+    volatile __global unsigned int *p,
+    unsigned int val)
+int atomic_add (
+    volatile __local int *p,
+    int val)
+unsigned int atomic_add (
+    volatile __local unsigned int *p,
+    unsigned int val)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="strong"><strong>ポインタpが指すアド
+レスで32-bitの値
+（oldと呼称）を読みこみ、
+次に`(old + val)`を
+計算し、結果をpが指すア
+ドレスに書き込みます。
+関数はoldを返します。</strong></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">int atomic_sub (
+    volatile __global int *p, int val)
+unsigned int atomic_sub (
+    volatile __global unsigned int *p,
+    unsigned int val)
+int atomic_sub (volatile __local int *p,
+    int val)
+unsigned int atomic_sub (
+    volatile __local unsigned int *p,
+    unsigned int val)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="strong"><strong>ポインタpが指す
+アドレスで32-bitの値
+（oldと呼称）を読み
+こみ、次に<code class="literal">(old - val)</code>
+を計算し、結果をpが指
+すアドレスに書き込み
+ます。関数はoldを返し
+ます。</strong></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">int atomic_xchg (
+    volatile __global int *p,
+    int val)
+unsigned int atomic_xchg (
+    volatile __global unsigned int *p,
+    unsigned int val)
+float atomic_xchg (
+    volatile __global float *p,
+    float val)
+int atomic_xchg (
+    volatile __local int *p,
+    int val)
+unsigned int atomic_xchg (
+    volatile __local unsigned int *p,
+    unsigned int val)
+float atomic_xchg (
+    volatile __local float *p,
+    float val)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="strong"><strong>アドレスpに保存され
+た古い値を、引数で指
+定した値valとスワッ
+プします。古い値を
+返します。</strong></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">int atomic_inc (
+    volatile __global int *p)
+unsigned int atomic_inc (
+    volatile __global unsigned int *p)
+int atomic_inc (
+    volatile __local int *p)
+unsigned int atomic_inc (
+    volatile __local unsigned int *p)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="strong"><strong>ポインタpが指すア
+ドレスで32-bitの値
+（oldと呼称）を読みこ
+み、次に`(old + 1)`を
+計算し、結果をpが指すア
+ドレスに書き込みます。
+関数はoldを返します。</strong></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">int atomic_dec (
+    volatile __global int *p)
+unsigned int atomic_dec (
+    volatile __global unsigned int *p)
+int atomic_dec (volatile __local int *p)
+unsigned int atomic_dec (
+    volatile __local unsigned int *p)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="strong"><strong>ポインタpが指すアド
+レスで32-bitの値（old
+と呼称）を読みこみ、次に
+(old - 1)を計算し、結果
+をpが指すアドレスに書き
+込みます。関数はoldを
+返します。
+￼</strong></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">int atomic_cmpxchg (
+    volatile __global int *p,
+    int cmp,
+    int val)
+unsigned int atomic_cmpxchg (
+    volatile __global unsigned int *p,
+    unsigned int cmp,
+    unsigned int val)
+int atomic_cmpxchg (
+    volatile __local int *p,
+    int cmp,
+    int val)
+unsigned int atomic_cmpxchg (
+    volatile __local unsigned int *p,
+    unsigned int cmp,
+    unsigned int val)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="strong"><strong>ポインタpが指すアドレス
+で32-bitの値（oldと
+呼称）を読みこみ、次に
+<code class="literal">(old == cmp) ? val : old</code>
+を計算し、結果をpが指すア
+ドレスに書き込みます。
+関数はoldを返します。</strong></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">int atomic_min (
+    volatile __global int *p,
+    int val)
+unsigned int atomic_min (
+    volatile __global unsigned int *p,
+    unsigned int val)
+int atomic_min (
+    volatile __local int *p,
+    int val)
+unsigned int atomic_min (
+    volatile __local unsigned int *p,
+    unsigned int val)￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="strong"><strong>ポインタpが指すアドレ
+スで32-bitの値（oldと
+呼称）を読みこみ、次に
+`min(old, val)`を計算
+し、結果をpが指すアドレ
+スに書き込みます。関数は
+oldを返します。</strong></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">int atomic_max (
+    volatile __global int *p, int val)
+unsigned int atomic_max (
+    volatile __global unsigned int *p,
+    unsigned int val)
+int atomic_max (
+    volatile __local int *p,
+    int val)
+unsigned int atomic_max (
+    volatile __local unsigned int *p,
+    unsigned int val)
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="strong"><strong>ポインタpが指すアドレス
+で32-bitの値（oldと呼称）
+を読みこみ、次に
+`max(old, val)`を計
+算し、結果をpが指すアド
+レスに書き込みます。関
+数はoldを返します。</strong></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">int atomic_and (
+    volatile __global int *p,
+    int val)
+unsigned int atomic_and (
+    volatile __global unsigned int *p,
+    unsigned int val)
+int atomic_and (
+    volatile __local int *p,
+    int val)
+unsigned int atomic_and (
+    volatile __local unsigned int *p,
+    unsigned int val)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="strong"><strong>ポインタpが指すアドレス
+で32-bitの値（oldと呼称）
+を読みこみ、次に
+(old &amp; val)を計算し、
+結果をpが指すアドレスに書
+き込みます。関数はoldを
+返します。</strong></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">int atomic_or (
+    volatile __global int *p,
+    int val)
+unsigned int atomic_or (
+    volatile __global unsigned int *p,
+    unsigned int val)
+int atomic_or (
+    volatile __local int *p,
+    int val)
+unsigned int atomic_or (
+    volatile __local unsigned int *p,
+    unsigned int val)
+￼
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="strong"><strong>ポインタpが指すアドレスで
+32-bitの値（oldと呼称）
+を読みこみ、次に`(old</strong></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> val)`
+を計算し、結果をpが指
+すアドレスに書き込みます。
+関数はoldを返します。</pre></td><td style="" align="left" valign="top"><p><span class="strong"><strong>int atomic_xor (
+    volatile <span class="emphasis"><em>global int *p,
+    int val)
+unsigned int atomic_xor (
+    volatile </em></span>global unsigned int *p,
+    unsigned int val)
+int atomic_xor (
+    volatile <span class="emphasis"><em>local int *p,
+    int val)
+unsigned int atomic_xor (
+    volatile </em></span>local unsigned int *p,
+    unsigned int val)
+￼
+￼</strong></span></p></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_shuffle_2"></a>B.43.6. shuffle</h3></div></div></div><div class="table"><a id="shuffle"></a><p class="title"><strong>Table B.123. 表：シャッフル関数</strong></p><div class="table-contents"><table class="table" summary="表：シャッフル関数" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><thead><tr><th style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top">関数￼</th><th style="border-bottom: 1px solid #527bbd; " align="left" valign="top">詳細
+￼</th></tr></thead><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">int vec_step (gentypen a)
+int vec_step (char3 a)
+int vec_step (uchar3 a)
+int vec_step (short3 a)
+int vec_step (ushort3 a)
+int vec_step (half3 a)
+int vec_step (int3 a)
+int vec_step (uint3 a)
+int vec_step (long3 a)
+int vec_step (ulong3 a)
+int vec_step (float3 a)
+int vec_step(double3 a)
+int vec_step(type)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">引数で指定したスカラと
+ベクトルの要素数を整数値
+として返します。
+
+全てのスカラ型に対して
+は1を返します。
+
+要素数3のベクトルについ
+て4を返します。
+
+引数を型名にもできます。
+
+例: vec_step(float2)</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentypen shuffle (
+    gentypem x,
+    ugentypen mask)
+gentypen shuffle2 (
+    gentypem x,
+    gentypem y,
+    ugentypen mask)</pre></td><td style="" align="left" valign="top"><pre class="literallayout">一つまたは２つの入力ベ
+クトルに対してマスクを
+適用し、要素間の順序変
+更をします。
+
+shuffleではマスク要素
+はilogb(2m-1)数の最下
+位ビットのみを使います。
+
+shuffle2ではマスク要素
+はilogb(2m-1)+1のみを
+使います。
+
+その他のマスクビットは使
+われることはありません。
+
+入力ベクトルは左から右に
+数えます。このためにベク
+トルの要素数の数はvec_
+step(gentypem)を使います。
+マスクの各要素は結果ベクト
+ルがどの要素を代入されるか
+指定します。これは入力ベク
+トルが２つの場合は、線に要
+素を並べて左から要素番号を
+与えるように作用します。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apbs42.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apb.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apbs44.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

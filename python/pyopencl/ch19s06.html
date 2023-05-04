@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>19.6. 実装例（GPU）</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch19.html" title="Chapter 19. 高速フーリエ変換（Fast Fourier Transform）" /><link rel="prev" href="ch19s05.html" title="19.5. 実装例（CPU）" /><link rel="next" href="ch20.html" title="Chapter 20. 2次元高速フーリエ変換" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch19s05.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch20.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_実装例_gpu"></a>19.6. 実装例（GPU）</h2></div></div></div><p>GPGPU実装は、CPU実装と基本的には同じものです。異なる点はデータ並列化が可能なコードは、カーネル関数内に移されます。</p><p>ここで使うカーネル関数は3つあります。まず一つ目が、fft_init関数です。</p><pre xmlns="" class="prettyprint">__kernel void fft_init(
+                __global float2* data,
+                __global float2* F,
+                int N)</pre><p>この関数は、Radix-2 FFTの導入部分となり、ストライドが1の時に使います。つまりCPU実装でいう以下の行に該当します。</p><pre xmlns="" class="prettyprint">F[offset] = data[offset] + data[offset + N2]
+F[offset + 1] = data[offset + 1] + data[offset + N2 + 1]
+F[offset + N2] = data[offset] - data[offset + N2]
+F[offset + N2 + 1] = data[offset + 1] - data[offset + N2 + 1]</pre><p>この計算では三角関数が不要となります。またdata変数は生データですが、以後の計算では、F変数を用います。</p><p>Radix-2 FFTのGPU実装の該当するFFTカーネル関数は以下のようになります。CPU実装例と比べると、ほとんど同じコードであることがわかると思います。</p><pre xmlns="" class="prettyprint">float2 in0, in1;
+
+in0 = F[index];
+in1 = F[index+stride];
+
+float angle = -2*M_PI_F*(index)/N;
+
+float c,s;
+float2 v;
+float2 tmp0;
+
+c = native_cos(angle);
+s = sign*native_sin(angle);
+
+v.x = c * (in1.x) - s * in1.y;
+v.y = c * (in1.y) + s * in1.x;
+
+tmp0 = in0;
+
+in0 = tmp0 + v;
+in1 = tmp0 - v;
+
+F[index] = in0;
+F[index + stride] = in1;</pre><p>OpenCLではfloat2型を使うことにより、xに実数部、yに虚数部とすることで、コード行数を少なくとも半分程度に抑制できます。</p><p>FFTのメインのアルゴリズムは以下のfftカーネル関数を使います。</p><pre xmlns="" class="prettyprint">__kernel void fft(
+                __global float2* F,
+                int N,
+                int sign)</pre><p>この関数はCooley-Tukeyアルゴリズムを実装しますが、該当するCPU実装は以下のようになります。</p><pre xmlns="" class="prettyprint">forward(N2, offset, data, F, sign, step)
+forward(N2, offset + N2, data, F, sign, step)
+
+for i in range(0, N2, 2):
+    c = np.cos(i * _PI / N2)
+    s = sign * np.sin(i * _PI / N2)
+    real = F[i + N2 + offset] * c + F[i + N2 + 1 + offset] * s
+    imaginary = F[i + N2 + 1 + offset] * c - F[i + N2 + offset] * s
+
+    F[i + N2 + offset] = F[i + offset] - real
+    F[i + N2 + 1 + offset] = F[i + 1 + offset] - imaginary
+    F[i + offset] += real
+    F[i + 1 + offset] += imaginary</pre><p>ここでは、forward関数は、fft関数に該当し、最初の2行で再帰処理をしています。</p><p>GPU実装については、再帰処理ができないため、再帰部分はOpenCLホストAPIを使い、残りは記述をカーネル関数に移します。構成としては以下のようになります。</p><pre xmlns="" class="prettyprint">int fftSize = 1;
+int ns = log2(N);
+int stages = 0;
+int[] fftSizePtr = new int[1];
+for(int i = 0; i &lt; ns; i++) {
+    fftSize &lt;&lt;= 1;
+    fftSizePtr[0] = fftSize;
+
+    if(fftSize !=2) {
+        // fftカーネル関数
+    } else {
+        // fft_initカーネル関数
+    }
+}</pre><p>fft_initは、forループ内の反復の一番初めだけ実行され、残りはfftカーネル関数が代わりに実行されます。</p><p><strong>FFTGPU1D.py. </strong>
+</p><pre xmlns="" class="prettyprint">import pyopencl as cl
+import numpy as np
+from numpy.random import *
+
+KERNEL_INIT = "fft_init"
+KERNEL_BIT_REVERSAL = "bit_reversal"
+KERNEL_FFT = "fft"
+KERNEL_FFT_INVERSE = "fft_inverse"
+DATA_SIZE = 32
+
+data = randint(0, 20, DATA_SIZE &lt;&lt; 1).astype(np.float32)
+processed_data = np.zeros(DATA_SIZE &lt;&lt; 1).astype(np.float32)
+
+print(data)
+
+global_work_size = (DATA_SIZE &gt;&gt; 1, 1, 1)
+local_work_size = (1, 1, 1)
+
+global_work_size_full = (DATA_SIZE, 1, 1)
+
+devices = [cl.get_platforms()[0].get_devices(cl.device_type.GPU)[0]]
+
+ctx = cl.Context(devices)
+queue = cl.CommandQueue(ctx)
+mf = cl.mem_flags
+data_mem = cl.Buffer(ctx, mf.USE_HOST_PTR, hostbuf=data)
+
+opt_string = "-Dsize="+str(DATA_SIZE)
+options = [opt_string]
+
+program = cl.Program(ctx, """
+    inline int reverseBit(int x, int stage) {
+        int b = 0;
+        int bits = stage;
+        while (bits != 0){
+              b &lt;&lt;=1;
+              b |=( x &amp;1 );
+              x &gt;&gt;=1;
+              bits&gt;&gt;=1;
+        }
+        return b;
+    }
+
+    __kernel void bit_reversal(__global float2* data, uint N) {
+        size_t gid = get_global_id(0);
+        uint rev = reverseBit(gid, N-1);
+        float2 in1;
+        float2 in2;
+        if(gid &lt; rev) {
+            in1 = data[gid];
+            in2 = data[rev];
+            printf("pair: %d - %d, N = %d\\n", gid, rev, N);
+            data[rev] = in1;
+            data[gid] = in2;
+        }
+    }
+
+    __kernel void fft_init(
+            __global float2* data,
+            __global float2* F,
+            int N)
+    {
+        int gid = get_global_id(0);
+        int stride = N/2;
+        float floor_adjust = gid/stride;
+        int index = ceil(floor_adjust)*stride + (gid);
+
+        float2 in0, in1;
+
+        in0 = data[index];
+        in1 = data[index+stride];
+
+        float2 v0;
+        v0 = in0;
+        in0 = v0 + in1;
+        in1 = v0 - in1;
+
+        F[index] = in0;
+        F[index + stride] = in1;
+
+        printf("gid=%d, pair: %d - %d, N = %d, s = %d, in0:in1 = %f:%f\\n", gid, index, index+stride, N, stride, F[index].x, F[index+stride].x);
+
+    }
+
+    __kernel void fft(
+            __global float2* F,
+            int N,
+            int sign)
+    {
+        int gid = get_global_id(0);
+        int stride = N/2;
+        float floor_adjust = gid/stride;
+        int index = ceil(floor_adjust)*stride + (gid);
+
+        float2 in0, in1;
+
+        in0 = F[index];
+        in1 = F[index+stride];
+
+        float angle = -2*M_PI_F*(index)/N;
+
+        float c,s;
+        float2 v;
+        float2 tmp0;
+
+        c = native_cos(angle);
+        s = sign*native_sin(angle);
+
+        v.x = c * (in1.x) - s * in1.y;
+        v.y = c * (in1.y) + s * in1.x;
+
+        tmp0 = in0;
+
+        in0 = tmp0 + v;
+        in1 = tmp0 - v;
+
+        F[index] = in0;
+        F[index + stride] = in1;
+
+        printf("gid=%d, pair: %d - %d, N = %d, s = %d, sign = %d c:s = %f:%f\\n in0:in1 = %f:%f\\n", gid, index, index+stride, N, stride, sign, c, s, F[index].x, F[index+stride].x);
+
+    }
+
+    __kernel void fft_inverse(
+        int N,
+        __global float2* F)
+    {
+        size_t gid = get_global_id(0);
+        F[gid] /= N;
+    }
+
+
+""").build()
+
+
+mf = cl.mem_flags
+
+data_mem = cl.Buffer(ctx, mf.READ_WRITE | mf.USE_HOST_PTR, hostbuf=data)
+processed_mem = cl.Buffer(ctx, mf.READ_WRITE | mf.USE_HOST_PTR, hostbuf=processed_data)
+
+kernel_init = cl.Kernel(program, name=KERNEL_INIT)
+kernel_bit_reversal = cl.Kernel(program, name=KERNEL_BIT_REVERSAL)
+kernel_fft = cl.Kernel(program, name=KERNEL_FFT)
+kernel_fft_inverse = cl.Kernel(program, name=KERNEL_FFT_INVERSE)
+
+N = DATA_SIZE
+fftSize = 1
+ns = np.uint32(np.log2(N))
+
+kernel_bit_reversal.set_arg(0, data_mem)
+kernel_bit_reversal.set_arg(1, np.uint32(N))
+
+cl.enqueue_nd_range_kernel(queue, kernel_bit_reversal, global_work_size_full, local_work_size)
+
+sign = 1
+
+for i in range(ns):
+    fftSize &lt;&lt;= 1
+    if fftSize != 2:
+        kernel_fft.set_arg(0, processed_mem)
+        kernel_fft.set_arg(1, np.int32(fftSize))
+        kernel_fft.set_arg(2, np.int32(sign))
+
+        cl.enqueue_nd_range_kernel(queue, kernel_fft, global_work_size, local_work_size)
+    else:
+        kernel_init.set_arg(0, data_mem)
+        kernel_init.set_arg(1, processed_mem)
+        kernel_init.set_arg(2, np.int32(fftSize))
+
+        cl.enqueue_nd_range_kernel(queue, kernel_init, global_work_size, local_work_size)
+
+
+kernel_bit_reversal.set_arg(0, processed_mem)
+kernel_bit_reversal.set_arg(1, np.int32(N))
+
+cl.enqueue_nd_range_kernel(queue, kernel_bit_reversal, global_work_size_full, local_work_size)
+
+sign = -1
+fftSize = 1
+
+
+for i in range(ns):
+    fftSize &lt;&lt;= 1
+
+    kernel_fft.set_arg(0, processed_mem)
+    kernel_fft.set_arg(1, np.int32(fftSize))
+    kernel_fft.set_arg(2, np.int32(sign))
+
+    cl.enqueue_nd_range_kernel(queue, kernel_fft, global_work_size, local_work_size)
+
+
+kernel_fft_inverse.set_arg(0, np.int32(N))
+kernel_fft_inverse.set_arg(1, processed_mem)
+
+cl.enqueue_nd_range_kernel(queue, kernel_fft_inverse, global_work_size_full, local_work_size)
+
+out = np.zeros(DATA_SIZE).astype(np.float32)
+
+cl.enqueue_read_buffer(queue, mem=processed_mem, hostbuf=out)
+
+print(out)</pre><p>
+</p><p>下記はFFTカーネル関数が出力したFFTの処理情報となります。処理点の数はN、処理点間の距離はs、pairが実行中の2つの処理点（in0、in1）、gidがグローバルIDとなっています。cはcos関数、sはsin関数の値です。</p><pre xmlns="" class="prettyprint">gid=2, pair: 4 - 5, N = 2, s = 1, in0:in1 = 6.000000:-4.000000
+gid=0, pair: 0 - 1, N = 2, s = 1, in0:in1 = 4.000000:-4.000000
+gid=3, pair: 6 - 7, N = 2, s = 1, in0:in1 = 10.000000:-4.000000
+gid=1, pair: 2 - 3, N = 2, s = 1, in0:in1 = 8.000000:-4.000000
+gid=2, pair: 4 - 6, N = 4, s = 2, sign = 1 c:s = 1.000000:-0.000000
+ in0:in1 = 16.000000:-4.000000
+gid=0, pair: 0 - 2, N = 4, s = 2, sign = 1 c:s = 1.000000:-0.000000
+ in0:in1 = 12.000000:-4.000000
+gid=3, pair: 5 - 7, N = 4, s = 2, sign = 1 c:s = -0.000000:-1.000000
+ in0:in1 = -3.999999:-4.000001
+gid=1, pair: 1 - 3, N = 4, s = 2, sign = 1 c:s = -0.000000:-1.000000
+ in0:in1 = -4.000000:-4.000000
+gid=2, pair: 2 - 6, N = 8, s = 4, sign = 1 c:s = -0.000000:-1.000000
+ in0:in1 = -3.999999:-4.000001
+gid=0, pair: 0 - 4, N = 8, s = 4, sign = 1 c:s = 1.000000:-0.000000
+ in0:in1 = 28.000000:-4.000000
+gid=3, pair: 3 - 7, N = 8, s = 4, sign = 1 c:s = -0.707110:-0.707110
+ in0:in1 = -3.999999:-4.000001
+gid=1, pair: 1 - 5, N = 8, s = 4, sign = 1 c:s = 0.707110:-0.707110
+ in0:in1 = -3.999999:-4.000001</pre><p>下記は上に同じく処理情報ですが、今度は逆（inverse）FFTの情報を採集しています。sign変数が「-1」となっていることに注目ください。</p><pre xmlns="" class="prettyprint">gid=0, pair: 0 - 1, N = 2, s = 1, sign = -1 c:s = 1.000000:0.000000
+ in0:in1 = 24.000000:32.000000
+gid=2, pair: 4 - 5, N = 2, s = 1, sign = -1 c:s = 1.000000:0.000000
+ in0:in1 = -8.000000:0.000001
+gid=3, pair: 6 - 7, N = 2, s = 1, sign = -1 c:s = 1.000000:0.000000
+ in0:in1 = -8.000000:0.000002
+gid=1, pair: 2 - 3, N = 2, s = 1, sign = -1 c:s = 1.000000:0.000000
+ in0:in1 = -8.000000:0.000002
+gid=2, pair: 4 - 6, N = 4, s = 2, sign = -1 c:s = 1.000000:0.000000
+ in0:in1 = -15.999999:-0.000001
+gid=0, pair: 0 - 2, N = 4, s = 2, sign = -1 c:s = 1.000000:0.000000
+ in0:in1 = 16.000000:32.000000
+gid=3, pair: 5 - 7, N = 4, s = 2, sign = -1 c:s = -0.000000:1.000000
+ in0:in1 = -11.313758:11.313760
+gid=1, pair: 1 - 3, N = 4, s = 2, sign = -1 c:s = -0.000000:1.000000
+ in0:in1 = 24.000000:40.000000
+gid=2, pair: 2 - 6, N = 8, s = 4, sign = -1 c:s = -0.000000:1.000000
+ in0:in1 = 16.000000:48.000000
+gid=0, pair: 0 - 4, N = 8, s = 4, sign = -1 c:s = 1.000000:0.000000
+ in0:in1 = 0.000001:32.000000
+gid=3, pair: 3 - 7, N = 8, s = 4, sign = -1 c:s = -0.707110:0.707110
+ in0:in1 = 23.999861:56.000137
+gid=1, pair: 1 - 5, N = 8, s = 4, sign = -1 c:s = 0.707110:0.707110
+ in0:in1 = 7.999863:40.000137</pre><p>プログラムが処理を終えた結果は以下のようになります。</p><pre xmlns="" class="prettyprint">1.1920929E-7
+-3.5762787E-7
+0.99998283
+-2.526322E-7
+2.0
+-5.9604645E-8
+2.9999826
+-4.7709625E-7
+4.0
+2.3841858E-7
+5.000017
+1.9301845E-7
+6.0
+1.7881393E-7
+7.000017
+-6.554011E-7</pre><p>元のデータがほとんど完全な形で復元に成功しています。</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch19s05.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch19.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch20.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

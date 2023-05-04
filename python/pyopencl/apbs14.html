@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>B.14. バッファオブジェクトのマップ</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="apb.html" title="Appendix B. OpenCL 1.2 API Reference" /><link rel="prev" href="apbs13.html" title="B.13. バッファーの読み込み・書き込み・コピー" /><link rel="next" href="apbs15.html" title="B.15. イメージオブジェクト" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="apbs13.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apbs15.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_バッファオブジェクトのマップ_2"></a>B.14. バッファオブジェクトのマップ</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clenqueuemapbuffer"></a>B.14.1. clEnqueueMapBuffer</h3></div></div></div><div class="table"><a id="clEnqueueMapBuffer"></a><p class="title"><strong>Table B.36. 表：clEnqueueMapBuffer</strong></p><div class="table-contents"><table class="table" summary="表：clEnqueueMapBuffer" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">関数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">void *</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clEnqueueMapBuffer (
+    cl_command_queue command_queue,
+    cl_mem buffer,
+    cl_bool blocking_map,
+    cl_map_flags map_flags,
+    size_t offset,
+    size_t size,
+    cl_uint num_events_in_wait_list,
+    const cl_event *event_wait_list,
+    cl_event *event,
+    cl_int *errcode_ret
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> バッファオブジェクトの領域からホストアドレ
+ス空間へのマップを行いマップされた領域へのポ
+インタを戻すコマンドを挿入。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 引数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queue</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">マップコマンドを
+挿入するコマンドキュー
+を指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">blocking_map</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">マップ操作をブロッキング
+またはノンブロッキング
+で行うかを指定。
+
+blocking_mapに
+CL_TRUE を指定する場
+合、bufferの指定した
+領域がマップされるまで
+clEnqueueMapBuffer
+は戻らない。
+
+blocking_mapに
+CL_FALSEを指定する
+場合、マップ操作は
+ノンブロッキングとなり
+clEnqueueMapBuffer
+が戻すマップ領域は
+コマンドが完了するまで
+使用できない。
+
+event引数にはイベント
+オブジェクトが戻され
+マップコマンドの実行
+状況の確認に使用できる。
+マップコマンドが完了し
+た後は、
+clEnqueueMapBuffer
+が戻すポインタを使用
+してマップ領域の内容
+にアクセスが可能となる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">map_flags</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">マップの設定を行
+うビットフィールド。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">buffer</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">有効なバッファオ
+ブジェクトを指定。
+command_queueと
+buffer は同じOpenCL
+コンテキスト上で作成さ
+れている必要がある。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">size</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">マップする領域の
+サイズをバイトで指定
+します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">offset</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">バッファオブジェ
+クトのマップを行う際に、
+マップの開始位置をどれ
+だけずらすかをバイト
+で指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">num_events_
+in_wait_list</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">event_wait_list
+で指定したイベントオブ
+ジェクトの数を指定します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_
+list</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">このコマンドが実
+行される前に完了して
+いなければならないイ
+ベントを指定。
+
+event_wait_listが
+NULLの場合、このコマ
+ンドはどのイベントの
+完了待機もしない。
+
+event_wait_listが
+NULLの場合、num_
+events_in_wait_list
+は0となる必要がある。
+
+event_wait_listが
+NULLでない場合、
+event_wait_listが指
+す各イベントは有効となる
+必要があり、またnum_
+events_in_wait_list
+は0より大きな値となる
+必要がある。
+
+event_wait_listに指
+定したイベントは同期点
+としてふるまう。
+
+event_wait_list内の
+イベントと関連付けられ
+たOpenCLコンテキスト
+と command_queueと
+関連付けられたOpenCL
+コンテキストは同じとな
+る必要がある。
+
+event_wait_listと関
+連付けられたメモリは、関
+数が完了の後に、再利用
+または解放できる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">このコマンドを識別す
+るイベントオブジェク
+トが戻され、コマンド
+完了の確認やコマンド
+完了待機をする。event
+がNULLの場合、アプリケ
+ーションはコマンドの状
+況確認やコマンド完了待
+ちを行えない。代わりに、
+clEnqueueBarrier
+WithWaitListを使うこ
+とができる。
+event_wait_listと
+event引数がNULLでない
+場合、event引数はevent_
+wait_list配列の要素を
+参照すべきでない。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">errcode_ret</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">適切なエラーコードを
+戻す。errcode_retが
+NULLの場合、エラーコ
+ードは戻さない。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 成功した場合の戻り値</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> マップ操作が成功
+すると、clEnqueueMapBuffer
+はマップ領域へのポインタ
+を返し errcode_ret
+に CL_SUCCESS を設定
+します。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 失敗した場合の戻り値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+COMMAND_QUEUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queueが
+有効でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+CONTEXT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queueと関
+連付けられたコンテキ
+ストとbufferと関連付
+けられたコンテキスト
+が同じでない場合。
+command_queueと関
+連付けられたコンテキ
+ストとevent_wait_list
+内のイベントと関連付
+けられたコンテキスト
+が同じでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+MEM_OBJECT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">buffer が有効な
+バッファオブジェクト
+でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">(offset, cb) で
+指定したマップ領域
+が範囲外の場合。また
+はmap_flagsに設定し
+た値が適切でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+EVENT_WAIT_LIST</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_listが
+NULLでnum_events_
+in_wait_listが0よ
+り大きい場合。
+
+event_wait_listが
+NULLでなくnum_events_
+in_wait_listが0の場合。
+
+event_wait_list内
+のイベントオブジェクト
+が有効なものでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_MISALIGNED_
+SUB_BUFFER_OFFSET</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">bufferがサブバッフ
+ァオブジェクトで、この
+サブバッファオブジェク
+トを生成する際に指定し
+たオフセットが
+command_queueと関連
+付けられたデバイスの
+CL_DEVICE_MEM_BASE_
+ADDR_ALIGNにアライン
+されていない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_MAP_
+FAILURE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">指定された領域のホス
+トアドレス空間へのマップ
+に失敗した場合。このエ
+ラーは、CL_MEM_USE_
+HOST_PTRまたはCL_MEM_
+ALLOC_HOST_PTRを指定
+して生成したバッファオブ
+ジェクトでは発生しない。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_EXEC_STATUS_
+ERROR_FOR_EVENTS_
+IN_WAIT_LIST</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">マップ操作がブロッキン
+グで、event_wait_list
+内のイベントのいずれか
+の実行状況が負の整数値
+の場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_MEM_OBJECT_
+ALLOCATION_FAILURE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">バッファに関連付けられ
+たデータ記憶域に用いるメ
+モリ領域を確保するのに失
+敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+OPERATION</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">バッファがCL_MEM_HOST_
+WRITE_ONLYで生成された場合。
+
+CL_MEM_HOST_NO_ACCESS
+とCL_MAP_READが
+map_flagsに設定された場合。
+
+バッファがCL_MEM_
+HOST_READ_ONLY、
+またはCL_MEM_HOST_NO_
+ACCESSとCL_MAP_WRITE
+で生成された場合。
+
+CL_MAP_WRITE_
+INVALIDATE_REGION
+がmap_flagsに設定された場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+RESOURCES</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とするリソー
+ス確保に失敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+HOST_MEMORY</pre></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL
+実装が必要とするリソ
+ース確保に失敗した場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apbs13.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apb.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apbs15.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

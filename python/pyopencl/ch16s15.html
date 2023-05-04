@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>16.15. カーネルの実行</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch16.html" title="Chapter 16. OpenCLランタイム" /><link rel="prev" href="ch16s14.html" title="16.14. カーネルオブジェクト情報の取得" /><link rel="next" href="pt04.html" title="Part IV. カーネルプログラミング" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch16s14.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="pt04.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_カーネルの実行"></a>16.15. カーネルの実行</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_enqueue_nd_range_kernel"></a>16.15.1. enqueue_nd_range_kernel</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：clEnqueueNDRangeKernel」（<a class="xref" href="apbs33.html#clEnqueueNDRangeKernel" title="Table B.88. 表：clEnqueueNDRangeKernel">Table B.88, “表：clEnqueueNDRangeKernel”</a>）を参照ください。</p></div><pre xmlns="" class="prettyprint">pyopencl.enqueue_nd_range_kernel(
+    queue, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO45-1"></a>(1)
+    kernel, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO45-2"></a>(2)
+    global_work_size, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO45-3"></a>(3)
+    local_work_size, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO45-4"></a>(4)
+    global_work_offset=None, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO45-5"></a>(5)
+    wait_for=None, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO45-6"></a>(6)
+    g_times_l=False) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO45-7"></a>(7)</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO45-1">(1)</a> </p></td><td valign="top" align="left"><p>
+有効なコマンドキューを指定。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO45-2">(2)</a> </p></td><td valign="top" align="left"><p>
+有効なカーネルオブジェクトを指定。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO45-3">(3)</a> </p></td><td valign="top" align="left"><p>
+要素数work_dimの配列で、カーネル関数を実行するwork_dim次元のグローバルワークアイテムの個数を指定。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO45-4">(4)</a> </p></td><td valign="top" align="left"><p>
+要素数work_dimの配列で、カーネル関数を実行する各ワークグループを構成するワークアイテムの数（ワークグループのサイズとも呼ぶ）を指定。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO45-5">(5)</a> </p></td><td valign="top" align="left"><p>
+要素数work_dimの配列でワークアイテムのグローバルIDを決定する際のオフセット値を指定。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO45-6">(6)</a> </p></td><td valign="top" align="left"><p>
+このコマンドが実行される前に完了されているイベントを指定
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO45-7">(7)</a> </p></td><td valign="top" align="left"><p>
+global_work_sizeをlocal_work_sizeで乗じた値を使います。
+</p></td></tr></table></div><p>enqueue_nd_range_kernel関数を実装する際に一番判断に迷うのは、以下の３つの引数です。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+global_offset
+</li><li class="listitem">
+global_work_size
+</li><li class="listitem">
+local_work_size
+</li></ul></div><p>オフセットは作業したいデータの位置や、アルゴリズムの設計により恣意的に開発者が決めるものですが、原則として(0,0,0)で支障はないかと思います。</p><p>グローバルワークサイズ引数についても同様ですが、一般にワークサイズは２の冪乗としてください。これはプロセッサの演算ユニットをなるべき多く使うための最も基本的な処方箋です。プロセッサを有効に使うためには、できるだけ多くのグローバルワークサイズ引数があったほうが良いです。</p><p>ローカルワークサイズ引数は、IntelのGPUであれば64〜128個とします。ローカルワークサイズを決定する際に覚えておきたい点は、ローカルワークサイズは、ワークグループ数を決めるということです。</p><p>例えば1024個のグローバルワークサイズに対して、128個のワークグループ数を考えてみましょう。この場合のワークグループ数は8個（1024/128）となります。しかしローカルワークサイズが大きいと、共有ローカルメモリのサイズが肥大化して、推奨されるメモリ使用量の閾値（Intelは4K）を超える可能性が高くなります。</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳細は 「ワークグループ数とワークグループサイズの最適化」（<a class="xref" href="ch13s17.html#workgroup_optimization" title="Table 13.15. ワークグループ数とワークグループサイズの最適化">Table 13.15, “ワークグループ数とワークグループサイズの最適化”</a>） を参照ください。</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="workgroup-sample"></a>実装例</h4></div></div></div><p><strong>clSample.py. </strong>
+</p><pre xmlns="" class="prettyprint">import pyopencl as cl
+import numpy as np
+
+data = np.arange(16).astype(np.int32)
+
+ctx = cl.Context([cl.get_platforms()[0].get_devices()[0]])
+queue = cl.CommandQueue(ctx)
+mf = cl.mem_flags
+data_mem = cl.Buffer(ctx, mf.USE_HOST_PTR, hostbuf=data)
+
+program = cl.Program(ctx, """
+    __kernel void square(__global int* data) {
+        size_t gid = get_global_id(0);
+        data[gid] *= data[gid];
+    }
+    """).build()
+
+program.square(queue, (16,), (4,), data_mem)
+# program.square(queue, np.array([16,1,1]), np.array([1,1,1]) None)
+
+cl.enqueue_copy(queue, data, data_mem)
+
+print(data)</pre><p>
+</p><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">[0   1   4   9  16  25  36  49  64  81 100 121 144 169 196 225]</pre><p>
+</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_enqueue_task"></a>16.15.2. enqueue_task</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：clEnqueueTask」（<a class="xref" href="apbs33.html#clEnqueueTask" title="Table B.89. 表：clEnqueueTask">Table B.89, “表：clEnqueueTask”</a>）、（<a class="link" href="ch13s06.html#task-parallel-model" title="タスク並列プログラミングモデル">タスク並列プログラミング</a>）を参照ください。</p></div><p>enqueue_taskはenqueue_nd_range_kernel関数がデータ並列プログラミングを指すのと対比して、異なるタスクを並列で処理させるために使うことができます。</p><p>通常のマルチスレッドプログラミングのOpenCLバージョンと考えて頂くと分かりやすいかと思います。</p><pre xmlns="" class="prettyprint">pyopencl.enqueue_task(
+    queue, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO46-1"></a>(1)
+    kernel, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO46-2"></a>(2)
+    wait_for=None) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO46-3"></a>(3)</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO46-1">(1)</a> </p></td><td valign="top" align="left"><p>
+有効なコマンドキューを指定。カーネルはコマンドキューと関連付けられたデバイス上で実行のためにキューに入れられる。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO46-2">(2)</a> </p></td><td valign="top" align="left"><p>
+有効なカーネルオブジェクト。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO46-3">(3)</a> </p></td><td valign="top" align="left"><p>
+このコマンドが実行される前に完了されているイベントを指定
+</p></td></tr></table></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch16s14.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch16.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="pt04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

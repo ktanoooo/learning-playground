@@ -1,0 +1,1211 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>B.13. バッファーの読み込み・書き込み・コピー</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="apb.html" title="Appendix B. OpenCL 1.2 API Reference" /><link rel="prev" href="apbs12.html" title="B.12. バッファオブジェクト" /><link rel="next" href="apbs14.html" title="B.14. バッファオブジェクトのマップ" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="apbs12.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apbs14.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_バッファーの読み込み_書き込み_コピー_2"></a>B.13. バッファーの読み込み・書き込み・コピー</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clenqueuereadbufferとclenqueuewritebuffer"></a>B.13.1. clEnqueueReadBufferとclEnqueueWriteBuffer</h3></div></div></div><div class="table"><a id="clEnqueueReadBuffer"></a><p class="title"><strong>Table B.31. 表：clEnqueueReadBufferとclEnqueueWriteBuffer</strong></p><div class="table-contents"><table class="table" summary="表：clEnqueueReadBufferとclEnqueueWriteBuffer" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">関数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_int</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clEnqueueReadBuffer (
+    cl_command_queue command_queue,
+    cl_mem buffer,
+    cl_bool blocking_read,
+    size_t offset,
+    size_t size,
+    void *ptr,
+    cl_uint num_events_in_wait_list,
+    const cl_event *event_wait_list,
+    cl_event *event
+)</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_int</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clEnqueueWriteBuffer (
+    cl_command_queue command_queue,
+    cl_mem buffer,
+    cl_bool blocking_write,
+    size_t offset,
+    size_t size,
+    const void *ptr,
+    cl_uint num_events_in_wait_list,
+    const cl_event *event_wait_list,
+    cl_event *event
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">(clEnqueueReadBuffer) バッファオブジェクトからホ
+ストメモリへの読み込みを行うコマンドを挿入。
+
+(clEnqueueWriteBuffer)ホストメモリからバッフ
+ァオブジェクトへの書き込みを行うコマンドを挿入。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 引数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queue</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">読み込み・書き込み
+コマンドを挿入するコマ
+ンドキューを指定。
+command_queueとbuffer
+は同じOpenCLコンテキス
+ト上で生成される必要が
+あります。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">buffer</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">有効なバッファオブ
+ジェクトを指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">blocking_read
+blocking_write</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">読み込み・書き込み操
+作を、ブロッキングで
+行うのかノンブロッキ
+ングで行うのかを指定。
+
+blocking_readに
+CL_TRUEを指定する場合、
+読み込みコマンドはブ
+ロッキングとなる。バ
+ッファデータを読み込
+んでptrが指すメモリ領
+域に複製し終わるまで
+、clEnqueueReadBuffer
+は戻らない。
+
+blocking_readに
+CL_FALSEを指定する
+場合、読み込みコマン
+ドはノンブロッキング
+となる。
+
+clEnqueueReadBuffer
+はノンブロッキング読
+み込みコマンドを挿入
+して戻らない。読み込
+みコマンドが完了する
+まで、ptrが指すバッ
+ファの内容は利用できま
+せん。event引数には
+イベントオブジェクト
+が戻される。読み込み
+コマンドの実行状況の
+確認に利用可能。読み
+込みコマンドが完了す
+るとptrが指すバッフ
+ァの内容をアプリケー
+ションが利用可能となる。
+
+書き込み操作を、ブロッ
+キングで行うのかノンブ
+ロッキングで行うのかを
+指定。
+
+blocking_writeに
+CL_TRUE を指定する場
+合、OpenCL実装は
+ptrが参照するデータ
+を複製しコマンドキュ
+ーに書き込み操作を挿入。
+
+clEnqueueWriteBuffer
+が戻った後、アプリ
+ケーションはptrが指
+すメモリを再利用可能
+となる。
+
+blocking_writeに
+CL_FALSEを指定すると
+、OpenCL実装はptrを
+使用してノンブロッキ
+ング書き込みを行う。
+
+書き込みはノンブロッ
+キングで行われるため、
+実装はすぐに戻ること
+ができる。呼び出しが
+戻った後も、ptrが指
+すメモリを再利用する
+ことはできない。
+
+event引数に戻される
+イベントオブジェクト
+を利用し、書き込みコ
+マンドの実行状況を確
+認可能。書き込みコマ
+ンドが完了すると、アプ
+リケーションはptrが指
+すメモリを再利用でき
+るようになる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">offset</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">バッファオブジェ
+クトから書き込みを行
+う際に、書き込み・読
+み込み開始位置をどれ
+だけずらすかを指定
+（バイトで表す）。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">size</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">書き込む・読み込
+むデータのサイズを指
+定（バイトで表す）。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">ptr</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">書き込むデータの、
+又は読み込んだデータ
+を保存するホストメ
+モリ領域へのポイン
+タを指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">num_events_
+in_wait_list</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">event_wait_list
+で指定したイベントオ
+ブジェクトの数を指
+定します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_list</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">このコマンドが実
+行される前に完了して
+いなければならないイ
+ベントを指定。
+
+event_wait_listが
+NULLの場合、このコマ
+ンドはどのイベントの
+完了待機もしない。
+
+event_wait_listが
+NULLの場合、
+num_events_in_
+wait_listは0となる
+必要がある。
+
+event_wait_listが
+NULLでない場合、
+event_wait_listが
+指す各イベントは有効と
+なる必要があり、
+またnum_events_in_
+wait_listは0より大
+きな値となる必要がある。
+event_wait_listに
+指定したイベントは同
+期点としてふるまう。
+
+event_wait_list内
+のイベントと関連付け
+られたOpenCLコンテ
+キストと command_queue
+と関連付けられた
+OpenCLコンテキストは
+同じとなる必要がある。
+
+event_wait_list
+と関連付けられたメモ
+リは、関数が完了の後
+に、再利用または解放できる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">このコマンドを識別
+するイベントオブジ
+ェクトが戻され、コマ
+ンド完了の確認やコマ
+ンド完了待機をする。
+eventがNULLの場合、
+アプリケーションはコマ
+ンドの状況確認やコマ
+ンド完了待ちを行えない。
+代わりに、
+clEnqueueBarrier
+WithWaitListを使うこ
+とができる。
+
+event_wait_list
+とevent引数がNULL
+でない場合、event引
+数はevent_wait_list
+配列の要素を参照すべ
+きでない。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 成功した場合の戻り値</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> CL_SUCCESS</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 失敗した場合の戻り値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+COMMAND_QUEUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queueが
+有効なコマンドキュー
+でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+CONTEXT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queueと
+関連付けられたコンテ
+キストとbufferと関連
+付けられたコンテキス
+トが同じでない場合。
+command_queueと関
+連付けられたコンテキ
+ストとevent_wait_list
+内のイベントと関連付
+けられたコンテキスト
+が同じでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+MEM_OBJECT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">bufferが有効なバ
+ッファオブジェクトで
+ない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">（offset,size）で
+指定した読み込む、書
+き込む領域が範囲外の場合。
+ptrがNULL値の場合。
+sizeが0の場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+EVENT_WAIT_LIST</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_list
+がNULLでnum_events_
+in_wait_listが0よ
+り大きい場合。
+
+event_wait_listが
+NULLでなくnum_
+events_in_wait_
+listが0の場合。
+event_wait_list内
+のイベントオブジェク
+トが有効なものでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_MISALIGNED_
+SUB_BUFFER_OFFSET</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">bufferがサブバッ
+ファオブジェクトで、
+このサブバッファオブ
+ジェクトを生成する際
+に指定したオフセット
+がcommand_queueと
+関連付けられたデバイ
+スの
+CL_DEVICE_MEM_
+BASE_ADDR_ALIGNに
+アラインされていない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_EXEC_
+STATUS_ERROR_
+FOR_EVENTS_
+IN_WAIT_LIST</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">コマンドがブロッキ
+ングで、event_wait_list
+内のイベントのいずれか
+の実行状況が負の整数
+値の場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_MEM_
+OBJECT_
+ALLOCATION_
+FAILURE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">bufferと関連付け
+られたデータ保存領域
+のためのメモリの確保
+に失敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+OPERATION</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">clEnqueueReadBuffer
+が
+CL_MEM_HOST_WRITE_ONLY
+または
+CL_MEM_HOST_NO_ACCESS
+のフラグで生成された
+バッファで呼び出される場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+OPERATION</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">clEnqueueWriteBuffer
+が
+CL_MEM_HOST_READ_ONLY
+または
+CL_MEM_HOST_NO_ACCESS
+のフラグで生成されたバ
+ッファで呼び出される場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+RESOURCES</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とするリソ
+ース確保に失敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+HOST_MEMORY</pre></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL
+実装が必要とするリソ
+ース確保に失敗した場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clenqueuereadbufferrectとclenqueuewritebufferrect"></a>B.13.2. clEnqueueReadBufferRectとclEnqueueWriteBufferRect</h3></div></div></div><div class="table"><a id="clEnqueueReadBufferRect"></a><p class="title"><strong>Table B.32. 表：clEnqueueReadBufferRectとclEnqueueWriteBufferRect</strong></p><div class="table-contents"><table class="table" summary="表：clEnqueueReadBufferRectとclEnqueueWriteBufferRect" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">関数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_int</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clEnqueueReadBufferRect (
+    cl_command_queue command_queue,
+    cl_mem buffer,
+    cl_bool blocking_read,
+    const size_t *buffer_origin,
+    const size_t *host_origin,
+    const size_t *region,
+    size_t buffer_row_pitch,
+    size_t buffer_slice_pitch,
+    size_t host_row_pitch,
+    size_t host_slice_pitch,
+    void *ptr,
+    cl_uint num_events_in_wait_list,
+    const cl_event *event_wait_list,
+    cl_event *event
+)</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_int</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clEnqueueWriteBufferRect (
+    cl_command_queue command_queue,
+    cl_mem buffer,
+    cl_bool blocking_write,
+    const size_t *buffer_origin,
+    const size_t *host_origin,
+    const size_t *region,
+    size_t buffer_row_pitch,
+    size_t buffer_slice_pitch,
+    size_t host_row_pitch,
+    size_t host_slice_pitch,
+    const void *ptr,
+    cl_uint num_events_in_wait_list,
+    const cl_event *event_wait_list,
+    cl_event *event
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">バッファオブジェクトからホストメモリへの、
+2Dまたは3Dの矩形領域の読み込みを行うコマンドを挿入。
+
+ホストメモリからバッファオブジェクトへの、2D
+または3Dの矩形領域の書き込みを行うコマンドを挿入。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 引数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queue</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">読み込み・書き込み
+コマンドを挿入するコ
+マンドキューを指定。
+command_queueと
+bufferは同じOpenCL
+コンテキスト上で生成さ
+れたものとなる必要がある。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">buffer</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">有効なバッファオ
+ブジェクトを指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">blocking_read
+blocking_write</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">読み込み・書き込
+み操作を、ブロッキング
+で行うのかノンブロッ
+キングで行うのかを指定。
+
+blocking_readに
+CL_TRUEを指定する
+場合、読み込みコマン
+ドはブロッキングとな
+る。バッファデータを
+読み込んでptrが指す
+メモリ領域に複製し終
+わるまで、
+clEnqueueReadBufferRect
+は戻らない。
+
+blocking_readに
+CL_FALSEを指定する
+場合、読み込みコマン
+ドはノンブロッキング
+となる。
+
+clEnqueueReadBufferRect
+はノンブロッキング読み込
+みコマンドを挿入して戻ら
+ない。読み込みコマンドが
+完了するまで、ptrが指す
+バッファの内容は利用でき
+ません。event引数には
+イベントオブジェクトが戻
+される。読み込みコマンド
+の実行状況の確認に利用可
+能。読み込みコマンドが完
+了するとptrが指すバッファ
+の内容をアプリケーションが
+利用可能となる。
+
+blocking_writeに
+CL_TRUE を指定する場合、
+OpenCL実装はptrが参照
+するデータを複製しコマ
+ンドキューに書き込み操作
+を挿入。
+
+clEnqueueWriteBufferRect
+が戻った後、アプリケーシ
+ョンはptrが指すメモリを
+再利用可能となる。
+
+blocking_writeに
+CL_FALSEを指定すると、
+OpenCL実装はptrを使
+用してノンブロッキング
+書き込みを行う。
+
+書き込みはノンブロッ
+キングで行われるため、
+実装はすぐに戻ること
+ができる。呼び出しが
+戻った後も、ptrが指す
+メモリを再利用するこ
+とはできない。
+
+event引数に戻される
+イベントオブジェクト
+を利用し、書き込みコ
+マンドの実行状況を確
+認可能。書き込みコマ
+ンドが完了すると、ア
+プリケーションはptr
+が指すメモリを再利用
+できるようになる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">buffer_origin</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">bufferと関連付
+けられたメモリ領域の
+(x, y, z)オフセット
+を指定。
+
+2D矩形領域では、
+buffer_origin[2]で
+指定するz値は0とな
+る必要がある。
+
+オフセットのバイト数は、
+buffer_origin[2]
+*buffer_slice_pitch
++ buffer_origin[1]
+*buffer_row_pitch
++ buffer_origin[0]
+で求められる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">host_origin</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">ptrが指すメモリ
+領域の(x, y, z)オフ
+セットを指定。
+2D矩形領域では、
+host_origin[2]で
+指定するz値は0となる
+必要がある。
+
+オフセットのバイト数は、
+host_origin[2]
+*host_slice_pitch
++ host_origin[1]
+*host_row_pitch
++ host_origin[0]
+で求められる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">region</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">読み込み・書き込
+みを行う2Dもしくは3D
+矩形領域の (widthバ
+イト, height行,
+depthスライス) を指
+定。2D矩形領域では、
+region[2]で指定する
+depth値は1となる必要
+がある。regionの値は
+0にはできない。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">buffer_row_
+pitch</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">bufferと関連付け
+られたメモリ領域で各
+行が使用する長さをバ
+イトで指定。
+buffer_row_pitch
+に0を指定すると、
+region[0]を設定した
+ものとして扱われる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">buffer_slice_
+pitch</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">bufferと関連付
+けられたメモリ領域
+で各2Dスライスが使
+用する長さをバイト
+で指定。
+buffer_slice_pitch
+に0を指定すると、
+region[1]
+*buffer_row_pitch
+を設定したものとして扱われる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">host_row_
+pitch</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">ptrが指すメモリ領域
+で各行が使用する長さ
+をバイトで指定。
+host_row_pitchに
+0を指定すると、
+region[0]を設定した
+ものとして扱われる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">host_slice_
+pitch</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">ptrが指すメモリ
+領域で各2Dスライス
+が使用する長さをバイ
+トで指定します。
+host_slice_pitch
+に0を指定すると、
+region[1]
+*host_row_pitch
+を設定したものとし
+て扱われる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">ptr</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">書き込む・読み込
+んだデータの保存先と
+なるホストメモリバ
+ッファへのポインタ
+を指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">num_events_
+in_wait_list</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">event_wait_list
+で指定したイベント
+オブジェクトの数を
+指定します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_
+list</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">このコマンドが
+実行される前に完了
+していなければならな
+いイベントを指定。
+event_wait_listが
+NULLの場合、このコマ
+ンドはどのイベントの
+完了待機もしない。
+
+event_wait_listが
+NULLの場合、
+num_events_in_
+wait_listは0となる
+必要がある。
+event_wait_listが
+NULLでない場合、
+event_wait_listが指
+す各イベントは有効と
+なる必要があり、
+またnum_events_in_
+wait_listは0より大きな
+値となる必要がある。
+
+event_wait_listに
+指定したイベントは同
+期点としてふるまう。
+
+event_wait_list内
+のイベントと関連付け
+られたOpenCLコンテキ
+ストと command_queue
+と関連付けられた
+OpenCLコンテキスト
+は同じとなる必要がある。
+
+event_wait_listと
+関連付けられたメモリ
+は、関数が完了の後に、
+再利用または解放できる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">このコマンドを識別す
+るイベントオブジェク
+トが戻され、コマンド
+完了の確認やコマンド
+完了待機をする。
+eventがNULLの場合、
+アプリケーションはコ
+マンドの状況確認やコ
+マンド完了待ちを行え
+ない。代わりに、
+clEnqueueBarrier
+WithWaitListを使う
+ことができる。
+
+event_wait_listと
+event引数がNULLでな
+い場合、event引数は
+event_wait_list配列
+の要素を参照すべきでない。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 成功した場合の戻り値</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> CL_SUCCESS</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 失敗した場合の戻り値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+COMMAND_QUEUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queue が有
+効なコマンドキューでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+CONTEXT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queueと関
+連付けられたコンテキス
+トとbufferと関連付け
+られたコンテキストが同
+じでない場合
+
+command_queueと関連
+付けられたコンテキスト
+とevent_wait_list
+内のイベントと関連付け
+られたコンテキストが
+同じでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+MEM_OBJECT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">buffer が有効なバッ
+ファオブジェクトでない
+場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> (buffer_origin,
+region,
+buffer_row_pitch,
+buffer_slice_pitch)
+で指定した書き込み領域
+が範囲外の場合。
+ptrがNULLの場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">ptrがNULL値の場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">region配列のいず
+れかの要素が0の場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">buffer_row_pitch
+が0でなく、region[0]
+より小さい場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">host_row_pitchが0
+でなく、region[0]よ
+り小さい場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">buffer_slice_pitch
+が0でなく、region[1]
+* buffer_row_pitchよ
+り小さい場合で、
+buffer_row_pitchの
+倍数でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+EVENT_WAIT_LIST</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_listが
+NULLでnum_events_
+in_wait_listが0より
+大きい場合。
+event_wait_listが
+NULLでなくnum_events
+_in_wait_listが0の場合。
+event_wait_list内の
+イベントオブジェクトが
+有効なものでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_MISALIGNED_
+SUB_BUFFER_OFFSET</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">bufferがサブバッフ
+ァオブジェクトで、こ
+のサブバッファオブジェ
+クトを生成する際に指定
+したオフセットが
+command_queueと関連
+付けられたデバイスの
+CL_DEVICE_MEM_
+BASE_ADDR_ALIGNに
+アラインされていない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_EXEC_
+STATUS_ERROR_
+FOR_EVENTS_
+IN_WAIT_LIST</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">読み込み・書き込み
+コマンドがブロッキン
+グで、event_wait_
+list内のイベントのいず
+れかの実行状況が負の整
+数値の場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_MEM_
+OBJECT_
+ALLOCATION_
+FAILURE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">buffer と関連付けら
+れたデータ保存領域のた
+めのメモリの確保に失敗
+した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+OPERATION</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">clEnqueueRead
+BufferRectが
+CL_MEM_HOST_
+WRITE_ONLYまたは
+CL_MEM_HOST_NO_
+ACCESSのフラグで生
+成されたバッファで
+呼び出される場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+OPERATION</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">clEnqueueWrite
+BufferRectが
+CL_MEM_HOST_
+READ_ONLYまたは
+CL_MEM_HOST_NO_
+ACCESSのフラグで生
+成されたバッファで
+呼び出される場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+RESOURCES</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とするリソ
+ース確保に失敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+HOST_MEMORY</pre></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL
+実装が必要とするリ
+ソース確保に失敗
+した場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clenqueuecopybuffer"></a>B.13.3. clEnqueueCopyBuffer</h3></div></div></div><div class="table"><a id="clEnqueueCopyBuffer"></a><p class="title"><strong>Table B.33. 表：clEnqueueCopyBuffer</strong></p><div class="table-contents"><table class="table" summary="表：clEnqueueCopyBuffer" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">関数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_int</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clEnqueueCopyBuffer (
+    cl_command_queue command_queue,
+    cl_mem src_buffer,
+    cl_mem dst_buffer,
+    size_t src_offset,
+    size_t dst_offset,
+    size_t size,
+    cl_uint num_events_in_wait_list,
+    const cl_event *event_wait_list,
+    cl_event *event
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> バッファオブジェクトで識別された
+src_bufferからdst_bufferへの複製
+を行うコマンドを挿入。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 引数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queue</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">複製コマンドを挿
+入するコマンドキュー
+を指定。command_queue、
+src_buffer、dst_buffer
+と関連付けられたOpenCL
+コンテキストは同じとなる
+必要がある。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_offset</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">src_bufferから複製
+を行う際に、読み込み開始
+位置をどれだけずらすかを
+指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">dst_offset</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">dst_bufferへ複製を
+行う際に、書き込み開始位
+置をどれだけずらすかを指
+定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">size</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">複製するデータのサイ
+ズをバイトで指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">num_events_in_wait_list</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">event_wait_listで指定し
+たイベントオブジェクトの数
+を指定します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_list</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">このコマンドが実行され
+る前に完了していなければな
+らないイベントを指定。
+
+event_wait_listがNULLの
+場合、このコマンドはどのイベ
+ントの完了待機もしない。
+
+event_wait_listがNULLの
+場合、num_events_in_wait_
+listは0となる必要がある。
+
+event_wait_listがNULLで
+ない場合、event_wait_list
+が指す各イベントは有効とな
+る必要があり、またnum_
+events_in_wait_listは0よ
+り大きな値となる必要がある。
+
+event_wait_listに指定した
+イベントは同期点としてふるまう。
+event_wait_list内のイベ
+ントと関連付けられたOpenCL
+コンテキストと command_
+queueと関連付けられた
+OpenCLコンテキストは同じと
+なる必要がある。
+
+event_wait_listと関連
+付けられたメモリは、関数が
+完了の後に、再利用または
+解放できる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">このコマンドを識別するイ
+ベントオブジェクトが戻さ
+れ、コマンド完了の確認や
+コマンド完了待機をする。
+eventがNULLの場合、アプ
+リケーションはコマンドの
+状況確認やコマンド完了待
+ちを行えない。代わりに、
+clEnqueueBarrier
+WithWaitListを使うことができる。
+
+event_wait_listと
+event引数がNULLでない
+場合、event引数はevent_
+wait_list配列の要素を
+参照すべきでない。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 成功した場合の戻り値</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> CL_SUCCESS</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 失敗した場合の戻り値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+COMMAND_QUEUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queue
+が有効なコマンドキュー
+でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+CONTEXT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queue、
+src_buffer、
+dst_bufferと関連付けら
+れたコンテキストが同じでない場合。
+
+command_queueと関連
+付けられたコンテキスト
+と event_wait_list
+内のイベントと関連付けら
+れたコンテキストが同じ
+でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+MEM_OBJECT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_buffer、
+dst_bufferが有効な
+バッファオブジェクト
+でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_offset、
+dst_offset、size、
+src_offset + size、
+dst_offset + size
+が要求するアクセス領域
+が、バッファオブジェクト
+(src_buffer、
+dst_buffer)の範囲外
+の場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">sizeが0の場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+EVENT_WAIT_LIST</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_listが
+NULLでnum_events_
+in_wait_listが0より
+大きい場合。
+
+event_wait_listが
+NULLでなくnum_events_
+in_wait_listが0の場合。
+
+event_wait_list内の
+イベントオブジェクトが
+有効なものでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_MISALIGNED_
+SUB_BUFFER_OFFSET</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_bufferがサブバッ
+ファオブジェクトで、こ
+のサブバッファオブジェ
+クトを生成する際に指定
+したオフセットが
+command_queueと関連
+付けられたデバイスの
+CL_DEVICE_MEM_BASE_
+ADDR_ALIGNにアライン
+されていない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_MISALIGNED_
+SUB_BUFFER_OFFSET</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">dst_bufferがサブバ
+ッファオブジェクトで、
+このサブバッファオブジ
+ェクトを生成する際に指
+定したオフセットが
+command_queueと関連付
+けられたデバイスの
+CL_DEVICE_MEM_
+BASE_ADDR_ALIGNにアラ
+インされていない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_MEM_COPY_
+OVERLAP</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_bufferと
+dst_bufferが同じバッ
+ファオブジェクトまたは
+サブバッファオブジェクト
+で、かつ複製元と複製先の
+領域が重なっている場合。
+
+src_bufferとdst_buffer
+が同じ関連付けされたバッ
+ファオブジェクトの異なるサ
+ブバッファで、領域が重なる場合。
+
+src_offset &lt;=
+dst_offset &lt;=
+src_offset
++ size – 1で、
+領域が重なる場合。
+dst_offset &lt;=
+src_offset &lt;=
+dst_offset
++ size – 1で、
+領域が重なる場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_MEM_
+OBJECT_
+ALLOCATION_
+FAILURE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_bufferまたは
+dst_bufferと関連
+付けられたデータ保
+存領域のためのメモリ
+の確保に失敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_
+OF_RESOURCES</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とするリソ
+ース確保に失敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+HOST_MEMORY</pre></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL
+実装が必要とするリソ
+ース確保に失敗した
+場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clenqueuecopybufferrect"></a>B.13.4. clEnqueueCopyBufferRect</h3></div></div></div><div class="table"><a id="clEnqueueCopyBufferRect"></a><p class="title"><strong>Table B.34. 表：clEnqueueCopyBufferRect</strong></p><div class="table-contents"><table class="table" summary="表：clEnqueueCopyBufferRect" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">関数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_int</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clEnqueueCopyBufferRect (
+    cl_command_queue command_queue, //&lt;1&gt;
+    cl_mem src_buffer,
+    cl_mem dst_buffer,
+    const size_t *src_origin,
+    const size_t *dst_origin,
+    const size_t *region,
+    size_t src_row_pitch,
+    size_t src_slice_pitch,
+    size_t dst_row_pitch,
+    size_t dst_slice_pitch,
+    cl_uint num_events_in_wait_list,
+    const cl_event *event_wait_list,
+    cl_event *event
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">src_bufferで識別されるバッファオブジェ
+クト内の2Dまたは3D矩形領域から、
+dst_bufferで識別されるバッファオブジェ
+クト内で2Dまたは3D領域への複製を行うコマ
+ンドを挿入。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 引数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queue</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">複製コマンドを挿入
+するコマンドキューを
+指定。command_queue、
+src_buffer、dst_buffer
+と関連付けられたOpenCL
+コンテキストは同じとな
+る必要があります。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_origin</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">src_bufferと関連
+付けられたメモリ領域の
+(x, y, z)オフセットを
+指定。2D矩形領域では、
+src_origin[2]で指定す
+るz値は0となる必要がある。
+
+オフセットのバイト数は、
+src_origin[2]
+*src_slice_pitch
++ src_origin[1]
+*src_row_pitch
++ src_origin[0]
+で求められる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">dst_origin</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">dst_bufferと関連付け
+られたメモリ領域の
+(x, y, z)オフセット
+を指定します。2D矩形領
+域では、dst_origin[2]
+で指定するz値は0となる
+必要がある。
+
+オフセットのバイト数は、
+dst_origin[2]
+*dst_slice_pitch
++ dst_origin[1]
+*dst_row_pitch
++ dst_origin[0]で
+求められる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">region</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">複製を行う2Dもしくは
+3D矩形領域の (width
+バイト, height行,
+depthスライス) を指定。
+2D矩形領域では、
+region[2]で指定する
+depth値は1となる必要が
+ある。regionの値は0に
+はできない。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_row_
+pitch</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">src_bufferと関連付け
+られたメモリ領域で各行
+が使用する長さをバイト
+で指定。
+
+src_row_pitchに0を指
+定すると、region[0]を
+設定したものとして扱われる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_slice_
+pitch</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">src_bufferと関連付け
+られたメモリ領域で各2D
+スライスが使用する長さ
+をバイトで指定。
+
+src_slice_pitchに0を
+指定すると、region[1]
+*src_row_pitchを設定
+したものとして扱われる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">dst_row_
+pitch</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">dst_bufferと関連付けら
+れたメモリ領域で各行が
+使用する長さをバイトで
+指定。dst_row_pitch
+に0を指定すると、
+region[0]を設定したも
+のとして扱われる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">dst_slice_
+pitch</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">dst_bufferと関連付け
+られたメモリ領域で各
+2Dスライスが使用する
+長さをバイトで指定。
+
+dst_slice_pitchに0
+を指定すると、
+region[1]*dst_row_pitch
+を設定したものとして
+扱われる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">num_events_
+in_wait_list</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">event_wait_list
+で指定したイベント
+オブジェクトの数を
+指定します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_list</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">このコマンドが
+実行される前に完了し
+ていなければならない
+イベントを指定。
+
+event_wait_listが
+NULLの場合、このコマン
+ドはどのイベントの完了
+待機もしない。
+
+event_wait_listが
+NULLの場合、num_events_
+in_wait_listは0とな
+る必要がある。
+
+event_wait_listがNULL
+でない場合、event_
+wait_listが指す各イベ
+ントは有効となる必要があり、
+またnum_events_in_
+wait_listは0より大き
+な値となる必要がある。
+
+event_wait_listに指定
+したイベントは同期点と
+してふるまう。
+
+event_wait_list内のイ
+ベントと関連付けられた
+OpenCLコンテキストと
+command_queueと関連付
+けられたOpenCLコンテ
+キストは同じとなる必要
+がある。
+
+event_wait_listと関
+連付けられたメモリは、
+関数が完了の後に、再利
+用または解放できる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">このコマンドを識別する
+イベントオブジェクトが
+戻され、コマンド完了の
+確認やコマンド完了待機
+をする。eventがNULLの
+場合、アプリケーションは
+コマンドの状況確認やコ
+マンド完了待ちを行えない。
+代わりに、clEnqueue
+BarrierWithWaitList
+を使うことができる。
+event_wait_listと
+event引数がNULLでない
+場合、event引数はevent_
+wait_list配列の要素を
+参照すべきでない。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 成功した場合の戻り値</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> CL_SUCCESS</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 失敗した場合の戻り値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+COMMAND_QUEUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queueが有
+効なコマンドキューで
+ない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+CONTEXT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queue、
+src_buffer、
+dst_bufferと関連付け
+られたコンテキストが同
+じでない場合。
+
+command_queueと関連付
+けられたコンテキストと
+event_wait_list内の
+イベントと関連付けられ
+たコンテキストが同じで
+ない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+MEM_OBJECT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_buffer、
+dst_bufferが有効なバ
+ッファオブジェクトでな
+い場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">(src_origin,
+region,
+src_row_pitch,
+src_slice_pitch)
+もしくは (dst_origin,
+region,
+dst_row_pitch,
+dst_slice_pitch)
+が要求するアクセス領域
+が、バッファオブジェクト
+src_buffer、
+dst_bufferそれぞれの
+範囲外の場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">region配列のいずれ
+かの要素が0の場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_row_pitchが0
+でなく、region[0]よ
+り小さい場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">dst_row_pitchが0で
+なく、region[0]より
+小さい場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_slice_pitchが0
+でなく、region[1]
+* src_row_pitchより小
+さい場合。
+
+src_slice_pitchが0
+でなく、src_row_pitch
+の倍数でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">dst_slice_pitch
+が0でなく、region[1]
+* dst_row_pitchよ
+り小さい場合。
+dst_slice_pitchが
+0でなく、src_row_
+pitchの倍数でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_bufferと
+dst_bufferが同じバッ
+ファオブジェクトで、
+src_slice_pitchと
+dst_slice_pitchが
+等しくなく、
+src_row_pitchが
+dst_row_pitchと等
+しくない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+EVENT_WAIT_LIST</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_list
+がNULLでnum_events_
+in_wait_listが0より
+大きい場合。
+
+event_wait_listが
+NULLでなくnum_events_
+in_wait_listが0の場合。
+
+event_wait_list内
+のイベントオブジェクト
+が有効なものでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_MEM_
+COPY_OVERLAP</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_bufferと
+dst_bufferが同じ
+バッファオブジェクト
+で、かつ複製元と複製
+先の領域が重なってい
+る場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_MISALIGNED_
+SUB_BUFFER_OFFSET</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_bufferがサブバッ
+ファオブジェクトで、こ
+のサブバッファオブジェ
+クトを生成する際に指定
+したオフセットが
+command_queueと関連
+付けられたデバイスの
+CL_DEVICE_MEM_BASE_
+ADDR_ALIGNにアライン
+されていない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_MISALIGNED_
+SUB_BUFFER_OFFSET</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">dst_bufferがサブバッ
+ファオブジェクトで、
+このサブバッファオブジ
+ェクトを生成する際に指
+定したオフセットが
+command_queueと関連
+付けられたデバイスの
+CL_DEVICE_MEM_
+BASE_ADDR_ALIGNにア
+ラインされていない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_MEM_
+OBJECT_
+ALLOCATION_
+FAILURE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_bufferまたは
+dst_bufferと関連付けら
+れたデータ保存領域のため
+のメモリの確保に失敗
+した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_
+OF_RESOURCES</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とするリソー
+ス確保に失敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+HOST_MEMORY</pre></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL実
+装が必要とするリソース
+確保に失敗した場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clenqueuefillbuffer_2"></a>B.13.5. clEnqueueFillBuffer</h3></div></div></div><div class="table"><a id="clEnqueueFillBuffer"></a><p class="title"><strong>Table B.35. 表：clEnqueueFillBuffer</strong></p><div class="table-contents"><table class="table" summary="表：clEnqueueFillBuffer" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">関数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_int</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clEnqueueFillBuffer (
+    cl_command_queue command_queue,
+    cl_mem buffer,
+    const void *pattern,
+    size_t pattern_size,
+    size_t offset,
+    size_t size,
+    cl_uint num_events_in_wait_list,
+    const cl_event *event_wait_list,
+    cl_event *event
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 指定したパターンサイズのパターンで、
+バッファオブジェクトをフィル（埋める）する
+コマンドを挿入。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 引数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queue</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">フィルコマンドが
+挿入されるコマンド
+キューを指定。コマンド
+キューとバッファに関連
+付けられたOpenCLコンテ
+キストは同じとなる必要がある。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">buffer</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">有効なバッファオブジェクトを指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">pattern</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">データパターンを
+指すポインタ。パター
+ンはoffsetで開始する
+バッファ内の領域
+（sizeバイト）をフィル
+するのに使われます。
+データパターンはスカラ
+型か整数ベクトル型、ま
+たはOpenCLがサポート
+する浮動小数点型となり
+ます。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">pattern_size</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">データパターンの
+サイズはpattern_size
+で指定（バイトで表す）。
+
+例：バッファがfloat4
+の値のパターンでフィル
+される場合、パターン
+はcl_float4の値のパ
+ターンのポインタとなり、
+pattern_sizeは
+sizeof(cl_float4)
+となります。
+
+パターンに関連付けら
+れたメモリは、関数が戻
+った後に再利用または解
+放することができます。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">offset</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">バッファ内でフィル
+される領域の位置をバイ
+トで表した値を指定。
+pattern_sizeの倍数と
+なる必要がある。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">size</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">バッファ内でフィル
+される領域のバイトサイ
+ズを指定。pattern_size
+の倍数となる必要がある。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">num_events_
+in_wait_list</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">event_wait_listで
+指定したイベントオブジ
+ェクトの数を指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_
+list</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">このコマンドが実
+行される前に完了して
+いなければならないイ
+ベントを指定。
+
+event_wait_listが
+NULLの場合、このコマ
+ンドはどのイベントの
+完了待機もしない。
+
+event_wait_listが
+NULLの場合、num_events_
+in_wait_listは0となる
+必要がある。
+
+event_wait_listが
+NULLでない場合、
+event_wait_listが指す
+各イベントは有効となる
+必要があり、またnum_
+events_in_wait_list
+は0より大きな値となる
+必要がある。
+
+event_wait_listに指
+定したイベントは同期点
+としてふるまう。
+
+event_wait_list内の
+イベントと関連付けられ
+たOpenCLコンテキストと
+command_queueと関連付
+けられたOpenCLコンテキ
+ストは同じとなる必要がある。
+
+event_wait_listと関
+連付けられたメモリは、
+関数が完了の後に、再利
+用または解放できる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">このコマンドを識別する
+イベントオブジェクトが
+戻され、コマンド完了の
+確認やコマンド完了待機
+をする。eventがNULLの
+場合、アプリケーション
+はコマンドの状況確認や
+コマンド完了待ちを行え
+ない。代わりに、
+clEnqueueBarrier
+WithWaitListを使うこ
+とができる。
+event_wait_listと
+event引数がNULLでない
+場合、event引数は
+event_wait_list配列
+の要素を参照すべきでない。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 成功した場合の戻り値</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> CL_SUCCESS</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 失敗した場合の戻り値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+COMMAND_QUEUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queueが有効
+でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+CONTEXT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queueと関連
+付けられたコンテキストと
+bufferと関連付けられた
+コンテキストが同じでない
+場合。
+
+command_queueと関連付け
+られたコンテキストとevent_
+wait_list内のイベントと
+関連付けられたコンテキス
+トが同じでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+MEM_OBJECT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">bufferが有効でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">オフセットまたは
+オフセット＋サイズが範囲外
+の要素にアクセスする場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">patternがNULLの場合。
+pattern_sizeが0の場合。
+pattern_sizeが
+`{1, 2, 4, 8, 16, `
+`32, 64, 128}`のいずれ
+かでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+EVENT_WAIT_LIST</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_listが
+NULLでnum_events_in_
+wait_listが0より大き
+い場合。
+
+event_wait_listがNULL
+でなくnum_events_
+in_wait_listが0の場合。
+
+event_wait_list内のイ
+ベントオブジェクトが
+有効なものでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_MISALIGNED_
+SUB_BUFFER_OFFSET</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">bufferがサブバッファ
+オブジェクトで、このサ
+ブバッファオブジェクトを
+生成する際に指定したオ
+フセットがcommand_queue
+と関連付けられたデバイス
+のCL_DEVICE_MEM_
+BASE_ADDR_ALIGNに
+アラインされていない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_MEM_OBJECT_
+ALLOCATION_FAILURE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">バッファのメモリ領域
+の確保に失敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+RESOURCES</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とするリソー
+ス確保に失敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+HOST_MEMORY</pre></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL実装
+が必要とするリソース
+確保に失敗した場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apbs12.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apb.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apbs14.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

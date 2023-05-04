@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>17.13. イメージ情報の取得</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch17.html" title="Chapter 17. OpenCL C言語プログラミング" /><link rel="prev" href="ch17s12.html" title="17.12. イメージ書き込み関数" /><link rel="next" href="pt05.html" title="Part V. PyOpenCL実装" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch17s12.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="pt05.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_イメージ情報の取得"></a>17.13. イメージ情報の取得</h2></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：イメージ情報の取得関数」（<a class="xref" href="apbs47.html#image_info_func" title="Table B.128. 表：イメージ情報の取得関数">Table B.128, “表：イメージ情報の取得関数”</a>）を参照ください。</p></div><p>ソースコードの設計にもよりますが、ホストAPI内ではなく、カーネル内でイメージの高さや幅、イメージチャンネルのデータ型を取得したいことが頻繁にあるかと思います。</p><p>以下は２次元イメージの幅を取得する関数です。</p><pre xmlns="" class="prettyprint">int get_image_width (
+    image2d_t image)</pre><p>整数型で幅の値が戻ります。２次元イメージの高さを取得する関数は以下になります。</p><pre xmlns="" class="prettyprint">int get_image_height (
+    image2d_t image)</pre><p>整数型で高さの値が戻ります。２次元イメージのデータ型の種類（例：CLK_UNORM_INT8）やチェネル順序（例：CLK_RGBA）を取得する関数は以下となります。</p><pre xmlns="" class="prettyprint">int get_image_channel_data_type (
+    image2d_t image)
+int get_image_channel_order (
+    image2d_t image)</pre><p>もちろん３次元の奥行きを取得する関数もあります。</p><pre xmlns="" class="prettyprint">int get_image_depth (
+    image3d_t image)</pre><p>1次元、2次元配列等のイメージデータに対応した関数のリストを見たい場合は「表：イメージ情報の取得関数」（<a class="xref" href="apbs47.html#image_info_func" title="Table B.128. 表：イメージ情報の取得関数">Table B.128, “表：イメージ情報の取得関数”</a>）を参照ください。</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_イメージチャンネルのマッピング"></a>17.13.1. イメージチャンネルのマッピング</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>「表：イメージチャンネルのマッピング」（<a class="xref" href="apbs47.html#image_channel_order_mapping" title="Table B.129. 表：イメージチャンネルのマッピング">Table B.129, “表：イメージチャンネルのマッピング”</a>）を参照ください。</p></div><p>read_imageで戻された色彩値へイメージチャンネルをマップ。write_imageに渡された色彩値をイメージチャンネルにマップします。</p><p>例えば頻繁に使うマップは以下のようになります。</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+CL_R
+</span></dt><dd>
+(r, 0.0, 0.0, 1.0)
+</dd><dt><span class="term">
+CL_RGB
+</span></dt><dd>
+(r, g, b, 1.0)
+</dd><dt><span class="term">
+CL_RGBA
+</span></dt><dd>
+(r, g, b, a)
+</dd></dl></div><p>4つの要素がない場合は、0.0や1.0を適宜に代入（マップ）しています。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch17s12.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch17.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="pt05.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

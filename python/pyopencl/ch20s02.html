@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>20.2. 2次元カーネルの実装</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch20.html" title="Chapter 20. 2次元高速フーリエ変換" /><link rel="prev" href="ch20s01.html" title="20.1. 実装例（GPGPU）" /><link rel="next" href="ch20s03.html" title="20.3. GPGPUへの修正点（メモリストライド・Bank Conflict対策）" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch20s01.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch20s03.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_2次元カーネルの実装"></a>20.2. 2次元カーネルの実装</h2></div></div></div><p>2次元FFTの実装は、各行・各列のスライス（配列）を独立して処理することになります。</p><p>もちろん前の項目で紹介した1次元FFTカーネルを各行、各列にそのまま適用することも可能です。ただこの項目では、OpenCLのカーネルのインデックス空間を2次元に拡大して、1つのカーネルで全行、全列を処理する方法を紹介させていただきます。</p><p>まずワークサイズについては以下のように2次元として設定します。</p><pre xmlns="" class="prettyprint">private static long[] global_work_size = new long[]{width/2,height,1};
+private static long[] local_work_size = new long[]{1,1,1};</pre><p>一つ目の次元のワークサイズがwidth/2に設定していますが、FFTでは処理点が全データの要素の半分となるため、ワークサイズ（インデックス空間）についても半分としています。</p><pre xmlns="" class="prettyprint">__kernel void fft2d(
+                __global float2* F,
+                int N,
+                int sign)
+{
+        int x = get_global_id(0);
+        int row_size = get_global_size(0)*2;
+        int y = get_global_id(1);
+        int stride = N/2;
+        float floor_adjust = x/stride;
+        int index = ceil(floor_adjust)*stride + (x%row_size);
+
+        float2 in0, in1;
+
+        in0 = F[y*row_size + index];
+        in1 = F[y*row_size + index+stride];
+
+        float angle = -2*M_PI_F*(index)/N;
+
+        float c,s;
+        float2 v;
+        float2 tmp0;
+
+        c = native_cos(angle);
+        s = sign*native_sin(angle);
+
+        v.x = c * (in1.x) - s * in1.y;
+        v.y = c * (in1.y) + s * in1.x;
+
+        tmp0 = in0;
+
+        in0 = tmp0 + v;
+        in1 = tmp0 - v;
+
+        F[y*row_size + index] = in0;
+        F[y*row_size + index + stride] = in1;
+
+}</pre><p>1次元からの大きな変更点としては各行を一つ一つ処理するために、yとrow_sizeの2つの変数が追加されたことです。</p><pre xmlns="" class="prettyprint">in0 = F[y*row_size + index];
+in1 = F[y*row_size + index+stride];</pre><p>この記述では、Fは2次元行列でindexは行の中の要素に対応します。またy*row_sizeは、y行を指定します。</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_全体の流れ"></a>20.2.1. 全体の流れ</h3></div></div></div><p>擬似フロー（<a class="xref" href="ch20.html#fft-2d-procedure" title="Figure 20.1. 図：2次元FFTの手順">Figure 20.1, “図：2次元FFTの手順”</a>）にある通り、2D-FFTの手順には、4回のビット反転、2回の行列転置を行う必要があります。</p><p>実装例では以下のような流れで処理をしています。</p><pre xmlns="" class="prettyprint">bit_reverse(data_mem) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO71-1"></a>(1)
+fft_2d(width, data_mem,processed_mem,1,true) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO71-2"></a>(2)
+
+transpose(processed_mem, transpose_mem) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO71-3"></a>(3)
+
+bit_reverse(transpose_mem) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO71-4"></a>(4)
+fft_2d(height,null,transpose_mem,1,false) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO71-5"></a>(5)
+
+bit_reverse(transpose_mem) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO71-6"></a>(6)
+fft_2d(height,null,transpose_mem,-1,false) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO71-7"></a>(7)
+fft_inverse2d(height,transpose_mem) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO71-8"></a>(8)
+
+transpose(transpose_mem, processed_mem) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO71-9"></a>(9)
+
+bit_reverse(processed_mem) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO71-10"></a>(10)
+fft_2d(width,null,processed_mem,-1,false) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO71-11"></a>(11)
+fft_inverse2d(width,processed_mem)      #<a xmlns="http://www.w3.org/1999/xhtml" id="CO71-12"></a>(12)</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO71-1">(1)</a> </p></td><td valign="top" align="left"><p>
+元データ（data_mem）のビット反転。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO71-2">(2)</a> </p></td><td valign="top" align="left"><p>
+元データを変換して、処理済みデータ（processed_mem）に書き込み。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO71-3">(3)</a> </p></td><td valign="top" align="left"><p>
+処理済みデータ（processed_mem）を転置して、転置データ（transpose_mem）に書き込み。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO71-4">(4)</a> </p></td><td valign="top" align="left"><p>
+転置データ（transpose_mem）のビット反転。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO71-5">(5)</a> </p></td><td valign="top" align="left"><p>
+転置データ（transpose_mem）のFFTをして転置データ（transpose_mem）を更新。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO71-6">(6)</a> </p></td><td valign="top" align="left"><p>
+転置データ（transpose_mem）のビット反転。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO71-7">(7)</a> </p></td><td valign="top" align="left"><p>
+転置データ（transpose_mem）の逆FFTをして転置データ（transpose_mem）を更新。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO71-8">(8)</a> </p></td><td valign="top" align="left"><p>
+転置データ（transpose_mem）にスケールファクターをかけて値を調整します。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO71-9">(9)</a> </p></td><td valign="top" align="left"><p>
+転置データ（transpose_mem）を転置して、処理済みデータ（processed_mem）に書き込み。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO71-10">(10)</a> </p></td><td valign="top" align="left"><p>
+処理済みデータ（processed_mem）のビット反転。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO71-11">(11)</a> </p></td><td valign="top" align="left"><p>
+処理済みデータ（processed_mem）のFFTをしてデータを更新。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO71-12">(12)</a> </p></td><td valign="top" align="left"><p>
+処理済みデータ（processed_mem）にスケールファクターをかけて値を調整します。
+</p></td></tr></table></div><p>bit_reverse関数がビット反転、transpose関数が転置、fft_2dが高速フーリエ変換（第4引数を-1にすると逆変換）、fft_inverse2dが逆フーリエ変換のスケーリングに対応します。</p><p>fft_inverse2dは以下のカーネル関数に対応します。</p><pre xmlns="" class="prettyprint">__kernel void fft_inverse2d(int N, __global float2* F) {
+        size_t x = get_global_id(0);
+        size_t row_size = get_global_size(0);
+        size_t y = get_global_id(1);
+        F[y*row_size + x] /= N;
+}</pre><p>この関数は単純に全ての要素に処理するデータサイズ（N）で割り算をしています。</p><p><strong>FFTGPU2D.py. </strong>
+</p><pre xmlns="" class="prettyprint">import pyopencl as cl
+import numpy as np
+from numpy.random import *
+
+# private static final String KERNEL_PATH = "fft2d.cl";
+KERNEL_INIT = "fft_init"
+KERNEL_BIT_REVERSAL = "bit_reversal"
+KERNEL_FFT = "fft2d"
+KERNEL_FFT_INVERSE = "fft_inverse2d"
+KERNEL_FFT_TRANSPOSE = "async_transpose"
+KERNEL_TRANSPOSE = "transpose"
+
+width = 8
+height = 8
+
+DATA_SIZE = width * height
+LOCAL_SIZE = 4
+TILE_SIZE = LOCAL_SIZE
+
+data = np.arange(DATA_SIZE &lt;&lt; 1).astype(np.float32)
+
+print(data)
+
+processed_data = np.zeros(DATA_SIZE &lt;&lt; 1).astype(np.float32)
+transpose_data = np.zeros(DATA_SIZE &lt;&lt; 1).astype(np.float32)
+
+global_work_size = (np.uint32(width / 2), height, 1)
+local_work_size = (1, 1, 1)
+
+global_work_size_rect = (width, height, 1)
+local_work_size_rect = (LOCAL_SIZE, LOCAL_SIZE, 1)
+
+devices = [cl.get_platforms()[0].get_devices(cl.device_type.GPU)[0]]
+
+ctx = cl.Context(devices)
+queue = cl.CommandQueue(ctx)
+mf = cl.mem_flags
+
+data_mem = cl.Buffer(ctx, mf.USE_HOST_PTR, hostbuf=data)
+processed_mem = cl.Buffer(ctx, mf.USE_HOST_PTR, hostbuf=processed_data)
+transpose_mem = cl.Buffer(ctx, mf.USE_HOST_PTR, hostbuf=transpose_data)
+
+opt_string = "-Dsize="+str(TILE_SIZE)
+options = [opt_string]
+
+program = cl.Program(ctx, """
+    inline int reverseBit(int x, int stage) {
+        int b = 0;
+        int bits = stage;
+        while (bits != 0){
+              b &lt;&lt;=1;
+              b |=( x &amp;1 );
+              x &gt;&gt;=1;
+              bits&gt;&gt;=1;
+        }
+        return b;
+    }
+
+    __kernel void bit_reversal(__global float2* data, uint N) {
+        size_t x = get_global_id(0);
+        size_t row_size = get_global_size(0);
+        size_t y = get_global_id(1);
+        uint rev = reverseBit(x, row_size-1);
+        float2 in1;
+        float2 in2;
+        if(x &lt; rev) {
+            in1 = data[y*row_size + x];
+            in2 = data[y*row_size + rev];
+            //printf("x=%d, y=%d, pair: %d - %d, rs = %d, di=%d\\n", x, y, x, rev, row_size,y*row_size + x);
+            data[y*row_size + rev] = in1;
+            data[y*row_size + x] = in2;
+        }
+    }
+
+    __kernel void fft_init(
+            __global float2* data,
+            __global float2* F,
+            int N)
+    {
+        int x = get_global_id(0);
+        int row_size = get_global_size(0)*2;
+        int y = get_global_id(1);
+        int stride = N/2;
+        float floor_adjust = x/stride;
+        int index = ceil(floor_adjust)*stride + (x%row_size);
+
+        float2 in0, in1;
+
+        in0 = data[y*row_size + index];
+        in1 = data[y*row_size + index+stride];
+
+        float2 v0;
+        v0 = in0;
+        in0 = v0 + in1;
+        in1 = v0 - in1;
+
+        F[y*row_size + index] = in0;
+        F[y*row_size + index + stride] = in1;
+
+        //printf("x=%d, y=%d, rs=%d, di=%d, pair: %d - %d, N = %d, s = %d, in0:in1 = %f:%f\\n", x,y,row_size,y*row_size + index, index, index+stride, N, stride, F[y*row_size + index].x, F[y*row_size + index+stride].x);
+
+    }
+
+
+    __kernel void fft2d(
+            __global float2* F,
+            int N,
+            int sign)
+    {
+        int x = get_global_id(0);
+        int row_size = get_global_size(0)*2;
+        int y = get_global_id(1);
+        int stride = N/2;
+        float floor_adjushgt = x/stride;
+        int index = ceil(floor_adjust)*stride + (x%row_size);
+
+        float2 in0, in1;
+
+        in0 = F[y*row_size + index];
+        in1 = F[y*row_size + index+stride];
+
+        float angle = -2*M_PI_F*(index)/N;
+
+        float c,s;
+        float2 v;
+        float2 tmp0;
+
+        c = native_cos(angle);
+        s = sign*native_sin(angle);
+
+        v.x = c * (in1.x) - s * in1.y;
+        v.y = c * (in1.y) + s * in1.x;
+
+        tmp0 = in0;
+
+        in0 = tmp0 + v;
+        in1 = tmp0 - v;
+
+        F[y*row_size + index] = in0;
+        F[y*row_size + index + stride] = in1;
+
+        //printf("x=%d, y=%d, pair: %d - %d, N = %d, s = %d, sign = %d c:s = %f:%f\\n in0:in1 = %f:%f\\n", x,y, y*row_size + index, y*row_size + index+stride, N, stride, sign, c, s, F[y*row_size + index].x, F[y*row_size + index+stride].x);
+
+    }
+
+    __kernel void fft_inverse2d(int N, __global float2* F) {
+        size_t x = get_global_id(0);
+        size_t row_size = get_global_size(0);
+        size_t y = get_global_id(1);
+        F[y*row_size + x] /= N;
+        //printf("di=%d, F[]=%f\\n",y*row_size + x,F[y*row_size + x].x);
+    }
+
+    __kernel void transpose(
+                 __global float2* input,
+                 __global float2* output,
+                 size_t width,
+                 size_t height)
+    {
+
+        __local float2 tile[size * (size+1)];
+        size_t x = get_global_id(0);
+        size_t y = get_global_id(1);
+
+        size_t lx = get_local_id(0);
+        size_t ly = get_local_id(1);
+
+        size_t gx = get_group_id(0);
+        size_t gy = get_group_id(1);
+
+        size_t index_input = y * width + x;
+        size_t index_tile = ly * (size+1) + lx;
+        tile[index_tile]=  input[index_input];
+        barrier(CLK_LOCAL_MEM_FENCE);
+
+        size_t ox = gy * size + lx;
+        size_t oy = gx * size + ly;
+
+        size_t index_output = oy * height + ox;
+        index_tile = lx * (size+1) + ly;
+        output[index_output] = tile[index_tile];
+        //printf("output[%d %d %d %d]=%f, index_tile=%d, index_out=%d\\n",x,y,gx,gy,output[index_output].x, index_tile, index_output);
+
+    }
+""").build(options=options)
+
+
+kernel_init = cl.Kernel(program, name=KERNEL_INIT)
+kernel_bit_reversal = cl.Kernel(program, name=KERNEL_BIT_REVERSAL)
+kernel_fft = cl.Kernel(program, name=KERNEL_FFT)
+kernel_fft_inverse = cl.Kernel(program, name=KERNEL_FFT_INVERSE)
+kernel_transpose = cl.Kernel(program, name=KERNEL_TRANSPOSE)
+
+
+def bit_reverse(input_mem):
+    N = DATA_SIZE
+    kernel_bit_reversal.set_arg(0, input_mem)
+    kernel_bit_reversal.set_arg(1, np.uint32(N))
+    cl.enqueue_nd_range_kernel(queue, kernel_bit_reversal, global_work_size_rect, local_work_size)
+
+
+def fft_2d(N, input_mem, output_mem, sign, is_init):
+    fftSize = 1
+    ns = np.uint32(np.log2(N))
+    for i in range(ns):
+        fftSize &lt;&lt;= 1
+        if is_init is False or fftSize != 2:
+            kernel_fft.set_arg(0, output_mem)
+            kernel_fft.set_arg(1, np.int32(fftSize))
+            kernel_fft.set_arg(2, np.int32(sign))
+            cl.enqueue_nd_range_kernel(queue, kernel_fft, global_work_size, local_work_size)
+        else:
+            kernel_init.set_arg(0, input_mem)
+            kernel_init.set_arg(1, output_mem)
+            kernel_init.set_arg(2, np.int32(fftSize))
+            cl.enqueue_nd_range_kernel(queue, kernel_init, global_work_size, local_work_size)
+
+
+def transpose(input_mem, output_mem):
+    kernel_transpose.set_arg(0, input_mem)
+    kernel_transpose.set_arg(1, output_mem)
+    kernel_transpose.set_arg(2, np.int32(width))
+    kernel_transpose.set_arg(3, np.int32(height))
+    cl.enqueue_nd_range_kernel(queue, kernel_transpose, global_work_size_rect, local_work_size_rect)
+
+
+def fft_inverse2d(N, inverse_mem):
+    kernel_fft_inverse.set_arg(0, np.int32(N))
+    kernel_fft_inverse.set_arg(1, inverse_mem)
+    cl.enqueue_nd_range_kernel(queue, kernel_fft_inverse, global_work_size_rect, local_work_size)
+
+
+bit_reverse(data_mem)
+fft_2d(width, data_mem, processed_mem, 1, True)
+
+transpose(processed_mem, transpose_mem)
+
+bit_reverse(transpose_mem)
+fft_2d(height, None, transpose_mem, 1, False)
+
+bit_reverse(transpose_mem)
+fft_2d(height, None, transpose_mem, -1, False)
+fft_inverse2d(height, transpose_mem)
+
+transpose(transpose_mem, processed_mem)
+
+bit_reverse(processed_mem)
+fft_2d(width, None, processed_mem, -1, False)
+fft_inverse2d(width, processed_mem)
+
+cl.enqueue_read_buffer(queue, mem=processed_mem, hostbuf=processed_data)
+
+queue.finish()
+
+print(processed_data)</pre><p>
+</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch20s01.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch20.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch20s03.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

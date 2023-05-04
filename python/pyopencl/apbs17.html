@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>B.17. イメージオブジェクトのマッピング</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="apb.html" title="Appendix B. OpenCL 1.2 API Reference" /><link rel="prev" href="apbs16.html" title="B.16. イメージの読み込みと書き込み" /><link rel="next" href="apbs18.html" title="B.18. イメージ情報取得" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="apbs16.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apbs18.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_イメージオブジェクトのマッピング"></a>B.17. イメージオブジェクトのマッピング</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clenqueuemapimage"></a>B.17.1. clEnqueueMapImage</h3></div></div></div><div class="table"><a id="clEnqueueMapImage"></a><p class="title"><strong>Table B.49. 表：clEnqueueMapImage</strong></p><div class="table-contents"><table class="table" summary="表：clEnqueueMapImage" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>関数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>void *</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clEnqueueMapImage (
+    cl_command_queue command_queue,
+    cl_mem image,
+    cl_bool blocking_map,
+    cl_map_flags map_flags,
+    const size_t *origin,
+    const size_t *region,
+    size_t *image_row_pitch,
+    size_t *image_slice_pitch,
+    cl_uint num_events_in_wait_list,
+    const cl_event *event_wait_list,
+    cl_event *event,
+    cl_int *errcode_ret
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>イメージオブジェクトの領域からホストアドレス
+空間へのマップを行いマップされた領域へのポインタを戻
+すコマンドを挿入。</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>引数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>command_queue</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">マップコマンドを挿入す
+るコマンドキューを指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>image</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">有効なイメージオブジェクト
+を指定。command_queueと
+imageと関連付けられた
+OpenCLコンテキストは同じ
+となる必要がある。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>blocking_map</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">マップ操作を、ブロッキング
+で行うのかノンブロッキングで
+行うのかを指定。
+
+blocking_mapにCL_TRUEを
+指定すると、imageの指定した
+領域がホストアドレス空間に
+マップされるまでclEnqueue
+MapImageは戻らない。
+
+アプリケーションはclEnqueue
+MapImageから戻るポインタを
+使用してマップされた領域にア
+クセスできる。
+
+blocking_mapにCL_FALSEを
+指定すると、マップ操作はノンブ
+ロッキングとなり、
+clEnqueueMapImageが戻す
+マップ領域はコマンドが完了する
+まで利用できません。
+
+event引数にはイベントオブ
+ジェクトが返され、マップコ
+マンドの実行状況の確認に利
+用できる。マップコマンドが
+完了すると、clEnqueue
+MapImageが戻すポインタを利
+用してマップ領域の内容にア
+クセスできる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>map_flags</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">マップの設定を行うビット
+フィールド。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>origin</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">1D、2D、3Dイメージ内の
+(x,y,z)オフセットをピク
+セルで指定。
+
+2Dイメージ配列内の(x,y)
+オフセットとイメージイン
+デックスを指定。
+
+1Dイメージ配列内の(x)オフ
+セットとイメージインデック
+スを指定。
+
+イメージが2Dイメージオ
+ブジェクトの場合、
+origin[2]は0となる。
+
+イメージが1Dイメージ
+または1Dイメージバッファ
+オブジェクトの場合、
+origin[1]とorigin[2]
+は0となる。
+
+イメージが1Dイメージ配列
+オブジェクトの場合、
+origin[1]は1Dイメージ
+配列のインデックス（添字）
+を記述する。
+イメージが2Dイメージ配列
+オブジェクトの場合、
+origin[2]は2Dイメージ
+配列のインデックス（添字）
+を記述する。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>region</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">1D、2D、3D矩形領域の
+(width, height,
+depth) をピクセルで
+定義。
+
+2D矩形領域の(width,
+height)をピクセルで定義
+し、2Dイメージ配列のイメ
+ージ個数の定義。
+
+1D矩形領域の(width)を
+ピクセルで定義し、1Dイメ
+ージ配列のイメージ個数を
+定義。
+
+イメージが2Dイメージオブ
+ジェクトの場合、
+region[2]は1となる。
+
+イメージが1Dイメージまた
+は、1Dイメージバッファオ
+ブジェクトの場合、
+region[1]とregion[2]
+は1となる。
+
+イメージが1Dイメージ配列
+オブジェクトの場合、
+region[2]は1となる。
+regionの値は0とはな
+らない。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>image_row_
+pitch</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">マップされる領域での
+走査線の長さをバイトで
+返します。非NULLの値
+を指定する必要がある。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>image_slice_
+pitch</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">マップされる領域で
+の3Dイメージの2Dス
+ライスのサイズ、また
+は1D/2Dイメージ、
+1D/2Dイメージ配列の
+サイズをバイトで戻す。
+
+imageが2Dイメージ
+オブジェクトでこの引
+数がNULLでない場合、
+0が戻される。
+
+imageが3Dイメージオ
+ブジェクト、1D/2Dイメ
+ージ配列である場合、
+image_slice_pitch
+には非NULLの値を指定
+する必要がある。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>num_events_
+in_wait_list</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_list
+で指定したイベントオ
+ブジェクトの数を指定
+します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>event_wait_
+list</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">このコマンドが実行
+される前に完了されて
+いるイベントを指定。
+
+event_wait_listが
+NULLの場合、このコマ
+ンドはどのイベントの完
+了待機もしない。
+
+event_wait_listが
+NULLの場合、num_events_
+in_wait_listは0とな
+る必要がある。
+
+event_wait_listが
+NULLではない場合、event_
+wait_listが指す各イベン
+トは有効となり、またnum_
+events_in_wait_listは
+0より大きな値となる必要
+がある。
+
+event_wait_listに指定
+したイベントは同期点とし
+てふるまう。event_
+wait_list内のイベント
+と関連付けられたOpenCL
+コンテキストと
+command_queueと関連付
+けられたOpenCLコンテキ
+ストは同じとなる必要がある。
+
+event_wait_listと関連
+付けられたメモリ領域は
+関数が戻った後に、再利
+用か解放できる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>event</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">マップコマンドを識別
+するイベントオブジェク
+トが戻され、コマンド完了
+の確認やコマンド完了の
+待機に使える。
+
+eventがNULLの場合、
+アプリケーションはコ
+マンドの状況確認やコマ
+ンド完了待ちができなくなる。
+
+event_wait_listと
+eventがNULLでない場
+合、eventはevent_
+wait_list配列の要素
+を参照すべきでない。
+
+clEnqueueBarrier
+WithWaitListを代わり
+に使うことができる。
+event_wait_listと
+event引数NULLでない
+場合、event引数は
+event_wait_list内
+の要素を参照すべきで
+ない。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>errcode_ret</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">適切なエラーコード
+を返します。
+errcode_retがNULL
+の場合、エラーコード
+は返されません。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>成功した場合の戻り値</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>マップ操作が成功
+すると、
+clEnqueueMapImage
+はマップ領域へのポイ
+ンタを返し
+errcode_ret に
+CL_SUCCESS を
+設定します。</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>失敗した場合の戻り値</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+COMMAND_QUEUE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queue
+が有効なコマンド
+キューでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+CONTEXT</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queue
+とimageに関連付け
+られたcontextが同
+じでない場合。
+
+command_queueと
+event_wait_list
+内のeventsに関連
+付けられたcontext
+が同じでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+MEM_OBJECT</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">imageが有効なイ
+メージオブジェクト
+でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+VALUE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">(origin,
+origin+region)で
+与えられるマップされ
+た領域が範囲外であ
+る場合。
+
+map_flagsに指定さ
+れた値が有効でない
+場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+VALUE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">originとregionの値が規則に従わない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+VALUE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">image_row_pitch
+がNULLの場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+VALUE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">イメージが3Dイメー
+ジ、1D/2Dイメージ配
+列オブジェクトのいず
+れかで、
+image_slice_pitch
+がNULLの場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+EVENT_WAIT_LIST</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_list
+がNULLで、num_
+events_in_wait_
+list &gt; 0の場合。
+
+event_wait_listが
+NULLでなくnum_
+events_in_wait_
+listが0の場合。
+
+event_wait_list
+内のイベントオブジ
+ェクトが有効なイベ
+ントでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+IMAGE_SIZE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">イメージの寸法
+（幅、高さ、行・
+スライスの長さ）
+がcommand_queue
+と関連付けられたデ
+バイスでサポートさ
+れていない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_IMAGE_
+FORMAT_NOT_
+SUPPORTED</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">イメージ型式
+（image channel
+orderやデータ型）が
+queueに関連付けら
+れたデバイスにサポ
+ートされていない
+場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_MAP_
+FAILURE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">リクエストされた
+領域をホストアド
+レス空間へのマップ
+に失敗した場合。
+
+CL_MEM_USE_
+HOST_PTRまたは
+CL_MEM_ALLOC_
+HOST_PTRで生成
+されたイメージオ
+ブジェクトでこの
+エラーは発生しない。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_EXEC_STATUS_
+ERROR_FOR_EVENTS_
+IN_WAIT_LIST</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">マップ操作がブロ
+ッキングで、event_
+wait_listのイベント
+の実行ステータスが負
+の整数値である場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_MEM_OBJECT_
+ALLOCATION_FAILURE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">イメージに関連付け
+られたデータ保存領域
+のメモリの確保に失敗
+した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+OPERATION</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queueに
+関連付けられる
+デバイスがイメージ
+をサポートしない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+OPERATION</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">イメージがCL_MEM_
+HOST_WRITE_ONLY
+またはCL_MEM_HOST_
+NO_ACCESSで生成され、
+CL_MAP_READが
+map_flagsに設定
+された場合。
+
+イメージがCL_MEM_
+HOST_READ_ONLY
+またはCL_MEM_HOST_
+NO_ACCESSで生成
+され、CL_MAP_WRITE
+またはCL_MAP_WRITE_
+INVALIDATE_REGION
+がmap_flagsに設定
+された場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_OF_
+RESOURCES</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_OF_
+HOST_MEMORY</em></span></p></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_cl_map_flags"></a>B.17.2. cl_map_flags</h3></div></div></div><div class="table"><a id="cl_map_flags"></a><p class="title"><strong>Table B.50. 表：cl_map_flags</strong></p><div class="table-contents"><table class="table" summary="表：cl_map_flags" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_map_flags
+￼
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">詳細
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_MAP_READ</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">このフラグは
+メモリオブジェクト
+内でマップされた
+領域が読み込み用に
+マップされること
+を指定。
+
+clEnqueueMap
+{Buffer | Image}
+コマンドが完了した
+際に、
+clEnqueueMap
+{Buffer | Image}
+が戻すポインタは、
+マップされた領域の
+最新ビットを持つ
+ことを保証します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_MAP_WRITE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">このフラグは
+メモリオブジェクト
+内でマップされた
+領域が書き込み用
+にマップされるこ
+とを指定。
+
+clEnqueueMap
+{Buffer | Image}
+コマンドが完了した
+際に、clEnqueueMap
+{Buffer | Image}
+が戻すポインタは、
+マップされた領域の
+最新ビットを持つこ
+とを保証します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_MAP_WRITE_
+INVALIDATE_REGION
+￼</pre></td><td style="" align="left" valign="top"><pre class="literallayout">このフラグはメモリ
+オブジェクト内で
+マップされた領域が
+書き込み用にマップ
+されることを指定。
+
+マップされた領域が
+上書きされる際には、
+マップされる領域の
+内容は捨てられる。
+
+このフラグによって、
+clEnqueueMap
+{Buffer | Image}
+コマンドが完了した
+際に、
+clEnqueueMap
+{Buffer | Image}
+が戻すポインタは、
+マップされた領域の
+最新ビットを持つこ
+とを保証しなくなります。
+
+CL_MAP_READまた
+はCL_MAP_WRITEと
+CL_MAP_WRITE_
+INVALIDATE_
+REGIONは相互排他
+の関係を持ちます。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apbs16.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apb.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apbs18.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

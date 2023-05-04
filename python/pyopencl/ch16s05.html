@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>16.5. イメージオブジェクト</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch16.html" title="Chapter 16. OpenCLランタイム" /><link rel="prev" href="ch16s04.html" title="16.4. バッファオブジェクトのマップ" /><link rel="next" href="ch16s06.html" title="16.6. イメージの読み込みと書き込み" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch16s04.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch16s06.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_イメージオブジェクト"></a>16.5. イメージオブジェクト</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="image_src"></a>16.5.1. 検証環境の準備</h3></div></div></div><div class="important" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Important</h3><p>OpenCLを使用した画像処理を行なうために画像をGithubのリポジトリに用意しました。以下が素材を含むリポジトリです。</p><p><a class="ulink" href="https://github.com/MacKomatsu/OpenCLIntro" target="_top">https://github.com/MacKomatsu/OpenCLIntro</a></p><p>この章で扱うイメージファイルでソースコードが使うのは以下の２つです。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<a class="ulink" href="https://github.com/MacKomatsu/OpenCLIntro/blob/master/SAMPLE.png" target="_top">https://github.com/MacKomatsu/OpenCLIntro/blob/master/SAMPLE.png</a>
+</li><li class="listitem">
+<a class="ulink" href="https://github.com/MacKomatsu/OpenCLIntro/blob/master/SAMPLE3.png" target="_top">https://github.com/MacKomatsu/OpenCLIntro/blob/master/SAMPLE3.png</a>
+</li></ul></div><p>ソースディレクトリにダウンロードしたPNGファイルを保存してください。</p></div><div class="figure"><a id="idm5471"></a><p class="title"><strong>Figure 16.1. SAMPLE.png</strong></p><div class="figure-contents"><div class="mediaobject"><img src="images/SAMPLE.png" alt="width=200" /></div></div></div><br class="figure-break" /><div class="figure"><a id="idm5478"></a><p class="title"><strong>Figure 16.2. SAMPLE3.png</strong></p><div class="figure-contents"><div class="mediaobject"><img src="images/SAMPLE3.png" alt="width=200" /></div></div></div><br class="figure-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_image"></a>16.5.2. Image</h3></div></div></div><p>Imageクラスは1Dイメージ、1Dイメージバッファ、1Dイメージ配列、2Dイメージ、2Dイメージ配列、3Dイメージオブジェクトを生成します。</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳細は「表：clCreateImage」（<a class="xref" href="apbs15.html#clCreateImage" title="Table B.37. 表：clCreateImage">Table B.37, “表：clCreateImage”</a>）、「表：host_ptrバッファサイズ」（<a class="xref" href="apbs15.html#host_ptr" title="Table B.38. 表：host_ptrバッファサイズ">Table B.38, “表：host_ptrバッファサイズ”</a>）、「表：cl_image_format」（<a class="xref" href="apbs15.html#cl_image_format" title="Table B.39. 表：cl_image_format">Table B.39, “表：cl_image_format”</a>）、「表：cl_image_desc」（<a class="xref" href="apbs15.html#cl_image_desc" title="Table B.42. 表：cl_image_desc">Table B.42, “表：cl_image_desc”</a>）を参照ください。</p></div><p>クラスの定義は以下のようになります。</p><pre xmlns="" class="prettyprint">pyopencl.Image(
+    context, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO32-1"></a>(1)
+    flags, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO32-2"></a>(2)
+    format, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO32-3"></a>(3)
+    shape=None, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO32-4"></a>(4)
+    pitches=None,
+    hostbuf=None, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO32-5"></a>(5)
+    is_array=False,
+    buffer=None):</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO32-1">(1)</a> </p></td><td valign="top" align="left"><p>
+有効なOpenCLコンテキストを指定。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO32-2">(2)</a> </p></td><td valign="top" align="left"><p>
+生成されるイメージメモリオブジェクトの割当・確保に使うメモリ領域と使用情報を指定するビットフィールド。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO32-3">(3)</a> </p></td><td valign="top" align="left"><p>
+確保する領域内に格納するイメージ形式プロパティを記述する構造体へのポインタを指定。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO32-4">(4)</a> </p></td><td valign="top" align="left"><p>
+確保する領域内に格納するイメージの型と次元数を記述するshape属性を指定
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO32-5">(5)</a> </p></td><td valign="top" align="left"><p>
+アプリケーションが確保済みのイメージデータを指定。
+</p></td></tr></table></div><p>コンストラクタの引数の中にはImageFormatというクラスがあります。</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+ImageFormat
+</span></dt><dd>
+次元数、CL_R、CL_RGB、CL_RGBA等のチャネル順序等を指定します。
+</dd></dl></div><p>このImageFormatは直接指定することもできますが、手間を減らすためにget_supported_image_formats関数を使うことを推奨します。</p><p>では例を見てみましょう。</p><pre xmlns="" class="prettyprint">img_format = cl.get_supported_image_formats(
+        ctx,
+        cl.mem_flags.READ_WRITE,
+        cl.mem_object_type.IMAGE2D)[0]
+output_mem = cl.Image(
+    context=ctx,
+    flags=cl.mem_flags.ALLOC_HOST_PTR,
+    format=img_format,
+    shape=(300, 300))</pre><p>この例では2次元のイメージを既に読み込んだ事を前提とします。また幅と高さについても既知の情報とします。つまりイメージオブジェクトをImageクラスを用いて生成する際のは、イメージを読み込み後となります。。</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_実装例_8"></a>16.5.3. 実装例</h3></div></div></div><p>それでは実装をしてみたいと思います。以下のソースコードでは、SAMPLE3.pngというファイルをPILライブラリのImage.openという関数を使い読みこみます。読み込んだデータをImageクラスのコンストラクタを呼び出してイメージオブジェクトを生成します。</p><p>さらにイメージオブジェクトをカーネルで処理後に、enqueue_read_image関数を使って、イメージオブジェクトからホストのメモリ領域にデータを読み込みます。</p><p>最後にImageライブラリ（PILの方です）の関数を使って、ホストメモリ領域にあるイメージデータをimage.pngファイルに書き込みます。</p><pre xmlns="" class="prettyprint">from PIL import Image
+import pyopencl as cl
+import numpy as np
+
+img = Image.open('image/SAMPLE.png', 'r')
+
+width, height = img.size
+
+imgArray = np.asarray(img).astype(np.uint8)
+img.close()
+
+ctx = cl.create_some_context()
+
+queue = cl.CommandQueue(ctx)
+
+img_format = cl.ImageFormat(cl.channel_order.RGBA, cl.channel_type.UNORM_INT8)
+
+input_mem = cl.Image(context=ctx, flags=cl.mem_flags.USE_HOST_PTR, format=img_format, hostbuf=imgArray)
+output_mem = cl.Image(context=ctx, flags=cl.mem_flags.ALLOC_HOST_PTR, format=img_format, shape=(300, 300))
+
+program = cl.Program(ctx, """
+    __constant sampler_t sampler = CLK_NORMALIZED_COORDS_FALSE |
+             CLK_ADDRESS_CLAMP | CLK_FILTER_NEAREST;
+
+    __kernel void pass_through(
+        image2d_t src_image,
+        write_only image2d_t dst_image) {
+        int x = get_global_id(0);
+            int y = get_global_id(1);
+            int2 coord = (int2)(x, y);
+
+            float4 pixel = read_imagef(src_image, sampler, coord);
+
+            write_imagef(dst_image, coord, pixel);
+    }
+    """).build()
+
+kernel = cl.Kernel(program, name="pass_through")
+
+kernel.set_arg(0, input_mem)
+kernel.set_arg(1, output_mem)
+
+cl.enqueue_nd_range_kernel(queue, kernel, global_work_size=(2,), local_work_size=(1,))
+
+outArray = np.ndarray((300, 300, 4)).astype(np.uint8)
+
+cl.enqueue_read_image(queue=queue, mem=output_mem, hostbuf=outArray, origin=(0, 0, 0), region=(300, 300, 1))
+
+print(outArray[0][0:5])
+
+new_img = Image.fromarray(outArray, mode="RGBA")
+
+new_img.save("image/new_image.png", "PNG")</pre><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_カーネル関数による画像データ処理"></a>カーネル関数による画像データ処理</h4></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「OpenCL-Cイメージ処理関数」（<a class="xref" href="ch17s10.html" title="17.10. OpenCL-Cイメージ処理関数">Section 17.10, “OpenCL-Cイメージ処理関数”</a>）を参照ください。</p></div><p>以下が前の項目で使ったプログラムオブジェクトを構成するカーネル関数です。</p><pre xmlns="" class="prettyprint">__constant sampler_t sampler = CLK_NORMALIZED_COORDS_FALSE |
+             CLK_ADDRESS_CLAMP | CLK_FILTER_NEAREST; //<a xmlns="http://www.w3.org/1999/xhtml" id="CO33-1"></a>(1)
+
+__kernel void helloworld(read_only image2d_t src_image, //<a xmlns="http://www.w3.org/1999/xhtml" id="CO33-2"></a>(2)
+                        write_only image2d_t dst_image) { //<a xmlns="http://www.w3.org/1999/xhtml" id="CO33-3"></a>(3)
+
+        int2 coord = (int2)(get_global_id(0), get_global_id(1)); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO33-4"></a>(4)
+        float4 pixel = read_imagef( //<a xmlns="http://www.w3.org/1999/xhtml" id="CO33-5"></a>(5)
+                                        src_image, //<a xmlns="http://www.w3.org/1999/xhtml" id="CO33-6"></a>(6)
+                                        sampler, //<a xmlns="http://www.w3.org/1999/xhtml" id="CO33-7"></a>(7)
+                                        (int2)(coord.x,coord.y)); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO33-8"></a>(8)
+
+        write_imagef(dst_image, coord, pixel); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO33-9"></a>(9)
+}</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO33-1">(1)</a> </p></td><td valign="top" align="left"><p>
+サンプラーを指定。（データ型により使えるパラメーターが異なります。例えば、`CL_UNORM_INT8`の場合は`CLK_NORMALIZED_COORDS_FALSE`と`CLK_FILTER_NEAREST`は必須の設定です）
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO33-2">(2)</a> </p></td><td valign="top" align="left"><p>
+イメージオブジェクトはimage2d_t型として宣言します。読み込みにしか使いませんので、`read_only`修飾子を付加します。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO33-3">(3)</a> </p></td><td valign="top" align="left"><p>
+イメージオブジェクトはimage2d_t型として宣言します。書き込みにしか使いませんので、`write_only`修飾子を付加します。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO33-4">(4)</a> </p></td><td valign="top" align="left"><p>
+x,y座標を取得します。この場合の座標とはインデックス空間内で定義されます。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO33-5">(5)</a> </p></td><td valign="top" align="left"><p>
+`read_imagef`は浮動小数点数で表した画素情報）を所定のチャネル順序（戻り値型がfloat4をしているので、RGBA等の4チャネルが前提で、`src_image`から取り出します。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO33-6">(6)</a> </p></td><td valign="top" align="left"><p>
+引数にあるイメージオブジェクト、`src_image`を指定。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO33-7">(7)</a> </p></td><td valign="top" align="left"><p>
+サンプラーを指定。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO33-8">(8)</a> </p></td><td valign="top" align="left"><p>
+画素の座標を指定。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO33-9">(9)</a> </p></td><td valign="top" align="left"><p>
+イメージオブジェクト`dst_image`に画素情報を書き込み。
+</p></td></tr></table></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_イメージデータのバッファ"></a>16.5.4. イメージデータのバッファ</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>「表：host_ptrバッファサイズ」（<a class="xref" href="apbs15.html#host_ptr" title="Table B.38. 表：host_ptrバッファサイズ">Table B.38, “表：host_ptrバッファサイズ”</a>）を参照ください。</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_imageformat"></a>16.5.5. ImageFormat</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳細は「表：cl_image_format」（<a class="xref" href="apbs15.html#cl_image_format" title="Table B.39. 表：cl_image_format">Table B.39, “表：cl_image_format”</a>）、「表：image_channel_order」（<a class="xref" href="apbs15.html#image_channel_order" title="Table B.40. 表：image_channel_order">Table B.40, “表：image_channel_order”</a>）と「表：image_channel_data_type」（<a class="xref" href="apbs15.html#image_channel_data_type" title="Table B.41. 表：image_channel_data_type">Table B.41, “表：image_channel_data_type”</a>）を参照ください。</p></div><p>イメージの形式を記述するユーティリティクラスは次の通り定義されています。</p><pre xmlns="" class="prettyprint">class pyopencl.ImageFormat(
+    [channel_order, channel_type])</pre><p>channel_orderは、チャネル数とチャネルの配置、つまりイメージ内に保存されるチャネルのメモリ配置を指定します。</p><p>channel_typeは、チャネルのデータ型を指定するクラスです。</p><pre xmlns="" class="prettyprint">class pyopencl.channel_type</pre><p>サポートされているビットフィールドの値は以下の通りです。</p><pre xmlns="" class="prettyprint">FLOAT
+HALF_FLOAT
+SIGNED_INT16
+SIGNED_INT32
+SIGNED_INT8
+SNORM_INT16
+SNORM_INT8
+UNORM_INT16
+UNORM_INT8
+UNORM_INT_101010
+UNORM_SHORT_555
+UNORM_SHORT_565
+UNSIGNED_INT16
+UNSIGNED_INT32
+UNSIGNED_INT8</pre><p>`channel_type`の値では、`UNORM_SHORT_565`、`UNORM_SHORT_555`、`UNORM_INT_101010`は特別なイメージ形式となります。</p><p>各チャネル要素は`unsigned short`型または`unsigned int`型に詰められています。データの詰め方としては、最初のチャネルがビットフィールド内の最上位ビットになるように詰められます。次のチャネルは占有するビット領域が連続になるようにすぐ下のビット領域に詰められます。</p><p>`UNORM_SHORT_565`の場合、Rが15から11ビット、Gが10から5ビット、Bが4から0ビットに詰められます。</p><p>`UNORM_SHORT_555`の場合、15ビット目は未定義となり、Rが14から10ビット、Gが9から5ビット、Bが4から0ビットに詰められます。</p><p>`UNORM_INT_101010`の場合、31から30ビットは未定義となり、R が29から20ビット、G が19から10ビット、B が9から0ビットに詰められます。</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_実装例_9"></a>実装例</h4></div></div></div><p>2次元イメージオブジェクトで使う一般的な、イメージ記述子とイメージ型式は以下のようになります。</p><pre xmlns="" class="prettyprint">img_format = cl.ImageFormat(cl.channel_order.RGBA, cl.channel_type.UNORM_INT8)</pre><p>ウェブの世界で使うCSSで使う型式とするには<code class="literal">UNSIGNED_INT8`とを選びます。`UNORM_INT8`は</code>[0.0,…,1.0]`の正規化された値をとります。画像処理をするには、正規化した方が便利ですので覚えておくと良いでしょう。</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_イメージ記述子_mem_object_type"></a>16.5.6. イメージ記述子(mem_object_type)</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>NOTE: 詳細は「表：cl_image_desc」（<a class="xref" href="apbs15.html#cl_image_desc" title="Table B.42. 表：cl_image_desc">Table B.42, “表：cl_image_desc”</a>）を参照ください。</p></div><p>OpenCLでイメージを処理する場合、イメージ記述子を設定しなくてはいけません。記述子で最低限設定が必要なものは、`cl_mem_object_type`と、高さ、幅、奥行きに関する情報です。</p><p>pyopencl.mem_object_typeについては以下のものを設定できます。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+IMAGE1D
+</li><li class="listitem">
+IMAGE1D_BUFFER
+</li><li class="listitem">
+IMAGE1D_ARRAY
+</li><li class="listitem">
+IMAGE2D
+</li><li class="listitem">
+IMAGE2D_ARRAY
+*
+</li></ul></div><p>幅、高さ、奥行きについてはピクセル数などを指定できます。本書では`300 x 300`画素の画像を使うことが多いです。</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_get_supported_image_formats"></a>16.5.7. get_supported_image_formats</h3></div></div></div><p>get_supported_image_formats関数はコンテキスト内のデバイスがサポートするイメージ型式の和集合を戻します。イメージメモリオブジェクトに関する以下の情報を指定したときにOpenCL実装がサポートするイメージ形式の一覧取得に使うことができます。</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：clGetSupportedImageFormats」（<a class="xref" href="apbs15.html#clGetSupportedImageFormats" title="Table B.43. 表：clGetSupportedImageFormats">Table B.43, “表：clGetSupportedImageFormats”</a>）を参照ください。</p></div><p>関数の定義は以下のようになります。</p><pre xmlns="" class="prettyprint">pyopencl.get_supported_image_formats(
+    context, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO34-1"></a>(1)
+    flags, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO34-2"></a>(2)
+    image_type) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO34-3"></a>(3)</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO34-1">(1)</a> </p></td><td valign="top" align="left"><p>
+イメージオブジェクトを生成する有効なOpenCLコンテキストを指定。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO34-2">(2)</a> </p></td><td valign="top" align="left"><p>
+イメージオブジェクトの割当に使うメモリ領域や、バッファオブジェクトの使用情報を指定するビットフィールド。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO34-3">(3)</a> </p></td><td valign="top" align="left"><p>
+イメージ型を記述。IMAGE1D、 IMAGE1D_BUFFER、IMAGE2D、 IMAGE3D、IMAGE1D_ARRAYまたはIMAGE2D_ARRAYの指定ができる。
+</p></td></tr></table></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_サポートするイメージ型式"></a>16.5.8. サポートするイメージ型式</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳細は「表：image_formats」（<a class="xref" href="apbs15.html#cl_image_format" title="Table B.39. 表：cl_image_format">Table B.39, “表：cl_image_format”</a>）を参照ください。</p></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch16s04.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch16.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch16s06.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

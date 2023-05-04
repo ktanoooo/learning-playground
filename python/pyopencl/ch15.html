@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Chapter 15. OpenCLホストAPI</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="pt03.html" title="Part III. PyOpenCLランタイム" /><link rel="prev" href="ch14s04.html" title="14.4. HelloWorld（データ並列プログラミング）" /><link rel="next" href="ch15s01.html" title="15.1. Platform" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch14s04.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch15s01.html">Next</a></td></tr></table><hr /></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a id="_openclホストapi"></a>Chapter 15. OpenCLホストAPI</h2></div></div></div><div class="toc"><p><strong>Table of Contents</strong></p><dl class="toc"><dt><span class="section"><a href="ch15s01.html">15.1. Platform</a></span></dt><dd><dl><dt><span class="section"><a href="ch15s01.html#_pyopencl_platform">15.1.1. pyopencl.Platform</a></span></dt><dt><span class="section"><a href="ch15s01.html#_get_devices">15.1.2. get_devices</a></span></dt><dt><span class="section"><a href="ch15s01.html#_get_info">15.1.3. get_info</a></span></dt><dt><span class="section"><a href="ch15s01.html#_platform_info">15.1.4. platform_info</a></span></dt></dl></dd><dt><span class="section"><a href="ch15s02.html">15.2. 実装例</a></span></dt><dt><span class="section"><a href="ch15s03.html">15.3. Deviceのクエリー</a></span></dt><dd><dl><dt><span class="section"><a href="ch15s03.html#_pyopencl_platform_get_devices">15.3.1. pyopencl.Platform.get_devices</a></span></dt><dt><span class="section"><a href="ch15s03.html#_device_type">15.3.2. device_type</a></span></dt><dt><span class="section"><a href="ch15s03.html#_get_info_2">15.3.3. get_info</a></span></dt><dt><span class="section"><a href="ch15s03.html#_device_info">15.3.4. device_info</a></span></dt></dl></dd><dt><span class="section"><a href="ch15s04.html">15.4. Context</a></span></dt><dd><dl><dt><span class="section"><a href="ch15s04.html#_create_some_context">15.4.1. create_some_context</a></span></dt><dt><span class="section"><a href="ch15s04.html#_context_properties">15.4.2. context_properties</a></span></dt><dt><span class="section"><a href="ch15s04.html#_get_info_3">15.4.3. get_info</a></span></dt><dt><span class="section"><a href="ch15s04.html#_context_info">15.4.4. context_info</a></span></dt></dl></dd></dl></div><p>OpenCLのランタイム処理の流れをざっくりまとめると以下のような項目におとすことができます。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+プラットフォーム（platform）情報の取得と選択
+</li><li class="listitem">
+デバイス（device）の情報取得と列挙
+</li><li class="listitem">
+コンテキスト（context）の生成
+</li><li class="listitem">
+プログラム（program）の生成とビルド
+</li><li class="listitem">
+コマンドキュー（commandQueue）の生成
+</li><li class="listitem">
+カーネル（kernel）オブジェクトをキューにいれる
+</li></ul></div><p>これらの処理はホストAPIの基本機能であり、アプリケーションを開発するために必ず行なう必要があります。</p><p>ホストAPIは、OpenCLが処理コマンドを挿入する、デバイスでの処理制御（OpenCL-Cプログラミング言語）ではなく、ホストプログラムの処理を記述するためのライブラリです。ホストAPIは以下の２つに分けることができます。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+OpenCL platform API
+</li><li class="listitem">
+OpenCL runtime API
+</li></ul></div><p>一つ目のプラットフォームAPIは、プラットフォームを指定して、デバイスを発見、コンテキストを生成します。次のランタイムAPIは、コンテキストからコマンドキューを生成するなどのランタイムの処理を行なうことに用いることができます。</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch14s04.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="pt03.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch15s01.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

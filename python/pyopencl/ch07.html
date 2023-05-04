@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Chapter 7. メモリーモデル</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="pt01.html" title="Part I. PyOpenCL" /><link rel="prev" href="ch06s01.html" title="6.1. 基本実装" /><link rel="next" href="ch07s01.html" title="7.1. デバイスメモリへのコピー" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch06s01.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch07s01.html">Next</a></td></tr></table><hr /></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a id="_メモリーモデル"></a>Chapter 7. メモリーモデル</h2></div></div></div><div class="toc"><p><strong>Table of Contents</strong></p><dl class="toc"><dt><span class="section"><a href="ch07s01.html">7.1. デバイスメモリへのコピー</a></span></dt><dd><dl><dt><span class="section"><a href="ch07s01.html#_デバイスメモリ複製のユーティリティ関数">7.1.1. デバイスメモリ複製のユーティリティ関数</a></span></dt></dl></dd></dl></div><p>OpenCLでは、OpenCLが管理するCPU、GPUやアクセラレータ等のプロセッサデバイスがアクセスするメモリ空間と、一般的な用途に使うホストメモリ空間を区別します。</p><p>デバイスがPCIeなどの外付デバイスの場合にホストメモリは、システムメモリ・メインメモリの空間の保管場所は物理的に異なります。外付デバイスであれば、デバイスメモリへコピーする必要があり、内臓デバイスではホストメモリの領域内において、ホストが管理するメモリ空間からOpenCLデバイスが管理するメモリ空間へのコピーを行います。</p><p>内臓デバイスと外付デバイスの区別としては原則として以下のようになります。</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+外付デバイス
+</span></dt><dd>
+ホストに割り当てたメモリから、デバイス内のメモリへコピーします。
+</dd><dt><span class="term">
+内臓デバイス
+</span></dt><dd>
+CPUやiGPUなどの内臓デバイスの場合はメインメモリ内にOpenCLデバイスが使うためのメモリ空間を割り当て、同じくメインメモリ内のホストメモリからコピーして使います。
+</dd></dl></div><p>デバイス内のメモリをバッファ、メモリオブジェクト等と呼びますが、PyOpenCLでは以下2種類のオブジェクトをデバイスメモリ空間のデータとして使用ができます。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+バッファ（メモリ）オブジェクト
+</li><li class="listitem">
+pyopencl.array.Array
+</li></ul></div><p>バッファオブジェクトはC言語のmallocを、OpenCLデバイスが管理するメモリ空間での割り当てに適合しカプセル化したオブジェクトです。PyOpenCLのBufferクラスのインスタンスは、OpenCLのバッファオブジェクトと概ね同じ方法で生成し、処理に使うことができます。バッファオブジェクトを使うアプローチは第三部以降で解説します。</p><p>PyOpenCLのArrayクラスはPythonのnumpy配列に該当するプロセッサ上のメモリ空間割り当てをカプセル化したオブジェクトです。配列の操作はnumpyと類似したインターフェースが使えるため、Pythonスクリプトに慣れているがOpenCL-C言語によるカーネル関数のプログラミングができないPython開発者にとって唯一の選択肢かと思います。</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>あくまでも2016年時点の検証ですが、pyopencl.array.Arrayをベースにした組み込み関数の実行処理速度は、numpyの組み込み関数より数倍以上遅かったので、テストや学習目的以外には使用を推奨しません。OpenCLのバッファオブジェクトのバインディングを介せば、numpyの速度の１０倍以上のパフォーマンスとなるので、組み込み関数は便利なツールということでパフォーマンスに関係のない中間処理などに活用すると良いかもしれません。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch06s01.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="pt01.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch07s01.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

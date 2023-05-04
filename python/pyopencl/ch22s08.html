@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>22.8. 実装例（GPU）</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch22.html" title="Chapter 22. 基数配列" /><link rel="prev" href="ch22s07.html" title="22.7. 実装例（CPU）" /><link rel="next" href="ch23.html" title="Chapter 23. 参考書籍とWebリソース" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch22s07.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch23.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_実装例_gpu_2"></a>22.8. 実装例（GPU）</h2></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>kernel_rearrangeはシーケンシャルな処理のため、CPUに行わせるほうが処理速度はあがります。</p></div><p>GPUでの基数整列の実装については、既に解説しており極力忠実にコードに落としていきます。</p><p>この実装では、4つの整数を要素にもつ配列を整列するため、ベクトル型であるuint4の配列に元データを記憶します。</p><p>ただしuint4にした場合、アルゴリズムが右側の要素（列）から左に一つ一つ走査する場合は、動的に要素にアクセスしなくてはなりません。そのため要素アクセスのための関数、get_elementが必要となります。</p><pre xmlns="" class="prettyprint">inline uint get_element(uint4 data, int idx, __constant uint4* mask) {
+        uint result;
+        uint4 mask_data = data &amp; mask[idx];
+        result = mask_data.s0 + mask_data.s1 + mask_data.s2 + mask_data.s3;
+        return result;
+}</pre><p>このインライン関数は32bitのmaskと、指定した添字の変数idxを元に、ベクトルから該当する値を抽出します。</p><p>このget_elementを使って元データのdata変数の値を取り出して、ヒストグラムを計算するのがaccumulatorカーネル関数です。</p><pre xmlns="" class="prettyprint">__kernel void accumulator(
+                __global const uint4* data,
+                uint index,
+                __constant uint4* mask,
+                __local uint* shmem,
+                __global uint* results)
+{
+        size_t gid = get_global_id(0);
+        uint pos = get_element(data[gid],index,mask);
+        atomic_inc(&amp;results[pos]);
+}</pre><p>この関数はアトミック関数を使い、results配列にたいしてヒストグラムを更新する最も単純なヒストグラムの算出をします。</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_up_sweep_gpu"></a>22.8.1. Up-sweep(GPU)</h3></div></div></div><p>up_sweepカーネル関数は既出ですが以下の擬似コードに沿って実装します。</p><div class="informalfigure"><div class="mediaobject"><img src="radix-algorithm-up-sweep.png" alt="radix-algorithm-up-sweep.png" /></div></div><p>このアルゴリズムの反復部分は全てホスト側でおこなっているため、デバイス側（カーネル関数）では、xの更新のみを行います。</p><p><strong>up_sweepカーネル関数. </strong>
+</p><pre xmlns="" class="prettyprint">__kernel void up_sweep(
+                __global uint* count,
+                uint stage)
+{
+        uint gid = get_global_id(0);
+        uint offset = gid * (2 &lt;&lt; (stage));
+        uint left_stride = (2 &lt;&lt; (stage)) &gt;&gt; 1;
+        uint right_stride = left_stride &lt;&lt; 1;
+        count[offset+right_stride-1] = count[offset+left_stride-1] + count[offset+right_stride-1];
+}</pre><p>
+</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_down_sweep"></a>22.8.2. down-sweep</h3></div></div></div><p>down_sweepカーネル関数は既出ですが以下の擬似コードに沿って実装します。</p><div class="informalfigure"><div class="mediaobject"><img src="radix-algorithm-down-sweep.png" alt="radix-algorithm-down-sweep.png" /></div></div><p>up-sweepと同様にループの箇所はホスト側でまわしているため、ループの中の更新箇所（tmpとx）の計算を行います。</p><pre xmlns="" class="prettyprint">__kernel void down_sweep(
+                __global uint* count,
+                const uint stage)
+{
+        uint gid = get_global_id(0);
+        uint offset = gid * (2 &lt;&lt; (stage));
+        uint left_stride = (2 &lt;&lt; stage) &gt;&gt; 1;
+        uint right_stride = left_stride &lt;&lt; 1;
+        uchar tmp = count[offset+left_stride-1];
+        count[offset+left_stride-1] = count[offset+right_stride-1];
+        count[offset+right_stride-1] = tmp + count[offset+right_stride-1];
+}</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_並び替え_rearrange"></a>22.8.3. 並び替え（rearrange）</h3></div></div></div><p>配列の並び替えは単純にシーケンシャルな計算をします。CPU実装例と同じなので確認してみてください。この実装例ではGPUで処理をさせていますが、CPUのほうが高速で処理できます。</p><p><strong>rearrangeカーネル関数. </strong>
+</p><pre xmlns="" class="prettyprint">__kernel void rearrange(
+                __global uint4* data,
+                __global uint* count,
+                uint index,
+                __constant uint4* mask,
+                __global uint4* result)
+{
+        for(int i = 0; i &lt; SIZE; i++) {
+                uint pos = get_element(data[i],index,mask);
+                result[count[pos]++] = data[i];
+        }
+}</pre><p>
+</p><p><strong>LSDSortGPU.py. </strong>
+</p><pre xmlns="" class="prettyprint">import pyopencl as cl
+import numpy as np
+from numpy.random import *
+
+KERNEL_LSD_HISTOGRAM = "accumulator"
+KERNEL_LSD_UP = "up_sweep"
+KERNEL_LSD_DOWN = "down_sweep"
+KERNEL_LSD_REARRANGE = "rearrange"
+BIN_SIZE = 4
+WORDS = 4
+DATA_SIZE = 32
+
+masks = np.array([[0xffffffff, 0, 0, 0],
+                  [0, 0xffffffff, 0, 0],
+                  [0, 0, 0xffffffff, 0],
+                  [0, 0, 0, 0xffffffff]]).astype(np.uint32)
+
+raw_data = randint(0, BIN_SIZE, DATA_SIZE * WORDS).astype(np.uint32)
+data = raw_data.reshape((DATA_SIZE, WORDS))
+
+print(data)
+
+raw_tmp = np.zeros(DATA_SIZE * WORDS).astype(np.uint32)
+result = raw_tmp.reshape((DATA_SIZE, WORDS))
+
+devices = [cl.get_platforms()[0].get_devices(cl.device_type.GPU)[0]]
+
+ctx = cl.Context(devices)
+queue = cl.CommandQueue(ctx)
+mf = cl.mem_flags
+data_mem = cl.Buffer(ctx, mf.USE_HOST_PTR, hostbuf=data)
+mask_mem = cl.Buffer(ctx, mf.USE_HOST_PTR, hostbuf=masks)
+
+opt_string = "-DSIZE="+str(DATA_SIZE)
+options = [opt_string]
+
+program = cl.Program(ctx, """
+    inline uint get_element(uint4 data, int idx, __constant uint4* mask) {
+        uint result;
+        uint4 mask_data = data &amp; mask[idx];
+        result = mask_data.s0 + mask_data.s1 + mask_data.s2 + mask_data.s3;
+        return result;
+    }
+
+    __kernel void down_sweep(
+            __global uint* count,
+            const uint stage)
+    {
+        uint gid = get_global_id(0);
+        uint offset = gid * (2 &lt;&lt; (stage));
+        uint left_stride = (2 &lt;&lt; stage) &gt;&gt; 1;
+        uint right_stride = left_stride &lt;&lt; 1;
+        uchar tmp = count[offset+left_stride-1];
+        count[offset+left_stride-1] = count[offset+right_stride-1];
+        count[offset+right_stride-1] = tmp + count[offset+right_stride-1];
+        printf("DOWN  gid: %d, count[%d] = %d, count[%d]: %d\\n",gid,offset+right_stride-1,count[offset+right_stride-1],offset+left_stride-1,count[offset+left_stride-1]);
+    }
+
+    __kernel void up_sweep(
+            __global uint* count,
+            uint stage)
+    {
+        uint gid = get_global_id(0);
+        uint offset = gid * (2 &lt;&lt; (stage));
+        uint left_stride = (2 &lt;&lt; (stage)) &gt;&gt; 1;
+        uint right_stride = left_stride &lt;&lt; 1;
+        count[offset+right_stride-1] = count[offset+left_stride-1] + count[offset+right_stride-1];
+        printf("UP gid: %d, count[%d]: %d, count[%d]: %d\\n",gid,offset+right_stride-1,count[offset+right_stride-1],offset+left_stride-1,count[offset+left_stride-1]);
+    }
+
+    __kernel void rearrange(
+            __global uint4* data,
+            __global uint* count,
+            //__global uint* idx,
+            uint index,
+            __constant uint4* mask,
+            __global uint4* result)
+    {
+        for(int i = 0; i &lt; SIZE; i++) {
+            uint pos = get_element(data[i],index,mask);
+            result[count[pos]++] = data[i];
+        }
+    }
+
+    __kernel void accumulator(
+            __global const uint4* data,
+            uint index,
+            __constant uint4* mask,
+            __local uint* shmem,
+            __global uint* results)
+    {
+        size_t gid = get_global_id(0);
+        uint pos = get_element(data[gid],index,mask);
+        atomic_inc(&amp;results[pos]);
+    }
+
+""").build(options=options)
+
+
+kernel_histogram = cl.Kernel(program, name=KERNEL_LSD_HISTOGRAM)
+kernel_up = cl.Kernel(program, name=KERNEL_LSD_UP)
+kernel_down = cl.Kernel(program, name=KERNEL_LSD_DOWN)
+kernel_rearrange = cl.Kernel(program, name=KERNEL_LSD_REARRANGE)
+
+
+mf = cl.mem_flags
+
+for w in reversed(range(WORDS)):
+    out_mem = cl.Buffer(ctx, mf.READ_WRITE | mf.USE_HOST_PTR, hostbuf=result)
+    count_mem = cl.Buffer(ctx, mf.READ_WRITE | mf.USE_HOST_PTR, hostbuf=np.zeros(BIN_SIZE+1).astype(np.uint32))
+
+    kernel_histogram.set_arg(0, data_mem)
+    kernel_histogram.set_arg(1, np.uint32(w))
+    kernel_histogram.set_arg(2, mask_mem)
+    kernel_histogram.set_arg(3, cl.LocalMemory(BIN_SIZE))
+    kernel_histogram.set_arg(4, count_mem)
+
+    cl.enqueue_nd_range_kernel(
+        queue=queue,
+        kernel=kernel_histogram,
+        global_work_size=(DATA_SIZE,),
+        local_work_size=(1, ))
+    ns = np.uint32(np.log2(BIN_SIZE))
+
+    tmp = np.zeros(BIN_SIZE+1).astype(np.uint32)
+    cl.enqueue_read_buffer(queue, mem=count_mem, hostbuf=tmp)
+
+    print(tmp)
+
+    for stage in range(ns):
+        gws = np.uint32(BIN_SIZE / (2 &lt;&lt; stage))
+        if gws &gt; 0:
+            kernel_up.set_arg(0, count_mem)
+            kernel_up.set_arg(1, np.uint32(stage))
+            cl.enqueue_nd_range_kernel(
+                queue=queue,
+                kernel=kernel_up,
+                global_work_size=(gws,),
+                local_work_size=(1,))
+
+    queue.flush()
+
+    count = np.zeros(BIN_SIZE+1).astype(np.uint32)
+    cl.enqueue_read_buffer(queue=queue, mem=count_mem, hostbuf=count)
+
+    count[BIN_SIZE] = count[BIN_SIZE-1]
+    count[BIN_SIZE-1] = 0;
+    cl.enqueue_write_buffer(queue, mem=count_mem, hostbuf=count)
+
+    for d in reversed(range(0, ns)):
+        gws = np.uint32((BIN_SIZE / (2 &lt;&lt; d)))
+        if gws &gt; 0:
+            kernel_down.set_arg(0, count_mem)
+            kernel_down.set_arg(1, np.uint32(d))
+            cl.enqueue_nd_range_kernel(queue, kernel_down, global_work_size=(gws,), local_work_size=(1,))
+
+    queue.flush()
+
+    kernel_rearrange.set_arg(0, data_mem)
+    kernel_rearrange.set_arg(1, count_mem)
+    kernel_rearrange.set_arg(2, np.uint32(w))
+    kernel_rearrange.set_arg(3, mask_mem)
+    kernel_rearrange.set_arg(4, out_mem)
+
+    cl.enqueue_task(queue=queue, kernel=kernel_rearrange)
+
+    queue.flush()
+
+    cl.enqueue_copy_buffer(queue, src=out_mem, dst=data_mem)
+
+    out_mem.release()
+    count_mem.release()
+
+    queue.flush()
+
+
+cl.enqueue_read_buffer(queue, mem=data_mem, hostbuf=data)
+
+print(data)</pre><p>
+</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch22s07.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch22.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch23.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

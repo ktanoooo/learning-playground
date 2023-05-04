@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>B.45. サンプラー無し読み込み</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="apb.html" title="Appendix B. OpenCL 1.2 API Reference" /><link rel="prev" href="apbs44.html" title="B.44. OpenCL-Cイメージ処理関数" /><link rel="next" href="apbs46.html" title="B.46. イメージ書き込み関数" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="apbs44.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apbs46.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_サンプラー無し読み込み_2"></a>B.45. サンプラー無し読み込み</h2></div></div></div><div class="table"><a id="samplerless"></a><p class="title"><strong>Table B.126. 表：サンプラー無しイメージ読み込み関数</strong></p><div class="table-contents"><table class="table" summary="表：サンプラー無しイメージ読み込み関数" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><thead><tr><th style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top">関数￼</th><th style="border-bottom: 1px solid #527bbd; " align="left" valign="top">詳細
+￼</th></tr></thead><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">float4 read_imagef (
+    image2d_t image,
+    int2 coord)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">座標(coord.x, coord.y)
+を使い２次元イメージオブ
+ジェクトの要素ルックアップ
+をします。
+
+image_channel_data_
+typeがCL_UNORM_INT8か
+CL_UNORM_INT16のいず
+れかに指定されて生成され
+たイメージオブジェクトに
+おいて、[0.0 ... 1.0]
+の範囲の浮動小数点の値を
+返します。
+
+image_channel_data_
+typeがCL_SNORM_INT8か
+CL_SNORM_INT16のいずれ
+かに指定されて生成された
+イメージオブジェクトにお
+いて、[-1.0 ... 1.0]の
+範囲の浮動小数点の値を返
+します。
+
+image_channel_data_
+typeがCL_HALF_FLOAT
+かCL_FLOATのいずれかに
+指定されて生成されたイメ
+ージオブジェクトにおいて、
+浮動小数点の値を返します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">int4 read_imagei (
+    image2d_t image,
+    int2 coord)
+uint4 read_imageui (
+    image2d_t image,
+    int2 coord)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">座標(coord.x, coord.y)
+を使い２次元イメージオブ
+ジェクトの要素ルックアッ
+プをします。
+
+read_imageiは正規化した
+符号付き、read_imageuiは
+符号無しの整数値を返します。
+各チャンネルは32ビット整
+数に保存されます。
+
+read_imageiは
+image_channel_data_typeが
+
+CL_SIGNED_INT8
+CL_SIGNED_INT16
+CL_SIGNED_INT32
+
+のいずれかに指定された
+イメージオブジェクトにたい
+して使うことができます。
+
+read_imageuiはimage_
+channel_data_typeが
+
+CL_UNSIGNED_INT8
+CL_UNSIGNED_INT16
+CL_UNSIGNED_INT32
+
+のいずれかに指定された
+イメージオブジェクトにた
+いして使うことができます。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">float4 read_imagef (
+    image3d_t image,
+    int4 coord )</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">座標(coord.x, coord.y,
+coord.z)を使い3次元イメージ
+オブジェクトの要素ルックアッ
+プをします。coord.wは使わ
+れません。
+
+image_channel_data_
+typeがCL_UNORM_INT8か
+CL_UNORM_INT16のいずれか
+に指定されて生成された
+イメージオブジェクトにおいて、
+[0.0 ... 1.0]の範囲の浮動
+小数点の値を返します。
+
+image_channel_data_type
+がCL_SNORM_INT8か
+CL_SNORM_INT16のいずれか
+に指定されて生成された
+イメージオブジェクトにおいて、
+[-1.0 ... 1.0]の範囲の
+浮動小数点の値を返します。
+
+image_channel_data_
+typeがCL_HALF_FLOATか
+CL_FLOATのいずれかに指定
+されて生成されたイメージオブ
+ジェクトにおいて、浮動小数
+点の値を返します。
+￼
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">int4 read_imagei (
+    image3d_t image,
+    int4 coord)
+uint4 read_imageui (
+    image3d_t image,
+    int4 coord)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">座標(coord.x, coord.y,
+coord.z)を使い3次元イ
+メージオブジェクトの要素
+ルックアップをします。
+coord.wは使われません。
+
+read_imageiは正規化した
+符号付き、read_imageui
+は符号無しの整数値を返しま
+す。各チャンネルは32ビット
+整数に保存されます。
+
+read_imageiはimage_
+channel_data_typeが
+
+CL_SIGNED_INT8
+CL_SIGNED_INT16
+CL_SIGNED_INT32
+
+のいずれかに指定された
+イメージオブジェクトに
+たいして使うことができます。
+
+read_imageuiはimage_
+channel_data_typeが
+
+CL_UNSIGNED_INT8
+CL_UNSIGNED_INT16
+CL_UNSIGNED_INT32
+
+のいずれかに指定された
+イメージオブジェクトにたい
+して使うことができます。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">float4 read_imagef (
+    image2d_array_t image,
+    int4 coord)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">座標coord.xyを使い、
+imageが指定する２次元イ
+メージアレイのcoord.zで
+特定される２次元イメージ
+の要素ルックアップをします。
+
+image_channel_data_
+typeがCL_UNORM_INT8か
+CL_UNORM_INT16のいず
+れかに指定されて生成された
+イメージオブジェクトにおい
+て、[0.0 ... 1.0]の範囲
+の浮動小数点の値を返します。
+
+image_channel_data_
+typeがCL_SNORM_INT8か
+CL_SNORM_INT16のいずれ
+かに指定されて生成された
+イメージオブジェクトにお
+いて、[-1.0 ... 1.0]
+の範囲の浮動小数点の値を返します。
+
+image_channel_data_
+typeがCL_HALF_FLOATか
+CL_FLOATのいずれかに指定
+されて生成されたイメージ
+オブジェクトにおいて、浮動
+小数点の値を返します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">int4 read_imagei (
+    image2d_array_t image,
+    int4 coord)
+uint4 read_imageui (
+    image2d_array_t image,
+    int4 coord)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">座標coord.xyを使い、
+imageが指定する２次元
+イメージアレイのcoord.z
+で特定される２次元イメージ
+の要素ルックアップをします。
+
+read_imageiは正規化した
+符号付き、read_imageuiは
+符号無しの整数値を返します。
+各チャンネルは32ビット整数
+に保存されます。
+
+read_imageiはimage_
+channel_data_typeが
+
+CL_SIGNED_INT8
+CL_SIGNED_INT16
+CL_SIGNED_INT32
+
+のいずれかに指定された
+イメージオブジェクトにた
+いして使うことができます。
+
+read_imageuiはimage_
+channel_data_typeが
+
+CL_UNSIGNED_INT8
+CL_UNSIGNED_INT16
+CL_UNSIGNED_INT32
+
+のいずれかに指定された
+イメージオブジェクトにたい
+して使うことができます。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">float4 read_imagef (
+    image1d_t image,
+    int coord)
+￼float4 read_imagef (
+    image1d_buffer_t image,
+    int coord)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">座標coordを使い1次元イメージ
+または１次元イメージバッファ
+ーオブジェクトの要素ルックア
+ップをします。
+
+image_channel_data_
+typeがCL_UNORM_INT8か
+CL_UNORM_INT16のいずれか
+に指定されて生成されたイメ
+ージオブジェクトにおいて、
+[0.0 ... 1.0]の範囲の浮動
+小数点の値を返します。
+
+image_channel_data_
+typeがCL_SNORM_INT8か
+CL_SNORM_INT16のいずれか
+に指定されて生成されたイメ
+ージオブジェクトにおいて、
+[-1.0 ... 1.0]の範囲の
+浮動小数点の値を返します。
+
+image_channel_data_
+typeがCL_HALF_FLOATか
+CL_FLOATのいずれかに指定
+されて生成されたイメージオ
+ブジェクトにおいて、浮動小
+数点の値を返します。
+
+整数の座標を扱う呼び出し
+では、フィルターモードが
+CLK_FILTER_NEAREST、
+座標モードは
+CLK_NORMALIZED_
+COORDS_FALSE、
+アドレスモードはCLK_ADDRESS_
+CLAMP_TO_EDGE,
+CLK_ADDRESS_CLAMP、
+CLK_ADDRESS_NONE
+
+のいずれかに指定してい
+る必要があります。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">int4 read_imagei (
+    image1d_t image,
+    int coord)
+uint4 read_imageui (
+    image1d_t image,
+    int coord)
+int4 read_imagei (
+    image1d_buffer_t image,
+    int coord)
+uint4 read_imageui (
+    image1d_buffer_t image,
+    int coord)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">座標coordを使い1次元
+イメージまたは１次元
+イメージバッファーオブ
+ジェクトの要素ルックア
+ップをします。
+
+read_imageiは正規化し
+た符号付き、read_imageui
+は符号無しの整数値を返し
+ます。各チャンネルは32
+ビット整数に保存されます。
+
+read_imageiはimage_
+channel_data_typeが
+
+CL_SIGNED_INT8
+CL_SIGNED_INT16
+CL_SIGNED_INT32
+
+のいずれかに指定された
+イメージオブジェクトにた
+いして使うことができます。
+
+read_imageuiはimage_
+channel_data_typeが
+
+CL_UNSIGNED_INT8
+CL_UNSIGNED_INT16
+CL_UNSIGNED_INT32
+
+のいずれかに指定された
+イメージオブジェクトに
+たいして使うことができます。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">float4 read_imagef (
+    image1d_array_t image,
+    int2 coord)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">座標coord.xを使い、
+imageが指定する1次元
+イメージアレイのcoord.y
+で特定される1次元イメージ
+の要素ルックアップをします。
+
+image_channel_data_type
+がCL_UNORM_INT8か
+CL_UNORM_INT16のいずれか
+に指定されて生成された
+イメージオブジェクトにおいて、
+[0.0 ... 1.0]の範囲の浮動
+小数点の値を返します。
+
+image_channel_data_
+typeがCL_SNORM_INT8か
+CL_SNORM_INT16のいずれか
+に指定されて生成された
+イメージオブジェクトにお
+いて、[-1.0 ... 1.0]の
+範囲の浮動小数点の値を返します。
+
+image_channel_data_
+typeがCL_HALF_FLOATか
+CL_FLOATのいずれかに指定
+されて生成されたイメージオ
+ブジェクトにおいて、浮動
+小数点の値を返します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">int4 read_imagei (
+    image1d_array_t image,
+    int2 coord)
+uint4 read_imageui (
+    image1d_array_t image,
+    int2 coord)</pre></td><td style="" align="left" valign="top"><pre class="literallayout">座標coord.xを使い、
+imageが指定する1次元イメ
+ージアレイのcoord.yで特
+定される1次元イメージの要
+素ルックアップをします。
+
+read_imageiは正規化した
+符号付き、read_imageuiは
+符号無しの整数値を返します。
+各チャンネルは32ビット整数
+に保存されます。
+
+read_imageiはimage_
+channel_data_typeが
+
+CL_SIGNED_INT8
+CL_SIGNED_INT16
+CL_SIGNED_INT32
+
+のいずれかに指定された
+イメージオブジェクトにたい
+して使うことができます。
+
+read_imageuiはimage_
+channel_data_typeが
+
+CL_UNSIGNED_INT8
+CL_UNSIGNED_INT16
+CL_UNSIGNED_INT32
+
+のいずれかに指定された
+イメージオブジェクトにたい
+して使うことができます。</pre></td></tr></tbody></table></div></div><br class="table-break" /><p>￼</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apbs44.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apb.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apbs46.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

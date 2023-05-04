@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>18.1. アルゴリズムのパラメータ</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch18.html" title="Chapter 18. ヒストグラム" /><link rel="prev" href="ch18.html" title="Chapter 18. ヒストグラム" /><link rel="next" href="ch18s02.html" title="18.2. 共有ローカルメモリ" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch18.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch18s02.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_アルゴリズムのパラメータ"></a>18.1. アルゴリズムのパラメータ</h2></div></div></div><p>ヒストグラムの基本アルゴリズムはシングルスレッドでは、シンプルなのですが、GPGPU等を使用したデータ並列プログラミングモデルに適合させると難易度は大半の人が想像される以上に高くなります。</p><p>まずアルゴリズムのパラメータですが、以下の４つを考慮する必要があります。</p><div class="variablelist"><p class="title"><strong>ワークグループ数</strong></p><dl class="variablelist"><dt><span class="term">
+データ数
+</span></dt><dd>
+入力の配列の要素数です。ヒストグラムでは、カテゴリ数 x スレッド数 x ワークグループ数以上の値にします。
+</dd><dt><span class="term">
+カテゴリ（ビン）数
+</span></dt><dd>
+8ビットのデータ（0-255）を使います。注意すべき点として、OpenCL-C言語（Intelプロセッサ環境）と連携するためにバイトオーダーはLittle-Endian（リトル・エンディアン）とします。
+</dd><dt><span class="term">
+ローカルサイズ
+</span></dt><dd>
+各ワークグループ内のワークアイテム数です。パフォーマンスをチューニングするために使います。
+</dd><dt><span class="term">
+ワークグループ数
+</span></dt><dd>
+ワークグループ数は、グローバルサイズをローカルサイズで除した数です。
+</dd></dl></div><p>次にマイクロプロセッサ（ここではGPUに限定）のキャッシュサイズと、ベンダーのOpenCL推奨値を調べます。共有ローカルメモリ（SLM）に割り当てるサイズ、ローカルサイズ、ワークグループ数はメモリーの容量によって値をチューニングします。</p><p>検証機のIntel iGPUのSLMのサイズは64KBとなりますが、AMDはCompute Unitに対して32KB-64KB、NVIDIAは16-48KBなどと異なります。ここでは、Intel HD Graphics内臓GPUの推奨値を使います。</p><p>IntelはSLMに最小でも4KBを割り当てるとしているので、4KBxワークグループ数が64KBとなるようにします。するとワークグループ数は16に固定できます。</p><p>最後にローカルサイズ（ワークグループ内のスレッド数）を決定する必要がありますが、これは次の項目で解説します。</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch18.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch18.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch18s02.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

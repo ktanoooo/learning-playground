@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>本書で使用する用語</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="index.html" title="Python OpenCL入門" /><link rel="prev" href="pr02s03.html" title="3. 開発環境" /><link rel="next" href="pt01.html" title="Part I. PyOpenCL" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="pr02s03.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="pt01.html">Next</a></td></tr></table><hr /></div><div class="glossary"><div class="titlepage"><div><div><h1 class="title"><a id="_本書で使用する用語"></a>本書で使用する用語</h1></div></div></div><div class="variablelist"><a id="application"></a><p class="title"><strong>Application</strong></p><dl class="variablelist"><dt><span class="term">
+アプリケーション
+</span></dt><dd>
+ホストとOpenCLデバイスで動作するプログラムの組み合わせと定義します。
+</dd></dl></div><div class="variablelist"><a id="blocking"></a><p class="title"><strong>Blocking and Non-Blocking</strong></p><dl class="variablelist"><dt><span class="term">
+ブロッキング・ノンブロッキングエンキュー APIコール
+</span></dt><dd>
+ノンブロッキングエンキューAPIコールはコマンドをコマンドキューにのせて即座にホストに戻ります。ブロッキングエンキューAPIコールはコマンドが終了するまでホストに戻りません。
+</dd></dl></div><div class="variablelist"><a id="barrier"></a><p class="title"><strong>Barrier</strong></p><dl class="variablelist"><dt><span class="term">
+バリアー
+</span></dt><dd>
+バリアーには２種類あります。コマンドキューバリアーとワークバリアーです。
+</dd></dl></div><div class="variablelist"><a id="command-barrier"></a><p class="title"><strong>Command-Queue Barrier</strong></p><dl class="variablelist"><dt><span class="term">
+コマンドキューバリアー
+</span></dt><dd>
+OpenCL APIはコマンドキューにエンキューする関数を提供しますが、バリアーコマンドは全ての事前にエンキューしたコマンドが、以降にエンキューされたコマンドが実行を開始する前に、終了することを保障します。
+</dd></dl></div><div class="variablelist"><a id="workgroup-barrier"></a><p class="title"><strong>Workgroup Barrier</strong></p><dl class="variablelist"><dt><span class="term">
+ワークグループバリアー
+</span></dt><dd>
+OpenCL Cプログラミング言語は組み込みワークグループバリアー関数を提供します。デバイスで実行中のカーネルはこの関数を使い、ワークグループのワークアイテム間の同期を実現します。各ワークグループにある全てのワークアイテムはバリアーを実行しないと次の処理に進むことはできません。
+</dd></dl></div><div class="variablelist"><a id="buffer-object"></a><p class="title"><strong>Buffer Object</strong></p><dl class="variablelist"><dt><span class="term">
+バッファーオブジェクト
+</span></dt><dd>
+線形コレクションを記憶するメモリーオブジェクトです。バッファーオブジェクトはデバイスで実行中のカーネルのポインタを使いアクセスすることができます。またOpenCL APIコールを使いホストで加工処理ができます。バイトサイズや、使用に関する情報や割当領域等のプロパティを保存します。
+</dd></dl></div><div class="variablelist"><a id="built-in-kernel"></a><p class="title"><strong>Built-in Kernel</strong></p><dl class="variablelist"><dt><span class="term">
+組み込みカーネル
+</span></dt><dd>
+組み込みカーネルはOpenCLデバイスやカスタムデバイスで動作するカーネルです。アプリケーションはサポートされたデバイスについてクエリーを行うことができます。プログラムオブジェクトはOpenCL Cや組み込みカーネルのいずれかで書かれたカーネルを持つことができますが、両方同時に持つことはできません。
+</dd></dl></div><div class="variablelist"><a id="command"></a><p class="title"><strong>Command</strong></p><dl class="variablelist"><dt><span class="term">
+コマンド
+</span></dt><dd>
+実行のためにコマンドキューに投入したOpenCLの操作です。
+</dd></dl></div><div class="variablelist"><a id="command-queue"></a><p class="title"><strong>Command Queue</strong></p><dl class="variablelist"><dt><span class="term">
+コマンドキュー
+</span></dt><dd>
+特定のデバイスで実行されるコマンドを保持するオブジェクトです。コマンドキューはコンテキスト内の特定デバイス上で生成されます。コマンドはコマンドキューに順に投入されますが、順（in-order）または順不同(out-of-order)で実行されます。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Compute Device Memory</strong></p><dl class="variablelist"><dt><span class="term">
+演算デバイスメモリ
+</span></dt><dd>
+演算デバイスに付加された一つ以上のメモリーです。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Compute Unit(CE)</strong></p><dl class="variablelist"><dt><span class="term">
+演算器
+</span></dt><dd>
+一つ以上の演算ユニットを持つOpenCLデバイスです。ワークグループは単一演算ユニットで実行されます。Compute Unitは一つ以上の処理要素（processing elements: PE）とローカルメモリーで構成されます。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Concurrency</strong></p><dl class="variablelist"><dt><span class="term">
+並行処理
+</span></dt><dd>
+同一システムでタスクを同時に処理することです。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Constant Memory</strong></p><dl class="variablelist"><dt><span class="term">
+コンスタントメモリー
+</span></dt><dd>
+カーネル実行中にグローバルメモリー内でデータが一定となる領域です。ホストはメモリーオブジェクトを割当・初期化して、コンスタントメモリーに投入することができます。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Context</strong></p><dl class="variablelist"><dt><span class="term">
+コンテキスト
+</span></dt><dd>
+カーネルが実行する環境や、同期・メモリー管理が定義されるドメインを指します。コンテキストは複数のデバイスや、デバイスとアクセスできるメモリー、一つ以上のコマンドキュー、メモリーオブジェクト操作で構成されます。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Custom Device</strong></p><dl class="variablelist"><dt><span class="term">
+カスタムデバイス
+</span></dt><dd>
+OpenCLランタイムAPIを実装するOpenCLデバイス
+だがOpenCL Cプログラミング言語で記述したプログラムをサポートしないデバイスです。（例：一部のDSP等）カスタムデバイスはOpenCLに準拠しないデバイスです。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Data Parallel Programming Model</strong></p><dl class="variablelist"><dt><span class="term">
+データ並列プログラミングモデル
+</span></dt><dd>
+一つのプログラムが、データ構造の集合の中で複数の要素に、並列で適応させるプログラミングモデルです。アレイの添字に同時にアクセスして処理するプログラムを一般に指します。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Device</strong></p><dl class="variablelist"><dt><span class="term">
+デバイス
+</span></dt><dd>
+演算ユニットのコレクションです。OpenCLデバイスはGPU、マルチコアCPU、DSPやFPGA等を含みます。OpenCLを実装しているかはベンダーの規格書、仕様書に記述されています。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Event Object</strong></p><dl class="variablelist"><dt><span class="term">
+イベントオブジェクト
+</span></dt><dd>
+コマンド等の操作のカプセル化をするオブジェクトです。コンテキスト内の操作を同期するために使うことができます。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Event Wait-List</strong></p><dl class="variablelist"><dt><span class="term">
+イベント待機リスト（event wait-list）
+</span></dt><dd>
+特定のコマンドが実行を開始した際に制御できるイベントオブジェクトのリストです。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Framework</strong></p><dl class="variablelist"><dt><span class="term">
+フレームワーク
+</span></dt><dd>
+ソフトウェア開発や実行環境をサポートするコンポーネントの集合です。ライブラリ、API、ランタイムシステム、コンパイラ等を含みます。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Global ID</strong></p><dl class="variablelist"><dt><span class="term">
+グローバルID
+</span></dt><dd>
+カーネルを実行する際に指定したグローバルワークアイテムの数から派生し、ワークアイテムを一意的に識別するために使います。グローバルIDは、n次元の値で、（0, 0, …, 0）の値から開始します。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Global Memory</strong></p><dl class="variablelist"><dt><span class="term">
+グローバルメモリ
+</span></dt><dd>
+コンテキスト内の全ての実行中のワークアイテムにアクセス可能なメモリ領域です。ホストからも、read/write/map等のコマンドを介してアクセスすることができます。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>GL Sharing Group</strong></p><dl class="variablelist"><dt><span class="term">
+GL共有グループ
+</span></dt><dd>
+GL共有グループオブジェクトは、共有されたOpenGLまたはOpenGL ESリソース（テキスチャ、バッファー、フレームバッファー、レンダーバッファー）を管理し、一つ以上のGLコンテキストオブジェクトと関連します。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Handle</strong></p><dl class="variablelist"><dt><span class="term">
+ハンドル
+</span></dt><dd>
+OpenCLに割り当てられたオブジェクトを参照する不透明な型です。オブジェクトに対するいかなる操作もオブジェクトのハンドルを参照します。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Host</strong></p><dl class="variablelist"><dt><span class="term">
+ホスト
+</span></dt><dd>
+ホストはOpenCLを使いコンテキストとやりとりします。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Host Pointer</strong></p><dl class="variablelist"><dt><span class="term">
+ホストポインタ
+</span></dt><dd>
+ホストの仮想アドレス空間に存在するメモリーへのポインタです。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Event Object</strong></p><dl class="variablelist"><dt><span class="term">
+イメージオブジェクト
+</span></dt><dd>
+２次元または３次元のアレイデータを保存するメモリーオブジェクトです。イメージデータは読み込み・書き込み関数を通じてのみアクセスができます。読み込み関数はサンプラーを使うことができます。次元数や、イメージの各要素の説明や使用に関するプロパティをカプセル化します。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>In-order Execution</strong></p><dl class="variablelist"><dt><span class="term">
+In-order実行
+</span></dt><dd>
+コマンドをコマンドキューに投入した順で実行・終了することを指します。
+</dd></dl></div><div class="variablelist"><a id="kernel"></a><p class="title"><strong>Kernel</strong></p><dl class="variablelist"><dt><span class="term">
+カーネル
+</span></dt><dd>
+プログラムで宣言された関数かつOpenCLデバイスで実行できるものをさします。カーネルは__kernelまたはkernel修飾子で識別され、プログラムで定義された関数に適用されます。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Kernel Object</strong></p><dl class="variablelist"><dt><span class="term">
+カーネルオブジェクト
+</span></dt><dd>
+プログラム内で宣言された__kernel関数および引数値をカプセル化します。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Local ID</strong></p><dl class="variablelist"><dt><span class="term">
+ローカルID
+</span></dt><dd>
+所定のカーネルを実行するワークグループ内にあるユニークなワークアイテムIDを特定するIDです。ローカルIDはN次元の値をとり、（0, 0, …, 0）の0値から開始します。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Local Memory</strong></p><dl class="variablelist"><dt><span class="term">
+ローカルメモリー
+</span></dt><dd>
+ワークグループに関連づけられたメモリ領域です。ワークグループ内にワークアイテムからのみアクセスができます。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Marker</strong></p><dl class="variablelist"><dt><span class="term">
+マーカー
+</span></dt><dd>
+コマンドキューに投入されたコマンドで、全ての先行するコマンドをタグするために使います。マーカーコマンドは処理を終了する前に、その他全てのキューに投入されたコマンドを待機させます。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Memory Object</strong></p><dl class="variablelist"><dt><span class="term">
+メモリーオブジェクト
+</span></dt><dd>
+グローバルメモリー領域を参照するオブジェクトです。例としてバッファーオブジェクトや、イメージオブジェクトがあります。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Memory space</strong></p><dl class="variablelist"><dt><span class="term">
+メモリ領域 (またはPools)
+</span></dt><dd>
+OpenCL内での明確なアドレス領域です。メモリ領域は物理メモリーとオーバーラップすることがあります（ただし論理的には別なものとして扱います）。メモリ領域には、private、local、constantとグローバルがあります。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Object</strong></p><dl class="variablelist"><dt><span class="term">
+オブジェクト
+</span></dt><dd>
+オブジェクトはOpenCL APIが操作可能なリソースの抽象的な表現です。プログラムオブジェクト、カーネルオブジェクト、メモリーオブジェクトが存在します。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Out-of-order Execution</strong></p><dl class="variablelist"><dt><span class="term">
+Out-of-Order実行
+</span></dt><dd>
+キューに投入されたコマンドが処理を開始、終了する順序に対して課せられる（イベント待機リストやコマンドキューバリアー等の）制約と一致した実行モデルです。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Platform</strong></p><dl class="variablelist"><dt><span class="term">
+プラットフォーム
+</span></dt><dd>
+（リソースを共有したりカーネルをデバイスで実行する）OpenCLフレームワークが管理するホストとデバイスのコレクションをさします。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Private Memory</strong></p><dl class="variablelist"><dt><span class="term">
+プライベートメモリー
+</span></dt><dd>
+ワークアイテムに対してプライベートなメモリ領域です。あるワークアイテムのプライベートメモリで定義した変数は、他のワークアイテムからはアクセスできません。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Processing Element</strong></p><dl class="variablelist"><dt><span class="term">
+プロセッシングエレメント（Processing Element、略称はPE）
+</span></dt><dd>
+仮想スカラプロセッサです。ワークアイテムは１つ以上のプロセッシングエレメント（PE）で実行することができます。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Program</strong></p><dl class="variablelist"><dt><span class="term">
+プログラム
+</span></dt><dd>
+カーネルの集合で構成されるOpenCLプログラムを指します。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Program Object</strong></p><dl class="variablelist"><dt><span class="term">
+プログラムオブジェクト
+</span></dt><dd>
+関連するコンテキストへの参照とプログラムのソースとバイナリ、ビルドした最新の実行プログラム、ビルドオプション、ビルドログ、関連するカーネルオブジェクトの数等をカプセル化します。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Reference Count</strong></p><dl class="variablelist"><dt><span class="term">
+参照カウント（reference count）
+</span></dt><dd>
+オブジェクトへの参照の数の内部カウントです。OpenCLオブジェクトのライフスパン（寿命）は参照カウントで決定されます。OpenCLでオブジェクトを生成するとき、参照カウントは１となります。後に続いて、retain（clRetainContextやclRetainCommandQueue）をコールすると、参照カウントはインクリメントされます。逆にreleaseをコールすると、参照カウントはデクリメントされます。参照カウントが０に達するとオブジェクトリソースの割当は解除されます。
+</dd></dl></div><div class="variablelist"><a id="relaxed-consistency"></a><p class="title"><strong>Relaxed Consistency</strong></p><dl class="variablelist"><dt><span class="term">
+緩やかな整合性
+</span></dt><dd>
+バリアーまたはその他の明示的同期ポイントを例外として、異なるワークアイテム・コマンドで可視化されたメモリーの中身が異なることがあるメモリー整合性モデル。
+</dd></dl></div><div class="variablelist"><a id="resource"></a><p class="title"><strong>Resource</strong></p><dl class="variablelist"><dt><span class="term">
+リソース
+</span></dt><dd>
+OpenCLが定義するオブジェクトの種類です。リソースのインスタンスはオブジェクトとなります。例としてコンテキスト、コマンドキュー、プログラムオブジェクト、カーネルオブジェクト、メモリーオブジェクトがあります。ホスト、デバイス、演算ユニット（CE）、プロセッシングエレメント（PE）等のハードウェアもリソースに含めることがあります。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Retain, Release</strong></p><dl class="variablelist"><dt><span class="term">
+保持（retain）、解放（release）
+</span></dt><dd>
+OpenCLオブジェクトを使って参照カウントをインクリメント、デクリメントする動作を指します。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Sampler</strong></p><dl class="variablelist"><dt><span class="term">
+サンプラー（sampler）
+</span></dt><dd>
+イメージをどのようにサンプリング（標本抽出）するかをカプセル化したオブジェクトです。イメージ読み込み関数はこのサンプラーを引数として使います。サンプラーは、アドレスモード、範囲外座標の処理方法、フィルターモード、入力イメージ座標の正規化・非正規化された値かを指定することができます。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>SIMD</strong></p><dl class="variablelist"><dt><span class="term">
+SIMD
+</span></dt><dd>
+SIMD（Single Instruction Multiple Data）は、カーネルがデータと共有プログラムカウンターに対して複数の処理要素（プロセッシングエレメント、PE）を使い並行で実行されるプログラミングをさします。このモデルでは全てのPEは厳密に同一な命令を実行するものとします。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>SPMD</strong></p><dl class="variablelist"><dt><span class="term">
+SPMD
+</span></dt><dd>
+SPMD（Single Program Multiple Data）はカーネルがデータと所有するプログラムカウンターに対して複数の処理要素（プロセッシングエレメント、PE）を使い並行で実行されるプログラミングをさします。つまり全ての演算リソースは同一カーネルを実行しますが、自らの命令カウンタを保ちます。さらにカーネル内の分岐により、実際の命令シーケンスは各PEによって大きく異なることがあります。
+</dd></dl></div><div class="variablelist"><a id="task-parrallel"></a><p class="title"><strong>Task Parallel Programming Model</strong></p><dl class="variablelist"><dt><span class="term">
+タスク並列プログラミングモデル
+</span></dt><dd>
+計算が複数の並行した（要素が１の単一ワークグループで動作する）タスクとして表現されるプログラミングモデルです。並行タスクは異なるカーネルを実行することができます。（マルチスレッドプログラミングの最も一般的な様態です。）
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Thread safe</strong></p><dl class="variablelist"><dt><span class="term">
+スレッドセーフ
+</span></dt><dd>
+複数のホストスレッドに同時に呼び出されたときに（OpenCLで管理された）内部状態に整合性がとれているときに、OpenCL APIコールはスレッドセーフとして定義されます。スレッドセーフなOpenCL APIコールは複数のホストスレッドで関数を（相互排他を実装せずに）アプリケーションが呼び出せることを可能とします。（つまりリエントラント・セーフでもある）。
+</dd></dl></div><div class="variablelist"><a id="undefined"></a><p class="title"><strong>Undefined</strong></p><dl class="variablelist"><dt><span class="term">
+未定義
+</span></dt><dd>
+カーネルの実行時に使う組込み関数でOpenCLが定義していない場合のOpenCL APIコールのふるまいを未定義（undefined）と呼びます。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Work-group</strong></p><dl class="variablelist"><dt><span class="term">
+ワークグループ
+</span></dt><dd>
+一つの演算ユニット（CU）を実行する関連したワークアイテムのコレクションです。グループ内のワークアイテムは同じカーネルを実行し、かつローカルメモリーとワークグループバリアーを共有します。
+</dd></dl></div><div class="variablelist"><p class="title"><strong>Work-item</strong></p><dl class="variablelist"><dt><span class="term">
+ワークアイテム
+</span></dt><dd>
+デバイスで呼び出されるカーネルの並列実行を構成するコレクションの１要素（スレッド）です。ワークアイテムは（一つの演算ユニットで実行中のワークグループの一部分として）一つ以上のプロセッシングエレメント（PE）で実行されます。ワークアイテムはコレクション内の他のカーネルインスタンス（ワークアイテム）と、グローバルIDとローカルIDにより、区別するこができます。
+</dd></dl></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="pr02s03.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="pt01.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

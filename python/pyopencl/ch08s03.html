@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>8.3. PyOpenCLデータ型</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch08.html" title="Chapter 8. Arrayクラス" /><link rel="prev" href="ch08s02.html" title="8.2. Arrayファクトリー" /><link rel="next" href="ch09.html" title="Chapter 9. 組み込み数値計算ライブラリ" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch08s02.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch09.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_pyopenclデータ型"></a>8.3. PyOpenCLデータ型</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_スカラー型"></a>8.3.1. スカラー型</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>OpenCLスカラー型の詳細については「<a class="xref" href="ch17s02.html#scalar-chapter" title="17.2.1. 組み込みスカラデータ型">Section 17.2.1, “組み込みスカラデータ型”</a>」を参照ください。</p></div><p>PyOpenCLのScalarデータ型は、numpy.dtypeとOpenCLデータ型を組み入れており、各データ型は直感的にマップされています。</p><p>主なOpenCL-PyOpenCL間のデータのマッピングは以下のようになります。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+OpenCLのfloatはfloat32
+</li><li class="listitem">
+OpenCLのintはint32
+</li><li class="listitem">
+OpenCLのuintはuint32
+</li><li class="listitem">
+OpenCLのucharはuint8
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_ベクトル型"></a>8.3.2. ベクトル型</h3></div></div></div><p>OpenCLではベクトル型という、複数の要素を持つ変数を宣言することができます。</p><p>例えばfloat2であれば、2つの要素を持つ浮動小数点数、int4であれば4つの要素を持つ符号付き32bit整数となります。</p><p>これらのOpenCL組み込みベクトル型についてPyOpenCLではvecクラスで定義されています。</p><pre xmlns="" class="prettyprint">class pyopencl.array.vec</pre><p>ベクトル型の使用方法ですが、一番手っ取り早いのがmake_「type」関数です。</p><p>以下のコードではfloat4のデータ型を持つ変数を初期化しています。</p><pre xmlns="" class="prettyprint">a_vec4 = pyopencl.array.vec.make_float4(0.0, 0.0, 1.0, 0.0)</pre><p>しかしnumpyのreshape関数を使いこなしている読者からすると用途が見えてこないかもしれません。</p><p>ベクトル型は本書第二部で解説するSIMDレーンを有効活用する効用があるのですが、詳細については第二部に譲りたいと思います。</p><p><strong>CLArrayTest.py. </strong>
+</p><pre xmlns="" class="prettyprint">import numpy as np
+import pyopencl as cl
+import pyopencl.array as clarr
+import warnings
+
+import os
+os.environ['PYOPENCL_COMPILER_OUTPUT'] = '1'
+
+a = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]).astype(np.float32)
+b = np.array([10, 20, 30, 40, 50,
+              60, 70, 80, 90, 100]).astype(np.float32)
+
+
+platforms = cl.get_platforms()
+ctx = cl.Context([platforms[0].get_devices(cl.device_type.GPU)[0]])
+queue = cl.CommandQueue(ctx)
+
+from pyopencl.clrandom import rand as clrand
+
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    a_gpu = clarr.to_device(queue, a)
+    b_gpu = clarr.to_device(queue, b)
+
+a_gpu = clarr.Array(queue, (10,), dtype=clarr.vec.float4)
+a_gpu.fill(clarr.vec.make_float4(0.0, 0.0, 1.0, 0.0))
+a = a_gpu.get()
+
+print(a)</pre><p>
+</p><p>上記のプログラムの出力は以下のようになります。</p><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">/Library/Frameworks/Python.framework/Versions/3.5/bin/python3.5 /Users/komatsu/PycharmProjects/MyPythonProject/CLArrayTest.py
+[(0.0, 0.0, 1.0, 0.0) (0.0, 0.0, 1.0, 0.0) (0.0, 0.0, 1.0, 0.0)
+ (0.0, 0.0, 1.0, 0.0) (0.0, 0.0, 1.0, 0.0) (0.0, 0.0, 1.0, 0.0)
+ (0.0, 0.0, 1.0, 0.0) (0.0, 0.0, 1.0, 0.0) (0.0, 0.0, 1.0, 0.0)
+ (0.0, 0.0, 1.0, 0.0)]</pre><p>
+</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_複素数"></a>8.3.3. 複素数</h3></div></div></div><p>OpenCL1.2は複素数をサポートしていませんが、PyOpenCLのArrayパッケージでは複素数をnumpyのように宣言することを可能としています。</p><p><strong>CLComplexTest.py. </strong>
+</p><pre xmlns="" class="prettyprint">from __future__ import print_function
+import numpy as np
+import pyopencl as cl
+from pyopencl import array as clarr
+import warnings
+
+import os
+os.environ['PYOPENCL_COMPILER_OUTPUT'] = '1'
+
+
+platforms = cl.get_platforms()
+ctx = cl.Context([platforms[0].get_devices(cl.device_type.GPU)[0]])
+queue = cl.CommandQueue(ctx)
+
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    ary = clarr.Array(queue, shape=(10,), dtype=np.float32).astype(np.complex64)
+
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    host_ary = (ary + np.complex64(1+1j)).get()
+
+print(host_ary)</pre><p>
+</p><p>上記のプログラムの出力は以下のようになります。</p><pre xmlns="" class="prettyprint">/Library/Frameworks/Python.framework/Versions/3.5/bin/python3.5 /Users/komatsu/PycharmProjects/MyPythonProject/CLComplexTest.py
+[ 1.+1.j  1.+1.j  1.+1.j  1.+1.j  1.+1.j  1.+1.j  1.+1.j  1.+1.j  1.+1.j
+  1.+1.j]</pre></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch08s02.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch08.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch09.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

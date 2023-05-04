@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>4.2. Intel SDKインストール手順(Ubuntu)</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch04.html" title="Chapter 4. OpenCL開発環境" /><link rel="prev" href="ch04s01.html" title="4.1. OpenCLのインストール" /><link rel="next" href="ch05.html" title="Chapter 5. APIとアーキテクチャ" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch04s01.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch05.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_intel_sdkインストール手順_ubuntu"></a>4.2. Intel SDKインストール手順(Ubuntu)</h2></div></div></div><div class="warning" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Warning</h3><p>参考までの掲載ですので本項目は未検証です。「<a class="xref" href="ch04s01.html#intel-linux-ubuntu" title="4.1.3. Intel Linux(Ubuntu)">Section 4.1.3, “Intel Linux(Ubuntu)”</a>」のインストールをすれば以下の手順は不要となるはずです。</p></div><p>以下の手順はJOCL公式HPに掲載されているものです。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+「http://software.intel.com/en-us/articles/download-intel-opencl-sdk/」からrpmパッケージをダウンロード。
+</li><li class="listitem">
+以下のコマンドでrpmパッケージをインストール。（パッケージファイル名は環境に応じて変更してください。）
+</li></ul></div><pre xmlns="" class="prettyprint">$ sudo apt-get install rpm alien
+$ fakeroot alien --to-deb &lt;intelのrpmパッケージのファイル名&gt;
+$ sudo dpkg -i intel-ocl-sdk-suse+11.1_1.1-2_amd64.deb
+$ sudo apt-get install libnuma1
+$ sudo echo "/usr/lib64/OpenCL/vendors/intel/libintelocl.so" &gt; /etc/OpenCL/vendors/intelocl64.icd」</pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+/usr/include/CLにOpenCLヘッダーを配置
+</li><li class="listitem">
+libOpenCL.soが/usr/lib64に配置されていることを確認します。他のOpenCLプラットフォームがインストールされていない場合は、/lib/lib64にバイナリを移動して、「sudo ldconfig」をします。
+</li></ul></div><p>Intelの公式サイトの手順「Installing Intel® SDK for OpenCL Applications on Linux」）では以下の手順としています。</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+Intel® SDK for OpenCL Applications 2012 installer for Linux operating systemsをダウンロードし、TGZファイル形式から解凍（tar xvf等）します。
+</li><li class="listitem">
+rpm -i &lt;rpmファイル名&gt;
+</li></ol></div><p>その他にも以下のコマンドでOpenCLヘッダーを自動でインストールできます。</p><pre xmlns="" class="prettyprint">$ sudo apt-get install ocl-icd-opencl-dev</pre></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch04s01.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch04.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch05.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

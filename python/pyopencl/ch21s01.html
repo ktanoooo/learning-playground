@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>21.1. バイトニック配列の構築</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch21.html" title="Chapter 21. Bitonic Sort（バイトニックソート）" /><link rel="prev" href="ch21.html" title="Chapter 21. Bitonic Sort（バイトニックソート）" /><link rel="next" href="ch21s02.html" title="21.2. バイトニックマージ" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch21.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch21s02.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_バイトニック配列の構築"></a>21.1. バイトニック配列の構築</h2></div></div></div><p>バイトニック分割を行なうためには、バイトニック配列を先んじて構築する必要があります。バイトニック配列がないと、分割ができないためです。</p><p>まずバイトニック配列に整列するための手順を見てみましょう。例えば要素数が「8」の場合は、２つのステージに分けます。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+ステージ0、[1]の間隔で要素を比較・スワップ
+</li><li class="listitem">
+ステージ1、[2,1]の間隔で要素を比較・スワップ
+</li></ul></div><p>例えば、ステージ０の比較では、以下の不等式が成立するときに値のスワップ（入れ替え）を行います。</p><div class="informalfigure"><div class="mediaobject"><img src="images/bitonic_stage0.png" alt="images/bitonic_stage0.png" /></div></div><p>ステージ１の2つの間隔の比較は、以下の場合に要素をスワップします。</p><div class="informalfigure"><div class="mediaobject"><img src="images/bitonic_stage1_pass0.png" alt="images/bitonic_stage1_pass0.png" /></div></div><p>ステージの「2,1」との記述には、２つの間隔の比較後に、1つ間隔の比較をすることを示しています。</p><div class="informalfigure"><div class="mediaobject"><img src="images/bitonic_stage1_pass1.png" alt="images/bitonic_stage1_pass1.png" /></div></div><p>よく見て頂くと、この比較は、(1,2,3,4)を上昇形態のバイトニック配列にし、（5,6,7,8）を下降形態の配列とします。これにより、(1,2,3,4)対(5,6,7,8)のバイトニック配列を構築することができます。</p><p>抑えておきたい点としては、各ステージの段階でバイトニック配列が作られていくことです。</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+ステージ０
+</span></dt><dd>
+2個のバイトニック配列
+</dd><dt><span class="term">
+ステージ１
+</span></dt><dd>
+1個のバイトニック配列
+</dd></dl></div><p>これで8つの要素を使ったバイトニック配列が作ることが可能となります。</p><p>さらに要素数を増やして「16」の場合を考えみましょう。その場合、一つステージを増やして３つのステージに分けます。</p><p>８つの要素数で使ったステージ０とステージ１を使い、新たなステージ２を追加すると、手順を以下のような図でまとめることができます。</p><div class="figure"><a id="idm9502"></a><p class="title"><strong>Figure 21.1. 16個の要素のバイトニック整列（注意：図を縮小するため、8個の要素だけを表示）</strong></p><div class="figure-contents"><div class="mediaobject"><img src="images/sorting-network-8.png" alt="images/sorting-network-8.png" /></div></div></div><br class="figure-break" /><p>このケースでは比較演算子が縦線に配置していると考えます。理解すべき点としては、各ステージの段階でバイトニック配列が作られていくことです。</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+ステージ０
+</span></dt><dd>
+4個のバイトニック配列
+</dd><dt><span class="term">
+ステージ１
+</span></dt><dd>
+2個のバイトニック配列
+</dd><dt><span class="term">
+ステージ２
+</span></dt><dd>
+1個のバイトニック配列
+</dd></dl></div><p>この手順は、さらに要素数を増やし2の累乗と拡張ができます。例えば64個であれば、以下のように５つのステージに分けます。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+ステージ0、[1]の間隔で要素を比較・スワップ、16個のバイトニック配列
+</li><li class="listitem">
+ステージ1、[2,1]の間隔で要素を比較・スワップ、8個のバイトニック配列
+</li><li class="listitem">
+ステージ2、[4,2,1]の間隔で要素を比較・スワップ、4個のバイトニック配列
+</li><li class="listitem">
+ステージ3、[8,4,2,1]の間隔で要素を比較・スワップ、2個のバイトニック配列
+</li><li class="listitem">
+ステージ4、[16,8,4,2,1]の間隔で要素を比較・スワップ、1個のバイトニック配列
+</li></ul></div><p>これにより、32個の上昇していく配列と、32個の下降していくバイトニック配列ができます。各ステージの間隔が2の累乗で増加していることがわかるかと思います。</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch21.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch21.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch21s02.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

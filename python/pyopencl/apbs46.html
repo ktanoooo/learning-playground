@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>B.46. イメージ書き込み関数</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="apb.html" title="Appendix B. OpenCL 1.2 API Reference" /><link rel="prev" href="apbs45.html" title="B.45. サンプラー無し読み込み" /><link rel="next" href="apbs47.html" title="B.47. イメージ情報の取得" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="apbs45.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apbs47.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_イメージ書き込み関数_2"></a>B.46. イメージ書き込み関数</h2></div></div></div><div class="table"><a id="write_image"></a><p class="title"><strong>Table B.127. 表：イメージ書き込み関数</strong></p><div class="table-contents"><table class="table" summary="表：イメージ書き込み関数" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><thead><tr><th style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top">Function￼</th><th style="border-bottom: 1px solid #527bbd; " align="left" valign="top">Description
+￼</th></tr></thead><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">void write_imagef (
+    image2d_t image,
+    int2 coord,
+    float4 color)
+void write_imagei (
+    image2d_t image,
+    int2 coord,
+    int4 color)
+void write_imageui (
+    image2d_t image,
+    int2 coord,
+    uint4 color)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">coord.xyで指定された
+２次元イメージオブジェクト
+に色彩値を書き込みます。
+指定したイメージ型式に適合
+するデータ型式への変換は、
+色彩値を書き込む前に行なわ
+れます。coord.xとcoord.y
+は非正規化された座標とし、
+`[0 ... イメージ幅 - 1],`
+`[0 ... イメージ高さ - 1]`
+の範囲である必要があります。
+
+write_imagefは
+image_channel_data_typeが
+
+CL_SNORM_INT8
+CL_UNORM_INT8
+CL_SNORM_INT16
+CL_UNORM_INT16
+CL_HALF_FLOAT
+CL_FLOAT
+
+のいずれかに指定された
+イメージオブジェクトに
+たいして使うことができます。
+
+write_imageiは
+image_channel_
+data_typeが
+
+CL_SIGNED_INT8
+CL_SIGNED_INT16
+CL_SIGNED_INT32
+
+のいずれかに指定された
+イメージオブジェクトに
+たいして使うことがで
+きます。
+
+write_imageuiは
+image_channel_
+data_typeが
+
+CL_UNSIGNED_INT8
+CL_UNSIGNED_INT16
+CL_UNSIGNED_INT32
+
+のいずれかに指定された
+イメージオブジェクト
+にたいして使うことが
+できます。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">void write_imagef (
+    image2d_array_t image,
+    int4 coord,
+    float4 color)
+void write_imagei (
+    image2d_array_t image,
+    int4 coord,
+    int4 color)
+void write_imageui (
+    image2d_array_t image,
+    int4 coord,
+    uint4 color)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">coord.xyで指定された
+（imageが指定する２次
+元イメージアレイのcoord.z
+で特定される）２次元
+イメージに色彩値を書き込
+みます。指定したイメージ
+型式に適合するデータ型式へ
+の変換は、色彩値を書き込む
+前に行なわれます。coord.x、
+coord.y、coord.zは非正規
+化された座標とし、
+`[0 ... イメージ幅 - 1],`
+`[0 ... イメージ高さ - 1],`
+`[0 ... レイメージイヤー数 - 1]`
+の範囲である必要があります。
+
+write_imagefは
+image_channel_
+data_typeが
+
+CL_SNORM_INT8
+CL_UNORM_INT8
+CL_SNORM_INT16
+CL_UNORM_INT16
+CL_HALF_FLOAT
+CL_FLOAT
+
+のいずれかに指定された
+イメージオブジェクトに
+たいして使うことができます。
+
+write_imageiは
+image_channel_
+data_typeが
+
+CL_SIGNED_INT8
+CL_SIGNED_INT16
+CL_SIGNED_INT32
+
+のいずれかに指定された
+イメージオブジェクトに
+たいして使うことが
+できます。
+
+write_imageuiは
+image_channel_
+data_typeが
+
+CL_UNSIGNED_INT8
+CL_UNSIGNED_INT16
+CL_UNSIGNED_INT32
+
+のいずれかに指定された
+イメージオブジェクトに
+たいして使うことが
+できます。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">void write_imagef (
+    image1d_t image,
+    int coord,
+    float4 color)
+void write_imagei (
+    image1d_t image,
+    int coord,
+    int4 color)
+void write_imageui (
+    image1d_t image,
+    int coord,
+    uint4 color)
+void write_imagef (
+    image1d_buffer_t image,
+    int coord,
+    float4 color)
+void write_imagei (
+    image1d_buffer_t image,
+    int coord,
+    int4 color)
+void write_imageui (
+    image1d_buffer_t image,
+    int coord,
+    uint4 color)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">coordで指定された
+１次元イメージまたは
+１次元イメージバッファー
+オブジェクトに色彩値を書
+き込みます。指定したイメージ
+型式に適合するデータ型式へ
+の変換は、色彩値を書き込
+む前に行なわれます。coord
+は非正規化された座標とし、
+`[0 ... イメージ幅 - 1]`
+の範囲である必要があります。
+
+write_imagefはimage_
+channel_data_typeが
+
+CL_SNORM_INT8
+CL_UNORM_INT8
+CL_SNORM_INT16
+CL_UNORM_INT16
+CL_HALF_FLOAT
+CL_FLOAT
+
+のいずれかに指定された
+イメージオブジェクトにた
+いして使うことができます。
+
+write_imageiはimage_
+channel_data_typeが
+
+CL_SIGNED_INT8
+CL_SIGNED_INT16
+CL_SIGNED_INT32
+
+のいずれかに指定されたイメ
+ージオブジェクトにたいして
+使うことができます。
+
+write_imageuiはimage_
+channel_data_typeが
+
+CL_UNSIGNED_INT8
+CL_UNSIGNED_INT16
+CL_UNSIGNED_INT32
+
+のいずれかに指定された
+イメージオブジェクトにた
+いして使うことができます。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">void write_imagef (
+    image1d_array_t image,
+    int2 coord,
+    float4 color)
+void write_imagei (
+    image1d_array_t image,
+    int2 coord,
+    int4 color)
+void write_imageui (
+    image1d_array_t image,
+    int2 coord,
+    uint4 color)</pre></td><td style="" align="left" valign="top"><pre class="literallayout">coord.xで指定した（image
+が指定する1次元イメージアレイ
+のcoord.yで特定される）１次元
+イメージオブジェクトに色彩値を
+書き込みます。指定したイメージ
+型式に適合するデータ型式への変換
+は、色彩値を書き込む前に行なわれ
+ます。coord.xとcoord.yは非正
+規化された座標とし、
+`[0 ... イメージ幅 - 1],`
+`[0 ... イメージレイヤー数 - 1]`
+の範囲である必要があります。
+
+write_imagefはimage_
+channel_data_typeが
+
+CL_SNORM_INT8
+CL_UNORM_INT8
+CL_SNORM_INT16
+CL_UNORM_INT16
+CL_HALF_FLOAT
+CL_FLOAT
+
+のいずれかに指定された
+イメージオブジェクトにた
+いして使うことができます。
+
+write_imageiはimage_
+channel_data_typeが
+
+CL_SIGNED_INT8
+CL_SIGNED_INT16
+CL_SIGNED_INT32
+
+のいずれかに指定されたイメージ
+オブジェクトにたいして使う
+ことができます。
+
+write_imageuiはimage_
+channel_data_typeが
+
+CL_UNSIGNED_INT8
+CL_UNSIGNED_INT16
+CL_UNSIGNED_INT32
+
+のいずれかに指定されたイメージ
+オブジェクトにたいして使うこ
+とができます。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apbs45.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apb.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apbs47.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

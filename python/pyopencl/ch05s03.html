@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>5.3. カーネルプログラミング言語</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch05.html" title="Chapter 5. APIとアーキテクチャ" /><link rel="prev" href="ch05s02.html" title="5.2. ランタイムAPI" /><link rel="next" href="ch06.html" title="Chapter 6. PyOpenCL" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch05s02.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch06.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_カーネルプログラミング言語"></a>5.3. カーネルプログラミング言語</h2></div></div></div><p>Platform APIとRuntime APIはホストプログラムと呼ばれるリソースの管理や制御を行うのにたいして、カーネルプログラミングは、CPU/GPU等のデバイス上で実際の処理を担当します。</p><p>カーネルプログラミング言語はOpenCL-C言語と呼ばれており、ホストプログラムのソースとなるC言語を補完してくれる、ISO-C99規格から派生した外部言語です。</p><p>OpenCLをサポートするデバイス対して命令をするコマンドを実行させるには、カーネルという関数をOpenCL-C言語でコーディングするのが、カーネルプログラミング言語の語源です。</p><p>OpenCL-C言語ではC言語がCPUなどのGeneral Purpose RegisterやComputingだけができる、以下のような複雑な処理機能は規格から省かれています。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+再帰関数
+</li><li class="listitem">
+関数ポインタ
+</li><li class="listitem">
+ビットフィールド
+</li><li class="listitem">
+stdio.hやstdlib.hヘッダー等のインクルード
+</li></ul></div><p>それ以外にも、structやunionはカーネル関数の引数として渡すのを除き処理ができないようになっています。</p><p>反対にOpenCL-C言語には、C言語を拡張した機能もあります。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+ベクトル型と処理
+</li><li class="listitem">
+アドレス空間修飾子
+</li><li class="listitem">
+組込み関数
+</li><li class="listitem">
+ローカル・グローバルメモリ内の単精度スカラ変数の処理に用いるアトミック関数
+</li></ul></div><p>またヘテロジニアス環境がサポートしなくてはならないデバイスが膨大なため、浮動小数点演算の規格はC言語よりも緩和した基準を指定しています。</p><p>CPUの世界ではベンダーがIEEE-754と854規格に準拠させるため問題となりませんが、DSP/FGPA/GPU等のデバイス全てでサポートするのは困難なため、クロノスグループは基準を緩和させることにしました。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+IEEE754をフルサポートするが、倍精度は任意選択機能とする。
+</li><li class="listitem">
+IEEE754の丸めモード「round to nearest」のサポート。それ以外のモードは任意選択とする。
+</li><li class="listitem">
+丸めモードは静的に設定される。
+</li><li class="listitem">
+INF(無限大)とNaN（Not a number）をサポート。符号付きNaNサポートは必要ではない。
+</li><li class="listitem">
+非正規化数は０にフラッシュできる。
+</li></ul></div><p>これらについて一部は本書でも解説しますが、IEEE754が浮動小数点演算で使われるということを抑えておき、浮動小数点での正確な操作が不可欠な場合は規格書を読むようにしてください。</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch05s02.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch05.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch06.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

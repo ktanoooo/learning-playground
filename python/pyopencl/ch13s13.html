@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>13.13. SIMD</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch13.html" title="Chapter 13. OpenCLの概要" /><link rel="prev" href="ch13s12.html" title="13.12. Intel GPUとNVIDIA GPUのベンチマーク比較" /><link rel="next" href="ch13s14.html" title="13.14. Autovectorization" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch13s12.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch13s14.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_simd"></a>13.13. SIMD</h2></div></div></div><p>Single Instruction Multiple Data(SIMD)はOpenCLに特有のものではなくベクトル型の要素での並列演算処理を可能とします。SIMD命令は複数のデータ要素を１サイクルで処理させます。</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_sse_avx"></a>13.13.1. SSE/AVX</h3></div></div></div><p>IntelやAMDのCPUが実装したSIMDはSSEと呼びます。Intelの最新のチップはAVXというSIMDのアーキテクチャをサポートしています。</p><p>Intelのマイクロプロセッサーではベクトルを並列で処理する機構である以下３つの規格（いずれか一つ）が採用されています。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Intel Streaming SIMD Extensions (Intel SSE)
+</li><li class="listitem">
+Intel Advanced Vector Extensions (Intel AVX)
+</li><li class="listitem">
+Intel Advanced Vector Extensions 2 (Intel AVX2)
+</li></ul></div><p>各規格の詳細についてはIntelがネットで公開しているドキュメントやマニュアルを参照ください。SSEにはSSE2、SSE3といったようにバージョンがついており、各ハードウェアでサポートしているSIMD拡張が異なります。</p><p>検証環境で使うIntel Core I5のマイクロアーキテクチャーIvyBridgeはAVXをサポートしているので、OpenCLの実装もAVXに適したパラメーターを設定するようにします。</p><p>IntelはAVXの推奨設定として下記のものをあげています。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+16個のバリアーレジスタがあるため、最大16個までのワークグループが同時に実行できる。最低でも16個以上のワークグループを同時に動作させるようにコードすることを推奨。
+</li><li class="listitem">
+共有ローカルメモリーの最大値は64KB、そのため一つのワークグループに16KBのメモリ領域を要するのであれば、４つのワークグループが並列で処理される。
+</li><li class="listitem">
+より高い使用率を実現するにはワークグループのサイズ（Local Work Size）を64〜256にする。
+</li></ul></div><p>CPU/GPUでの推奨ワークグループサイズは64または128です。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch13s12.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch13.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch13s14.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

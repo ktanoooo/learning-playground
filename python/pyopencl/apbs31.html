@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>B.31. カーネル引数設定</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="apb.html" title="Appendix B. OpenCL 1.2 API Reference" /><link rel="prev" href="apbs30.html" title="B.30. カーネルオブジェクト" /><link rel="next" href="apbs32.html" title="B.32. カーネルオブジェクト情報の取得" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="apbs30.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apbs32.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_カーネル引数設定_2"></a>B.31. カーネル引数設定</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clsetkernelarg"></a>B.31.1. clSetKernelArg</h3></div></div></div><div class="table"><a id="clSetKernelArg"></a><p class="title"><strong>Table B.81. 表：clSetKernelArg</strong></p><div class="table-contents"><table class="table" summary="表：clSetKernelArg" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>関数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>cl_int</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clSetKernelArg (
+    cl_kernel kernel,
+    cl_uint arg_index,
+    size_t arg_size,
+    const void *arg_value
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>kernelの特定の引数に対して引数値を設定。</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>引数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>kernel</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">有効なカーネル
+オブジェクトを指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>arg_index</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">引数の添字（インデックス）
+を指定。
+
+カーネルが宣言している
+引数の数をnとした場合、
+左端の引数を0で始めて
+n - 1 までの添字で
+カーネルの引数の番号
+を指定。
+
+一例として、以下の５つ
+の引数をもつカーネル
+を考察する。
+
+__kernel void image_filter (
+    int n,
+    int m,
+    __constant float *filter_weights,
+    __read_only image2d_t src_image,
+    __write_only image2d_t dst_image)
+{
+    ...
+}
+
+引数のインデックスは、
+引数nが0、引数mが1、
+引数filter_weightsが2、
+引数src_imageが3、
+引数dst_imageが4となる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>arg_value</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">arg_indexで指定した
+引数に、カーネルの引数
+値として渡したいデータ
+へのポインタを指定。
+
+arg_valueが指す引数
+データは複製され、
+clSetKernelArg()が戻
+った後にアプリケーション
+はarg_valueポインタを
+再利用可能。
+
+指定した引数値は、
+clSetKernelArg() を
+呼び出して kernel の
+引数値を変更するまで、全
+てのカーネルを挿入する
+API（clEnqueueND
+RangeKernel() および
+clEnqueueTask()）の呼
+び出しで使用。
+
+引数がメモリオブジェクト
+（バッファオブジェクトや
+イメージオブジェクト）
+である場合、arg_value
+にはバッファ・イメージ・
+イメージ配列オブジェクト
+へのポインタを指定。指定
+するメモリオブジェクトは、
+kernelと関連付けられた
+OpenCLコンテキスト上で
+生成される必要がある。
+
+引数がバッファオブジェク
+トの場合、NULL値を指定
+できる。またはNULL値に
+ポインタを指すことができ、
+その際、カーネル内で
+__globalもしくは
+__constant メモリへの
+ポインタとして宣言された
+引数への値としてNULL値
+が設定される。
+
+引数が__local修飾子付
+で宣言された場合、
+arg_valueにはNULL値を
+指定する必要がある。引数
+型がsampler_tである場合
+は、arg_valueエントリは
+サンプラーオブジェクトへ
+のポインタを指定する
+必要がある。
+
+引数が組み込み、または
+グローバル・コンスタント
+アドレス空間内のユーザ定
+義型へのポインタであると
+き、引数値として指定する
+メモリオブジェクトはバッ
+ファオブジェクト（または
+NULL）である必要がある。
+引数が`__constant`修飾
+子付で宣言された場合、
+メモリオブジェクトのバイ
+トサイズは CL_DEVICE_
+MAX_CONSTANT_BUFFER_
+SIZEの値を超えることはで
+きない。また、
+__constant修飾子付で
+宣言できる引数の数は
+CL_DEVICE_MAX_
+CONSTANT_ARGSの値を
+超えることはできない。
+
+引数型がimage2d_tの
+場合、引数として指定す
+るメモリオブジェクトは
+2Dイメージオブジェクト
+となる必要がある。
+
+引数型がimage3d_tの
+場合、引数として指定する
+メモリオブジェクトは3D
+イメージオブジェクトと
+なる必要がある。
+
+引数型がimage1d_
+buffer_tの場合、引数
+として指定するメモリオ
+ブジェクトは1Dイメージ
+オブジェクトとなる必要
+がある。
+
+引数型がimage1d_
+array_tの場合、引数と
+して指定するメモリオブ
+ジェクトは1Dイメージ
+配列オブジェクトと
+なる必要がある。
+
+引数型がimage2d_
+array_tの場合、引数と
+して指定するメモリオ
+ブジェクトは2Dイメージ
+配列オブジェクトとな
+る必要がある。
+
+他の全てのカーネル引
+数については、
+arg_valueに引数値と
+して実際に使用される
+データへのポインタを指
+定する必要がある。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>arg_size</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">引数値のサイズを指定。
+
+引数がメモリオブ
+ジェクトの場合、サイズ
+はバッファ・イメージ
+オブジェクト型のサイズ
+となる必要がある。
+
+`__local`修飾子付で
+宣言された引数につい
+ては、指定したサイズは
+、__local 引数のため
+に割り当てるバッファの
+バイトサイズとなる。
+
+引数型がsampler_tで
+ある場合、arg_sizeに
+指定する値は
+sizeof(cl_sampler)
+と等しくなる。他の全て
+の引数については、引数
+型のサイズを指定。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>成功した場合の戻り値</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>CL_SUCCESS</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>失敗した場合の戻り値</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+KERNEL</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">kernelが有効なカーネル
+オブジェクトでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+ARG_INDEX</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">arg_indexで指定した引
+数のインデックスが適切
+でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+ARG_VALUE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">arg_valueで指定した
+引数が有効な値でない
+場合。
+￼￼￼￼￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+MEM_OBJECT</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">メモリオブジェクトと
+宣言された引数に対して
+arg_valueで設定した
+引数値が有効なメモリオブ
+ジェクトでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+SAMPLER</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> sampler_t型を指定
+するように宣言された
+引数に対してarg_value
+で設定した引数値が有効
+なサンプラーオブジェク
+トでないとき。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+ARG_SIZE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">メモリオブジェクトで
+はない引数に対して
+arg_sizeが引数型と
+一致しない場合。
+
+引数がメモリオブジェクト
+で、arg_sizeがsizeof
+(cl_mem)と一致しない
+場合。
+
+引数が`__local`修飾
+子付で宣言され、
+arg_zeroが0の場合。
+
+引数がサンプラーオブ
+ジェクトで、arg_size
+がsizeof(cl_sampler)
+と一致しない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+ARG_VALUE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">引数がread_only修飾子
+で宣言されたイメージで、
+arg_valueがcl_mem_
+flagsでCL_MEM_WRITE
+を指定したイメージオブ
+ジェクトを参照する場合。
+
+イメージ引数がwrite_
+only修飾子で宣言され、
+arg_valueがcl_mem_
+flagsで CL_MEM_READ
+を指定したイメージオブ
+ジェクトを参照する場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_OF_
+RESOURCES</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_OF_
+HOST_MEMORY</em></span></p></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apbs30.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apb.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apbs32.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

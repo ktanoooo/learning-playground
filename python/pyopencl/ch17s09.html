@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>17.9. ベクトルデータ読み出し・変換関数</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch17.html" title="Chapter 17. OpenCL C言語プログラミング" /><link rel="prev" href="ch17s08.html" title="17.8. 比較関数" /><link rel="next" href="ch17s10.html" title="17.10. OpenCL-Cイメージ処理関数" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch17s08.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch17s10.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_ベクトルデータ読み出し_変換関数"></a>17.9. ベクトルデータ読み出し・変換関数</h2></div></div></div><p>C＋＋等のC派生の言語以外でOpenCLフレームワークのバインディングを使うと、ランタイムAPI上でベクトル型の操作ができないケースが良くあります。例えばJavaやPythonの独自ライブラリで、配列・コレクション型としてデータのバインディングがある場合には、往々にしてベクトル型への変換をカーネル内で行なう必要が出てきます。</p><p>カーネル内での「うわべだけの」（Spurious）初期化はC言語で行なう場合は、慎重に行なうべきですが、PythonでOpenCLを使うのであれば必須の操作となりえます。</p><p>ベクトルデータのloadとstoreは、vloadnとvstoren関数を使うことができます。例えば４つの要素からなる配列データをベクトルデータに移すには、vload4関数を呼び出します。</p><pre xmlns="" class="prettyprint">import numpy as np
+import pyopencl as cl
+
+devices = [cl.get_platforms()[0].get_devices(cl.device_type.GPU)[0]]
+
+ctx = cl.Context(devices)
+queue = cl.CommandQueue(ctx)
+mf = cl.mem_flags
+
+ary = np.arange(64).astype(np.float32)
+loc_mem = cl.LocalMemory(ary.nbytes)
+ary_mem = cl.Buffer(ctx, mf.USE_HOST_PTR, hostbuf=ary)
+
+program = cl.Program(ctx, """
+    __kernel void helloworld(
+        __local float4* foo, //<a xmlns="http://www.w3.org/1999/xhtml" id="CO64-1"></a>(1)
+        __global float* bar) //<a xmlns="http://www.w3.org/1999/xhtml" id="CO64-2"></a>(2)
+    {
+        *foo = vload4(0, bar); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO64-3"></a>(3)
+        *(foo+1) = vload4(0, bar + 4); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO64-4"></a>(4)
+
+        printf("-----after vload4-----\\n");
+
+        printf("%#v4f\\n", *foo);
+        printf("%#v4f\\n", *(foo+1));
+
+        printf("-----before vstore4-----\\n");
+
+        printf("%f\\n", *(bar+4));
+        printf("%f\\n", *(bar+5));
+
+        printf("-----after vstore4-----\\n");
+
+        __global float4* g_data;
+        *g_data = (float4) (1.0f, 2.0f, 3.0f, 4.0f);
+        __global float *data;
+        vstore4(*g_data, 0, bar); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO64-5"></a>(5)
+
+        printf("%f\\n", *(bar+3));
+        printf("%f\\n", *(bar+4));
+    }
+    """).build()
+
+kernel = cl.Kernel(program, name="helloworld")
+
+kernel.set_arg(0, loc_mem)
+kernel.set_arg(1, ary_mem)
+
+cl.enqueue_task(queue, kernel)
+
+queue.finish()</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO64-1">(1)</a> </p></td><td valign="top" align="left"><p>
+ローカルメモリ領域に記憶する引数foo
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO64-2">(2)</a> </p></td><td valign="top" align="left"><p>
+グローバルメモリ領域に記憶する引数bar
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO64-3">(3)</a> </p></td><td valign="top" align="left"><p>
+vload4を使ってbarからfooにデータを複製
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO64-4">(4)</a> </p></td><td valign="top" align="left"><p>
+(bar+4)から(foo+1)にデータを複製（括弧の中はポインタ演算）
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO64-5">(5)</a> </p></td><td valign="top" align="left"><p>
+barにg_dataを上書きします。
+</p></td></tr></table></div><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">status: 1
+Well aligned.
+kernel completed.
+-----vload4-----
+0.000000,1.000000,2.000000,3.000000
+4.000000,5.000000,6.000000,7.000000
+-----before vstore4-----
+4.000000
+5.000000
+-----after vstore4-----
+4.000000
+4.000000</pre><p>
+</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_ベクトルload_store関数"></a>17.9.1. ベクトルload・store関数</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：ロードと保存」（<a class="xref" href="apbs43.html#load" title="Table B.118. 表：ロードと保存">Table B.118, “表：ロードと保存”</a>）を参照ください。</p></div><p>vloadn関数はアラインメントのとれてないベクトルのロードに使います。</p><pre xmlns="" class="prettyprint">gentypen vloadn(
+    size_t offset,
+    const global gentype *p)</pre><p>`sizeof(gentypen)`バイトのデータ`（p + (offset * n)`のアドレスで読み込み）を返します。</p><p>gentypeがcharまたはucharのときは、`(p + (offset * n))`として計算されるアドレスは8-bitとして揃う(アラインメントをとる)必要があります。</p><p>gentypeがshortまたはushortのときは、16-bit長で揃えます。int、uint、floatのときは、32-bit長で揃えます。long、ulong、doubleのときは、64-bit長で揃えます。</p><p>vstoren関数はアラインメントのとれてないベクトルの書き込みに使います。</p><pre xmlns="" class="prettyprint">void vstoren(
+    gentypen data,
+    size_t offset,
+    global gentype *p)</pre><p>sizeof(gentypen)のデータを`(p + (offset * n))`のアドレスに書き込みます。</p><p>gentypeがcharまたはucharのときは、`(p + (offset * n))`として計算されるアドレスは8-bitとして揃う(アラインメントをとる)必要があります。</p><p>gentypeがshortまたはushortのときは、16-bit長で揃えます。int、uint、floatのときは、32-bit長で揃えます。long、ulong、doubleのときは、64-bit長で揃えます。</p><p>vload_halfnはアラインメントのとれてないベクトルのロードをし、floatのベクトルを返します。</p><pre xmlns="" class="prettyprint">floatn vload_halfn(
+    size_t offset,
+    const global half *p)</pre><p>sizeof(halfn)バイトのデータ`（p + (offset * n)`のアドレスで読み込み）を返します。</p><p>読み込んだデータはhalfnとして解釈されます。そしてhalfnの値はfloatnに変換され、floatnの値が返されます。`（p + (offset * n)`のアドレスは、16-bit長で揃える必要があります。</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_同期関数"></a>17.9.2. 同期関数</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳細は「表：同期関数」（<a class="xref" href="apbs43.html#synchronization" title="Table B.119. 表：同期関数">Table B.119, “表：同期関数”</a>）を参照ください。</p></div><p>カーネル内で同期点を持つには、barrier関数を使います。カーネルを実行する*ワークグループ内のワークアイテム*は、その他の全てのワークアイテムがバリアーを超えた処理（バリアー関数の後に記述された処理）に進むために、この関数を実行する必要があります。この関数はカーネルを実行する全てのワークアイテムによって呼び出されます。</p><p>以下が関数の定義です。</p><pre xmlns="" class="prettyprint">void barrier (
+    cl_mem_fence_flags flags
+)</pre><p>flagsは以下２つの値を取ります。</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+CLK_LOCAL_MEM_FENCE
+</span></dt><dd>
+関数はローカルメモリーの変数をフラッシュするか、メモリーフェンスをキューにいれて、ローカルメモリー領域においてメモリ操作の順序性を確保します。
+</dd><dt><span class="term">
+CLK_GLOBAL_MEM_FENCE
+</span></dt><dd>
+メモリーフェンスをキューにいれて、グローバルメモリー領域においてメモリ操作の順序性を確保します。例えばワークアイテムがバッファーやイメージに書き込みして、更新したデータを読み込む際に使うことができます。
+</dd></dl></div><div class="important" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Important</h3><p>barrierはワークグループ内のワークアイテムの同期を行ないますが、ワークグループ間の同期は行ないません。</p></div><p>メモリ操作の順序性はメモリーフェンスを使うため、mem_fence関数のメモリへのコミットの順序の属性を持ちます。</p><p>barrierはメモリの整合性と操作の同期を同時に達成します。ただしbarrierをループや分岐処理内で使うことは、ハング（デッドロックに類似した現状）によるクラッシュを発生させるので注意が必要です。ハングは以下の状況で発生します。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+ワークグループの一部のスレッドが戻らない。そのためbarrierが待機し続ける。（ワークアイテムの一つもbarrierに到達しない場合は、逆に問題にならない。）
+</li></ul></div><pre xmlns="" class="prettyprint">__kernel void helloworld(__global uint* g_mat,
+                __local uint* l_mat)
+{
+
+        size_t gid = get_global_id(0);
+        size_t lid = get_local_id(0);
+        size_t group = get_group_id(0);
+        size_t lsize = get_local_size(0);
+        size_t wgsize= get_num_groups(0);
+
+        __global uint* output;
+
+        //printf("g_mat[%d] = %u\n", group * lsize + lid, *(g_mat+gid));
+
+        uint sum = 0;
+
+        for(int i = 1; i &lt;= 1000; i++) {
+                sum += group;
+        }
+
+        l_mat[lid] = sum;
+        barrier(CLK_LOCAL_MEM_FENCE);
+
+        //printf("l_mat[%u] = %u\n", lid, l_mat[lid]);
+
+        if(lid == 0) {
+                uint group_sum = 0;
+
+                for(size_t i = 0; i &lt; lsize; i++) {
+                        group_sum += l_mat[i];
+                }
+                g_mat[group] = group_sum;
+                //printf("output[%u] = %u\n", gid, g_mat[group]);
+        }
+
+        barrier(CLK_GLOBAL_MEM_FENCE);
+
+        if(group == 0){
+
+                uint output_sum = 0;
+
+                for(size_t i = 0; i &lt; wgsize; i++) {
+                        output_sum += g_mat[i];
+                }
+                g_mat[wgsize] = output_sum;
+                //printf("output_sum = %u\n", output_sum);
+        }
+}</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_明示的メモリフェンス関数"></a>17.9.3. 明示的メモリフェンス関数</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳細は「表：メモリフェンス関数」（<a class="xref" href="apbs43.html#fence" title="Table B.120. 表：メモリフェンス関数">Table B.120, “表：メモリフェンス関数”</a>）を参照ください。</p></div><p>*ワークアイテム内でメモリの整合性を取りたい場合*にはmem_fence関数を使い読み込み、書き込みのタイミング・順序を整列させます。</p><p>以下が関数の定義です。</p><pre xmlns="" class="prettyprint">void mem_fence (
+    cl_mem_fence_flags flags
+)</pre><p>この関数はカーネルを実行するワークアイテムのロードや保存の前後の順序を整列させます。これはメモリーフェンスの後に記述されたロードや保存が行われる前に、ロードや保存はメモリーにコミットされることを意味します。</p><div class="important" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Important</h3><p>同じワークグループ内のワークアイテムが全て終了することを保証するbarrier関数に対して、mem_fenceはメモリの（load/store）整合性を保証します。つまりワークアイテム内でmem_fenceの以前に起きたload/storeはメモリにコミットされ、その後にロードが行なわれます。ただしbarrier関数はmem_fenceを呼び出すため、ワークグループ内の同期と整合性が保証されます。</p></div><p>この他にも、読み込み・書き込みだけに限定したフェンスを設けることができる以下の関数があります。</p><pre xmlns="" class="prettyprint">void read_mem_fence (
+    cl_mem_fence_flags flags)
+void write_mem_fence (
+    cl_mem_fence_flags flags)￼</pre><p>flags引数についてはbarrier関数と同様に、CLK_LOCAL_MEM_FENCE
+CLK_GLOBAL_MEM_FENCEの２つの値を指定できます。</p><pre xmlns="" class="prettyprint">__kernel void helloworld(__global uint* g_mat1,
+                __global uint* g_mat2)
+{
+    size_t id = get_global_id(0);
+        g_mat2[a] = g_mat1[id];
+        mem_fence(CLK_LOCAL_MEM_FENCE);
+        g_mat2[b] = g_mat1[id+1];
+}</pre><p>明示的メモリフェンスとは、g_mat2のインデックスaのstore、g_mat1のインデックスidのloadの処理がメモリにコミットされた後に、g_mat2のインデックスbへのstoreとg_mat1のインデックスid+1のloadが処理されることを保証します。</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>当たり前のように感じられるかもしれませんが、フェンスを明示することによってコンパイラに順序があるということを知らせることができます。</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_非同期複製_先読み関数"></a>17.9.4. 非同期複製・先読み関数</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳細は「表：非同期ワークグループ関数」（<a class="xref" href="apbs43.html#async_group" title="Table B.121. 表：非同期ワークグループ関数">Table B.121, “表：非同期ワークグループ関数”</a>）を参照ください。</p></div><p>非同期複製の関数には2つの機能があります。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+ローカルメモリの中身をグローバルメモリに複製
+</li><li class="listitem">
+グローバルメモリの中身をローカルメモリに複製
+</li></ul></div><p>これは以下の関数プロトタイプの引数をグローバル変数をローカル変数に変えるだけで使いわけられます。</p><pre xmlns="" class="prettyprint">event_t async_work_group_copy (
+    __local gentype *dst, //<a xmlns="http://www.w3.org/1999/xhtml" id="CO65-1"></a>(1)
+    const __global gentype *src, //<a xmlns="http://www.w3.org/1999/xhtml" id="CO65-2"></a>(2)
+    size_t num_gentypes, //<a xmlns="http://www.w3.org/1999/xhtml" id="CO65-3"></a>(3)
+    event_t event) //<a xmlns="http://www.w3.org/1999/xhtml" id="CO65-4"></a>(4)</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO65-1">(1)</a> </p></td><td valign="top" align="left"><p>
+コピー先に確保されたメモリ領域を指すポインタ
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO65-2">(2)</a> </p></td><td valign="top" align="left"><p>
+コピー元のメモリーのアドレスを指すポインタ
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO65-3">(3)</a> </p></td><td valign="top" align="left"><p>
+コピーする要素数、ワークグループ内のワークアイテム数と同じ
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO65-4">(4)</a> </p></td><td valign="top" align="left"><p>
+他のイベントと関連付けるイベントオブジェクト、0の場合は何もしない。
+</p></td></tr></table></div><pre xmlns="" class="prettyprint">__kernel void helloworld(__global uint* g_mat, __local uint* l_mat, uint num_rows, uint num_cols)
+{
+
+        size_t gid = get_global_id(0);
+        size_t lid = get_local_id(0);
+        size_t group = get_group_id(0);
+        size_t lsize = get_local_size(0);
+
+        printf("g_mat[%d] = %u\n", group * lsize + lid, *(g_mat+gid)); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO66-1"></a>(1)
+
+        event_t my_evt;
+        my_evt =  async_work_group_copy(
+                        l_mat, //<a xmlns="http://www.w3.org/1999/xhtml" id="CO66-2"></a>(2)
+                        g_mat + (group * lsize), //<a xmlns="http://www.w3.org/1999/xhtml" id="CO66-3"></a>(3)
+                        4, //<a xmlns="http://www.w3.org/1999/xhtml" id="CO66-4"></a>(4)
+                        (event_t) 0
+                );
+
+
+        wait_group_events(1, &amp;my_evt); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO66-5"></a>(5)
+
+        g_mat[lsize * lid + group] = l_mat[lid]; //<a xmlns="http://www.w3.org/1999/xhtml" id="CO66-6"></a>(6)
+
+}</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO66-1">(1)</a> </p></td><td valign="top" align="left"><p>
+配列の中身を順に標準出力におくります。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO66-2">(2)</a> </p></td><td valign="top" align="left"><p>
+コピー先のローカルメモリ領域を指すポインタ
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO66-3">(3)</a> </p></td><td valign="top" align="left"><p>
+コピー元のグローバルメモリのアドレスを指すポインタ
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO66-4">(4)</a> </p></td><td valign="top" align="left"><p>
+コピーするサイズ（ローカルワークサイズと同じ）
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO66-5">(5)</a> </p></td><td valign="top" align="left"><p>
+my_evtの終了を待ちます。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO66-6">(6)</a> </p></td><td valign="top" align="left"><p>
+行列の転置をします。行順の要素を列順に入れかえる。
+</p></td></tr></table></div><pre xmlns="" class="prettyprint">g_mat[8] = 8
+g_mat[9] = 9
+g_mat[10] = 10
+g_mat[11] = 11
+g_mat[12] = 12
+g_mat[0] = 0
+g_mat[13] = 13
+g_mat[1] = 1
+g_mat[14] = 14
+g_mat[2] = 2
+g_mat[15] = 15
+g_mat[3] = 3
+g_mat[4] = 4
+g_mat[5] = 5
+g_mat[6] = 6
+g_mat[7] = 7
+0 //<a xmlns="http://www.w3.org/1999/xhtml" id="CO67-1"></a>(1)
+4
+8
+12
+1 //<a xmlns="http://www.w3.org/1999/xhtml" id="CO67-2"></a>(2)
+5
+9
+13
+2 //<a xmlns="http://www.w3.org/1999/xhtml" id="CO67-3"></a>(3)
+6
+10
+14
+3 //<a xmlns="http://www.w3.org/1999/xhtml" id="CO67-4"></a>(4)
+7
+11
+15</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO67-1">(1)</a> </p></td><td valign="top" align="left"><p>
+Matrix(0,0)
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO67-2">(2)</a> </p></td><td valign="top" align="left"><p>
+Matrix(1,0)
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO67-3">(3)</a> </p></td><td valign="top" align="left"><p>
+Matrix(2,0)
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO67-4">(4)</a> </p></td><td valign="top" align="left"><p>
+Matrix(3,0)
+</p></td></tr></table></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_アトミック関数"></a>17.9.5. アトミック関数</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：アトミック関数」（<a class="xref" href="apbs43.html#atomic" title="Table B.122. 表：アトミック関数">Table B.122, “表：アトミック関数”</a>）を参照ください。</p></div><p>barrier関数はワークグループ内のスレッドの同期をとるため、*「ローカルな同期」*を行ないます。アトミック関数は*主に競合アクセスが発生するデータに対する「グローバルまたはローカル」なメモリ整合性*を確保するために使います。ごく一部の例外を除いて、int型、unsigned int型のみで提供されています。</p><p>おそらく一番分かりやすいアトミック関数は、atomic_addです。まずグローバルメモリへ加算をする種類を見てみましょう。</p><pre xmlns="" class="prettyprint">int atomic_add (
+    volatile __global int *p,
+    int val)</pre><p>ポインタpが指すアドレスで32-bitの値（oldと呼称）を読みこみ、次に`(old + val)`を計算し、結果をpが指すアドレスに書き込みます。関数はoldを返します。</p><p>次に変数をアトミックにインクリメントする関数です。</p><pre xmlns="" class="prettyprint">int atomic_inc (
+    volatile __global int *p)</pre><p>この関数はポインタpが指すアドレスで32-bitの値（oldと呼称）を読みこみ、次に`(old + 1)`を計算し、結果をpが指すアドレスに書き込みます。関数はoldを返します。</p><p>次にローカルメモリの整合性をとる種類をみてみましょう。</p><pre xmlns="" class="prettyprint">int atomic_add (
+    volatile __local int *p,
+    int val)</pre><p>基本的にはグローバルメモリのものと一緒なのですが、アトミック関数を使う場合には、ローカルメモリの初期化にbarrier関数を使うことが必要な場合があります。もちろんグローバルメモリでも順序性が必要な場合であればbarrierと組み合わせることができます。グローバル変数と同様に、類似したatomic_incも用意されています。</p><p>浮動小数点数でアトミックなスワップ操作を行なう関数もあります。</p><pre xmlns="" class="prettyprint">float atomic_xchg (
+    volatile __global float *p,
+    float val)</pre><p>この関数はアドレスpに保存された古い値を、引数で指定した値valとスワップし、古い値を返します。この関数はint型でもサポートされています。</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_shuffle"></a>17.9.6. shuffle</h3></div></div></div><div class="figure"><a id="idm7662"></a><p class="title"><strong>Figure 17.1. シャッフル</strong></p><div class="figure-contents"><div class="mediaobject"><img src="images/shuffle1.png" alt="images/shuffle1.png" /></div></div></div><br class="figure-break" /><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：シャッフル関数」（<a class="xref" href="apbs43.html#shuffle" title="Table B.123. 表：シャッフル関数">Table B.123, “表：シャッフル関数”</a>）を参照ください。</p></div><p><strong>定義. </strong>
+</p><pre xmlns="" class="prettyprint">gentypen shuffle (
+    gentypem x,
+    ugentypen mask)</pre><p>
+</p><p>shuffle関数は一つの入力ベクトルに対してマスクを適用し、要素間の順序変更をします。shuffleではマスク要素は`ilogb(2m-1)`数の最下位ビットのみを使います。</p><p><strong>定義. </strong>
+</p><pre xmlns="" class="prettyprint">gentypen shuffle2 (
+    gentypem x,
+    gentypem y,
+    ugentypen mask)</pre><p>
+</p><p>shuffle2関数は２つの入力ベクトルに対してマスクを適用し、要素間の順序変更をします。shuffle2ではマスク要素は`ilogb(2m-1)+1`のみを使います。</p><pre xmlns="" class="prettyprint">__kernel void helloworld(
+                __global uint* g_mat)
+{
+
+        float4 in1 = (float4)(1.5f, 15.0f,5.0f,7.5f);
+        float4 in2 = (float4)(-20.0f, -5.0f, 1.0f, 100.0f);
+        uint4 shuffle_mask = (uint4)(0,3,2,1);
+        uint8 shuffle2_mask = (uint8)(0,3,2,1,5,4,7,6);
+
+        float4 result1 = shuffle(in1, shuffle_mask);
+        printf("Shuffle Result vector is %#2.1v4f\n", result1);
+
+        float8 result2 = shuffle2(in1, in2, shuffle2_mask);
+        printf("Shuffle2 Result vector is %#2.1v8f\n", result2);
+
+}</pre><pre xmlns="" class="prettyprint">Shuffle Result vector is 1.5,7.5,5.0,15.0
+Shuffle2 Result vector is 1.5,7.5,5.0,15.0,-5.0,-20.0,100.0,1.0</pre></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch17s08.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch17.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch17s10.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

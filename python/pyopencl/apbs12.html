@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>B.12. バッファオブジェクト</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="apb.html" title="Appendix B. OpenCL 1.2 API Reference" /><link rel="prev" href="apbs11.html" title="B.11. コマンドキュー" /><link rel="next" href="apbs13.html" title="B.13. バッファーの読み込み・書き込み・コピー" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="apbs11.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apbs13.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_バッファオブジェクト_2"></a>B.12. バッファオブジェクト</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clcreatebuffer"></a>B.12.1. clCreateBuffer</h3></div></div></div><div class="table"><a id="clCreateBuffer"></a><p class="title"><strong>Table B.29. 表：clCreateBuffer</strong></p><div class="table-contents"><table class="table" summary="表：clCreateBuffer" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">関数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_mem</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clCreateBuffer (
+    cl_context context,
+    cl_mem_flags flags,
+    size_t size,
+    void *host_ptr,
+    cl_int *errcode_ret
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> バッファオブジェクトを生成する。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 引数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">context</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">有効なOpenCLコンテ
+キストを指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">flags</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">バッファオブジェクト
+割当に使用されるメモリ領
+域や、バッファオブジェク
+トがどのように使われるの
+かを指定するビットフィー
+ルドです。有効な値は
+cl_mem_flagsの項目を
+参照ください。フラグの値
+を0にした場合のデフォルト
+値はCL_MEM_READ_WRITE
+です。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">size</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">確保するバッファオ
+ブジェクトの（バイト
+で表す）サイズを指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">host_ptr</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">アプリケーション
+が割当済みのバッファ
+データを指します。
+host_ptrが指すバッフ
+ァのサイズはsize引数
+以上の大きさである必要
+があります。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">errcode_ret</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">適切なエラーコード
+を戻す。errcode_ret
+がNULLの場合はエラー
+コードは戻されない。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 成功した場合の戻り値</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> バッファオブジェ
+クトの生成に成功する
+と、clCreateBuffer
+は有効な非ゼロのバッ
+ファオブジェクトを戻し
+errcode_retに
+CL_SUCCESSを設定。
+それ以外の場合はNULL
+を戻して、errcode_ret
+に以下のエラーのうち
+のひとつを設定する。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 失敗した場合の戻り値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+CONTEXT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">contextが有効な
+OpenCLコンテキスト
+でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">flagsに指定した値
+が有効なものでない
+場合。&lt;&lt;cl_mem_flags&gt;&gt;
+の項目を参照のこと。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+BUFFER_SIZE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">sizeが0の場合。
+指定されたsizeが
+CL_DEVICE_MAX_
+MEM_ALLOC_SIZEよ
+り大きい場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+HOST_PTR</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">host_ptrがNULL
+でCL_MEM_USE_HOST_PTR
+または
+CL_MEM_COPY_HOST_PTR
+がflagsに指定されている
+場合。もしくは
+CL_MEM_COPY_HOST_PTR、
+CL_MEM_USE_HOST_PTRが
+設定されていない状態で
+host_ptrがNULLで
+ない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_MEM_
+OBJECT_
+ALLOCATION_
+FAILURE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">バッファオブジェクトの
+メモリを割り当てるのに
+失敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+RESOURCES</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とするリソー
+ス確保に失敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+HOST_MEMORY</pre></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL実
+装が必要とするリソー
+ス確保に失敗した場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_cl_mem_flags"></a>B.12.2. cl_mem_flags</h3></div></div></div><div class="table"><a id="cl_mem_flags"></a><p class="title"><strong>Table B.30. cl_mem_flags</strong></p><div class="table-contents"><table class="table" summary="cl_mem_flags" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_mem_flags</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">詳細</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_MEM_
+READ_WRITE
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">このフラグはメモリオ
+ブジェクトがカーネル
+によって読み書きされ
+ることを指定。この設定
+がデフォルトです。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_MEM_
+WRITE_ONLY</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">このフラグはカーネル
+がメモリオブジェクト
+に書き込みをするが、
+読み込みはされないこ
+とを指定。
+
+カーネル内で
+CL_MEM_WRITE_ONLY
+を指定して生成したバッ
+ファ・イメージオブジェ
+クトからの読み込み処理
+は未定義となります。
+
+CL_MEM_READ_WRITEと
+CL_MEM_WRITE_ONLYは
+相互に相いれない。
+（相互排他的）</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_MEM_
+READ_ONLY</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">このフラグはカーネル
+がメモリオブジェクト
+への読み込み専用であ
+ることを指定。
+CL_MEM_READ_ONLYを
+指定し生成したバッファ
+・イメージオブジェクト
+へのカーネル内での書
+き込みについては未定義
+となります。
+
+CL_MEM_READ_WRITE
+または、
+CL_MEM_READ_ONLYと
+CL_MEM_WRITE_ONLY
+は相互に相いれない。
+（相互排他的）
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_MEM_USE_
+HOST_PTR</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">このフラグは
+host_ptrがNULLでな
+い場合のみ有効。
+
+アプリケーションが
+OpenCL実装に、
+host_ptrが指すメモリ
+をメモリオブジェクトの
+記憶域として用いるよ
+う求めていることを示す。
+
+OpenCL実装は
+host_ptrが指す領域
+に保存されているバッ
+ファの内容をデバイス
+メモリにキャッシュで
+きます。キャッシュさ
+れた複製はデバイス上
+でカーネルを実行する
+際に使用することができる。
+
+同じhost_ptrまたは
+重複する領域に対して
+生成された複数のバッ
+ファオブジェクトに対
+して操作を行うOpenCL
+コマンドの結果は未定
+義となります。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_MEM_ALLOC_
+HOST_PTR
+￼
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">このフラグはアプリ
+ケーションがOpenCL
+実装に、ホストがアク
+セス可能なメモリ領域
+からメモリを割当るよ
+う求めていることを示す。
+
+CL_MEM_ALLOC_
+HOST_PTRと
+CL_MEM_USE_
+HOST_PTRは相互に
+相いれない。（相互排他的）
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_MEM_COPY_
+HOST_PTR</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">このフラグはhost_ptr
+がNULLでない場合の
+み有効。アプリケーシ
+ョンが OpenCL実装に、
+メモリオブジェクトのメ
+モリを確保しhost_ptr
+が指すメモリからデータ
+を複製するよう求めてい
+ることを示す。
+
+CL_MEM_COPY_
+HOST_PTRと
+CL_MEM_USE_
+HOST_PTRは相互
+に相いれない。（相互排他的）
+
+CL_MEM_COPY_
+HOST_PTRはCL_MEM_
+ALLOC_HOST_PTRと
+一緒に指定して、ホスト
+がアクセス可能なメモリ
+（例：PCIeメモリ）に
+確保したcl_memオブジ
+ェクトの内容を初期化
+できます。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_MEM_HOST_
+WRITE_ONLY</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">このフラグはメモリ
+オブジェクトにホスト
+が書き込むのみできる
+ことを指定。（読み込
+みまたはマップによる）
+
+ホストからの書き込み
+アクセスを最適化する
+ことに使うことができる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_MEM_HOST_
+READ_ONLY
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">このフラグはメモリ
+オブジェクトをホスト
+が読み込むのみできる
+ことを指定。（読み込
+みまたはマップによる）
+
+CL_MEM_HOST_
+WRITE_ONLYと
+CL_MEM_HOST_
+READ_ONLYは相互
+に相いれない。（相互排他的）
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_MEM_HOST_
+NO_ACCESS
+￼
+￼</pre></td><td style="" align="left" valign="top"><pre class="literallayout">このフラグはメモ
+リオブジェクトをホ
+ストが読み書きしな
+いことを示す。
+
+CL_MEM_HOST_
+WRITE_ONLY
+またはCL_MEM_HOST_
+READ_ONLY
+とCL_MEM_HOST_
+NO_ACCESSは相互
+に相いれない。（相互排他的）</pre></td></tr></tbody></table></div></div><br class="table-break" /></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apbs11.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apb.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apbs13.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

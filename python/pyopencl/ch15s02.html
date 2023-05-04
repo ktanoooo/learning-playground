@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>15.2. 実装例</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch15.html" title="Chapter 15. OpenCLホストAPI" /><link rel="prev" href="ch15s01.html" title="15.1. Platform" /><link rel="next" href="ch15s03.html" title="15.3. Deviceのクエリー" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch15s01.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch15s03.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_実装例"></a>15.2. 実装例</h2></div></div></div><p>以下のコードがget_info関数の実装例となります。</p><p>上級者のためにfrom_int_ptr関数についての参考例も掲載していますが、これはOpenCLオブジェクトへのCポインタを取得する関数であり、pyopenclのモジュールを開発する用途でもなければ使うことはないでしょう。</p><p><strong>PlatformTest.py. </strong>
+</p><pre xmlns="" class="prettyprint">import pyopencl as cl
+
+platforms = cl.get_platforms()
+device = platforms[0].get_devices(cl.device_type.ALL)
+
+platform = platforms[0]
+
+extensions = platform.get_info(cl.platform_info.EXTENSIONS)
+
+print("platform extensions: "+str(extensions))
+
+name = platform.get_info(cl.platform_info.NAME)
+
+print("name: " + str(name))
+
+vendor = platform.get_info(cl.platform_info.VENDOR)
+
+print("vendor: " + str(vendor))
+
+version = platform.get_info(cl.platform_info.VERSION)
+
+print("version: " + str(version))
+
+# For pyopencl module developer
+# Retrieve the c-pointer to opencl object
+# This would allow other python API to interact with the opencl object
+
+platref = platform.from_int_ptr(platform.int_ptr)
+
+if platref == platform and type(platref) is type(platform):
+    print("pointer identity is confirmed.")
+
+if platref != device:
+    print("pass: another identity test")</pre><p>
+</p><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">/Library/Frameworks/Python.framework/Versions/3.5/bin/python3.5 /Users/komatsu/PycharmProjects/MyPythonProject/PlatformTest.py
+platform extensions: cl_APPLE_SetMemObjectDestructor cl_APPLE_ContextLoggingFunctions cl_APPLE_clut cl_APPLE_query_kernel_names cl_APPLE_gl_sharing cl_khr_gl_event
+name: Apple
+vendor: Apple
+version: OpenCL 1.2 (Apr 26 2016 00:05:53)
+pointer identity is confirmed.
+pass: another identity test</pre><p>
+</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch15s01.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch15.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch15s03.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>19.5. 実装例（CPU）</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch19.html" title="Chapter 19. 高速フーリエ変換（Fast Fourier Transform）" /><link rel="prev" href="ch19s04.html" title="19.4. 高速フーリエ変換（Fast Fourier Transform）" /><link rel="next" href="ch19s06.html" title="19.6. 実装例（GPU）" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch19s04.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch19s06.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_実装例_cpu"></a>19.5. 実装例（CPU）</h2></div></div></div><p>本書はGPGPUを主題として取り扱っているため、あまり深くCPUでの実装を解説はしません。しかし並列化される前のアルゴリズムを適度に理解できていないと、並列化したアルゴリズムを理解するのは困難でしょう。</p><p>CPU実装が理解できないとGPGPU実装が理解できないわけではありませんが、シーケンシャルなアルゴリズムを、並列アルゴリズムに移行させる困難さは、シーケンシャルなものを先に実装することで大幅に軽減されます。</p><p>FFTについて初めての読者は面倒がらずに、CPU実装を十分に理解できてから、GPGPUに進むようにしてください。そのほうが結果的に時間をセーブできるはずです。</p><p><strong>FFTCPU1D.py. </strong>
+</p><pre xmlns="" class="prettyprint">import pyopencl as cl
+import numpy as np
+from numpy.random import *
+
+_PI = np.pi
+size = 16
+_SIGN = 1
+
+
+def forward(N, offset, data, F, sign, step):
+    N2 = np.uint32(N/2)
+    step += 1
+
+    if N2 != 2:
+        forward(N2, offset, data, F, sign, step)
+        forward(N2, offset + N2, data, F, sign, step)
+
+        for i in range(0, N2, 2):
+            c = np.cos(i * _PI / N2)
+            s = sign * np.sin(i * _PI / N2)
+            real = F[i + N2 + offset] * c + F[i + N2 + 1 + offset] * s
+            imaginary = F[i + N2 + 1 + offset] * c - F[i + N2 + offset] * s
+
+            print("pair: " + str((i + offset) / 2) + "-" +
+                  str(( i + N2 + offset) / 2) + "       N2: " + str(N2) +
+                  " offset:" + str(offset) + " step:" + str(step) + "   c=" + str(c) + " s=" + str(s))
+            F[i + N2 + offset] = F[i + offset] - real
+            F[i + N2 + 1 + offset] = F[i + 1 + offset] - imaginary
+            F[i + offset] += real
+            F[i + 1 + offset] += imaginary
+    else:
+        F[offset] = data[offset] + data[offset + N2]
+        F[offset + 1] = data[offset + 1] + data[offset + N2 + 1]
+        F[offset + N2] = data[offset] - data[offset + N2]
+        F[offset + N2 + 1] = data[offset + 1] - data[offset + N2 + 1]
+        print("pair: " + str((offset) / 2) + "-" + str((N2 + offset) / 2) + "   N2: " + str(N2) +
+              " offset:" + str(offset) + " FFT-2 " + str(F[offset]) + " " + str(F[offset + N2]))
+
+
+def inverse(N, data, F):
+    N2 = np.uint32(N/2)
+    inverseSign = -1
+
+    forward(N, 0, data, F, inverseSign, 0)
+
+    for i in range(0, N, 2):
+        F[i] /= N2
+        F[i + 1] /= N2
+
+
+def reverse_bit(x, stage):
+    b = 0
+    bits = stage
+    while bits != 0:
+        b &lt;&lt;= 1
+        b |= (x &amp; 1)
+        x &gt;&gt;= 1
+        bits &gt;&gt;= 1
+    return b
+
+
+data = randint(0, 16, 32).astype(np.float32)
+index = np.arange(1, 32, 2).astype(np.uint32)
+
+data[index] = 0.0
+
+print(data)
+
+F = np.zeros(size*2).astype(np.float32)
+
+for i in range(2, size*2, 2):
+    rev = reverse_bit(np.uint32(i/2), size-1) * 2
+    if i &lt; rev:
+        print("i: " + str(i / 2)+" rev:" + str(rev / 2))
+        tmpR = data[i]
+        tmpI = data[i+1]
+        data[i] = data[rev]
+        data[i+1] = data[rev+1]
+        data[rev] = tmpR
+        data[rev+1] = tmpI
+
+# 反転後のデータを標準出力に表示
+print(data)
+
+# FFTの処理を行います。
+forward(size * 2, 0, data, F, _SIGN, 0)
+
+# FFTの計算結果を標準出力に表示
+print(F)
+
+# FFT（逆FFT）をおこない元データを回復します。
+# データ要素をビット反転して、偶数項・奇数項に分割
+for i in range(2, size*2, 2):
+    rev = reverse_bit(np.uint32(i/2), size-1) * 2
+    if i &lt; rev:
+        print("i: "+str(i / 2)+" rev:"+str(rev / 2))
+        tmpR = F[i]
+        tmpI = F[i+1]
+        F[i] = F[rev]
+        F[i+1] = F[rev+1]
+        F[rev] = tmpR
+        F[rev+1] = tmpI
+
+out = np.zeros(size*2).astype(np.float32)
+
+# FFT（逆FFT）の処理をおこないます。
+inverse(size * 2, F, out)
+
+
+print(out[range(0, size*2, 2)])</pre><p>
+</p><p>上記のソースコードは経過を標準出力に表示させます。初めの出力は以下の行です。</p><p><strong>FFT1D経過：ビット反転. </strong>
+</p><pre xmlns="" class="prettyprint">i: 1 rev:4
+i: 3 rev:6
+0.0
+0.0
+4.0
+0.0
+2.0
+0.0
+6.0
+0.0
+1.0
+0.0
+5.0
+0.0
+3.0
+0.0
+7.0
+0.0</pre><p>
+</p><p>まずデータとなる配列は「0, 1, 2, 3, 4, 5, 6, 7」となります。その上で、ビット反転をした要素は「1-4、3-6」となります。</p><p>ビットの反転後に配列は、「0,4,2,6」と「1,3,5,7」となり、前半を偶数、後半を奇数に分けています。</p><p>ビット反転についてはアルゴリズムが多くありますが前の項目で解説した方式で算出します。</p><p>次に高速フーリエ変換のメインのアルゴリズム部分についてですが、再帰を使うため、順序は「0-1、2-3、4-5、6-7」ではなく、「0-1、2-3、0-2、1-3」と、初めのステップ内のベースの計算が終わると次のステップに移りますが、計算上は変わりません。</p><p><strong>FFT1D（変換時パラメータ：pairは処理点、N2は処理しているデータサイズ、cはcos、sはsinの値を示します。stepはアルゴリズムのステップに該当します。）. </strong>
+</p><pre xmlns="" class="prettyprint">pair: 0-1       N2: 2 offset:0 FFT-2 4.0        -4.0
+pair: 2-3       N2: 2 offset:4 FFT-2 8.0        -4.0
+pair: 0-2       N2: 4 offset:0 step:2   c=1.0 s=0.0
+pair: 1-3       N2: 4 offset:0 step:2   c=6.123233995736766E-17 s=1.0
+pair: 4-5       N2: 2 offset:8 FFT-2 6.0        -4.0
+pair: 6-7       N2: 2 offset:12 FFT-2 10.0      -4.0
+pair: 4-6       N2: 4 offset:8 step:2   c=1.0 s=0.0
+pair: 5-7       N2: 4 offset:8 step:2   c=6.123233995736766E-17 s=1.0
+pair: 0-4       N2: 8 offset:0 step:1   c=1.0 s=0.0
+pair: 1-5       N2: 8 offset:0 step:1   c=0.7071067811865476 s=0.7071067811865475
+pair: 2-6       N2: 8 offset:0 step:1   c=6.123233995736766E-17 s=1.0
+pair: 3-7       N2: 8 offset:0 step:1   c=-0.7071067811865475 s=0.7071067811865476</pre><p>
+</p><p>上記の算出からのFFTの計算結果は以下のようになります。</p><p><strong>FFT1D経過（変換した配列）. </strong>
+</p><pre xmlns="" class="prettyprint">28.0
+0.0
+-4.0
+9.65685424949238
+-4.0
+4.0
+-4.0
+1.6568542494923797
+-4.0
+0.0
+-3.9999999999999996
+-1.6568542494923797
+-3.9999999999999996
+-4.0
+-3.9999999999999987
+-9.65685424949238</pre><p>
+</p><p>次ぎにこの変換配列を、元のデータに巻き戻します。つまり逆変換(Inverse FFT)をします。</p><p>逆変換の前にビット変換を行います。逆変換の手順は以下のように、通常の変換とほぼ同じ手順を取ります。大きな相違点としてはsin関数の符号となります。</p><pre xmlns="" class="prettyprint">i: 1 rev:4
+i: 3 rev:6
+pair: 0-1       N2: 2 offset:0 FFT-2 24.0       32.0
+pair: 2-3       N2: 2 offset:4 FFT-2 -8.0       -4.440892098500626E-16
+pair: 0-2       N2: 4 offset:0 step:2   c=1.0 s=-0.0
+pair: 1-3       N2: 4 offset:0 step:2   c=6.123233995736766E-17 s=-1.0
+pair: 4-5       N2: 2 offset:8 FFT-2 -8.0       -4.440892098500626E-16
+pair: 6-7       N2: 2 offset:12 FFT-2 -7.999999999999998        -1.3322676295501878E-15
+pair: 4-6       N2: 4 offset:8 step:2   c=1.0 s=-0.0
+pair: 5-7       N2: 4 offset:8 step:2   c=6.123233995736766E-17 s=-1.0
+pair: 0-4       N2: 8 offset:0 step:1   c=1.0 s=-0.0
+pair: 1-5       N2: 8 offset:0 step:1   c=0.7071067811865476 s=-0.7071067811865475
+pair: 2-6       N2: 8 offset:0 step:1   c=6.123233995736766E-17 s=-1.0
+pair: 3-7       N2: 8 offset:0 step:1   c=-0.7071067811865475 s=-0.7071067811865476</pre><p>最後に逆フーリエ変換（Inverse FFT）の結果を見てみましょう。</p><pre xmlns="" class="prettyprint">2.220446049250313E-16
+0.0
+1.0000000000000002
+2.2776579365114115E-16
+2.0
+-9.957992501029599E-17
+3.0
+2.1632341619892146E-16
+4.0
+0.0
+5.0
+-2.1632341619892146E-16
+6.0
+9.957992501029599E-17
+7.0
+-2.2776579365114115E-16</pre><p>入力した観測値通りの値が戻ったことが確認できました。</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch19s04.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch19.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch19s06.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>B.40. その他の関数</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="apb.html" title="Appendix B. OpenCL 1.2 API Reference" /><link rel="prev" href="apbs39.html" title="B.39. 整数関数" /><link rel="next" href="apbs41.html" title="B.41. 幾何関数" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="apbs39.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apbs41.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_その他の関数_2"></a>B.40. その他の関数</h2></div></div></div><div class="table"><a id="misc"></a><p class="title"><strong>Table B.114. 表：その他の関数</strong></p><div class="table-contents"><table class="table" summary="表：その他の関数" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><thead><tr><th style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top">gentype clamp (gentype x, gentype minval,
+gentype maxval)
+gentypef clamp (gentypef x, float minval,
+float maxval)
+gentyped clamp (gentyped x, double minval,
+double maxval)</th><th style="border-bottom: 1px solid #527bbd; " align="left" valign="top">min(max(x, minval),
+maxval)を計算します。
+結果はminval &gt; maxval
+のときに未定義です。
+￼</th></tr></thead><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype degrees (gentype radians)
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">ラジアンを度に変換し
+ます。(180 / π) * radians
+を計算します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype max (gentype x, gentype y)
+gentypef max (gentypef x, float y)
+gentyped max (gentyped x, double y)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">x &lt; yのときは、y
+それ以外は、x
+もしxまたはyが無限また
+はNaNのときは、戻り
+値は未定義です。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype min (gentype x, gentype y)
+gentypef min (gentypef x, float y)
+gentyped min (gentyped x, double y)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">y &lt; xのときは、y
+それ以外は、x
+もしxまたはyが無限または
+NaNのときは、戻り値は
+未定義です。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype mix (gentype x, gentype y, gentype a)
+gentypef mix (gentypef x, gentypef y, float a)
+gentyped mix (gentyped x, gentyped y, double a)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">xとyの線形ブレンドをします。
+x + (y – x) * aの計算を
+します。
+
+aは[0.0, 1.0]の範囲内とし
+ます。aが範囲外のときの戻り
+値は未定義です。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype radians (gentype degrees)
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">度をラジアンに変換します。
+(π / 180) * degreesを
+計算します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype step (gentype edge, gentype x)
+gentypef step (float edge, gentypef x)
+gentyped step (double edge, gentyped x)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">x &lt; edgeのときに、0.0
+それ以外のときに、1.0を返します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype smoothstep (
+    gentype edge0,
+    gentype edge1,
+    gentype x)
+gentypef smoothstep (
+    float edge0,
+    float edge1,
+    gentypef x)
+gentyped smoothstep (
+    double edge0,
+    double edge1,
+    gentyped x)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">x &lt;= edge0のときは、0.0
+x &gt;= edge1のときは、1.0
+を返します。
+edge0 &lt; x &lt; edge1のときは
+0と1の間でエルミート補間をし
+ます。
+
+スムースに遷移してくれる閾関
+数が必要な時に使います。
+
+gentype t;
+t = clamp((x - edge0)
+/ (edge1 - edge0), 0, 1);
+return t * t * (3 - 2 * t);
+
+と同義です。
+
+edge0 &gt;= edge1のとき、
+またはx, edge0, edge1
+のどれかがNaNのときの結果
+は未定義です。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype sign (gentype x)
+￼</pre></td><td style="" align="left" valign="top"><pre class="literallayout">x &gt; 0のときは、1.0
+x = -0.0のときは、-0.0
+x = +0.0のときは、+0.0
+x &lt; 0のときは、-1.0を返します。
+xがNaNのときは、0.0を返します。</pre></td></tr></tbody></table></div></div><br class="table-break" /><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_printf関数_2"></a>B.40.1. printf関数</h3></div></div></div><div class="table"><a id="printf"></a><p class="title"><strong>Table B.115. 表：printf関数</strong></p><div class="table-contents"><table class="table" summary="表：printf関数" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><thead><tr><th style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top">関数</th><th style="border-bottom: 1px solid #527bbd; " align="left" valign="top">詳細
+￼</th></tr></thead><tbody><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>int printf(
+    constant char * restrict format, …)
+￼</em></span></p></td><td style="" align="left" valign="top"><pre class="literallayout">実装システムに依存し
+たストリーム（例：stdout）
+に、formatが指定する型式
+に引数で入力した文字列を
+変換します。
+
+処理に成功すると0を返します。
+それ以外は-1を返します。
+
+実装が定義するストリーム
+（たとえば stdout）に、
+format が指定する形式に基づ
+いて続く引数を変換し得られる
+文字列を出力として書き込みます。
+引数の数が format が必要と
+する数に満たないときの振る舞
+いは未定義です。引数の数が
+format が必要とする数より多
+いとき、残る引数は評価はされ
+ますが無視されます。この関数
+は format の終端に達した時
+点で返ります。実行に成功する
+と 0 を返し、そうでないとき
+は -1 を返します。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apbs39.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apb.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apbs41.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

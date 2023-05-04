@@ -1,0 +1,1371 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>B.16. イメージの読み込みと書き込み</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="apb.html" title="Appendix B. OpenCL 1.2 API Reference" /><link rel="prev" href="apbs15.html" title="B.15. イメージオブジェクト" /><link rel="next" href="apbs17.html" title="B.17. イメージオブジェクトのマッピング" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="apbs15.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apbs17.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_イメージの読み込みと書き込み_2"></a>B.16. イメージの読み込みと書き込み</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clenqueuereadimageとclenqueuewriteimage"></a>B.16.1. clEnqueueReadImageとclEnqueueWriteImage</h3></div></div></div><div class="table"><a id="clEnqueueReadImage"></a><p class="title"><strong>Table B.44. 表：clEnqueueReadImageとclEnqueueWriteImage</strong></p><div class="table-contents"><table class="table" summary="表：clEnqueueReadImageとclEnqueueWriteImage" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">関数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_int</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clEnqueueReadImage (
+    cl_command_queue command_queue,
+    cl_mem image,
+    cl_bool blocking_read,
+    const size_t *origin,
+    const size_t *region,
+    size_t row_pitch,
+    size_t slice_pitch,
+    void *ptr,
+    cl_uint num_events_in_wait_list,
+    const cl_event *event_wait_list,
+    cl_event *event
+)</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_int</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clEnqueueWriteImage (
+    cl_command_queue command_queue,
+    cl_mem image,
+    cl_bool blocking_write,
+    const size_t *origin,
+    const size_t *region,
+    size_t input_row_pitch,
+    size_t input_slice_pitch,
+    const void * ptr,
+    cl_uint num_events_in_wait_list,
+    const cl_event *event_wait_list,
+    cl_event *event
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">イメージオブジェクトまたはイメージ配列オブジェク
+トからホストメモリに読み込むコマンドを挿入。
+
+ホストメモリからイメージオブジェクトまたはイメージ
+配列オブジェクトへの書き込みを行うコマンドを挿入。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 引数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queue</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">読み込みまたは、書き
+込みコマンドを挿入するコ
+マンドキューを指定。
+command_queueとimage
+は同じOpenCLコンテキス
+ト上で生成される必要がある。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">image</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">有効なイメージオブジェク
+トまたはイメージ配列オブ
+ジェクトを指定します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">blocking_read(read)または
+blocking_write(write)</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">読み込み操作をブロッキン
+グ、またはノンブロッキン
+グで行うのかを指定。
+
+blocking_readに
+CL_TRUEを指定すると、
+読み込みコマンドはブロッ
+キングとなり、バッファデ
+ータを読み込んでptrが指す
+メモリ領域に複製し終わる
+まで、clEnqueueReadImage
+は戻らない。
+
+blocking_readにCL_FALSE
+を指定すると、読み込みコマ
+ンドはノンブロッキングとな
+り、clEnqueueReadImageは
+ノンブロッキング読み込み
+コマンドを挿入して戻る。読み
+込みコマンドが完了するまで、
+ptrが指すバッファの内容は利
+用できない。event引数には
+イベントオブジェクトが返さ
+れ、読み込みコマンドの実行
+状況の確認に利用できます。
+読み込みコマンドが完了する
+と、ptrが指すバッファの内
+容をアプリケーションが利用
+できるようになる。
+
+書き込み操作をブロッキング、
+またはノンブロッキングで行う
+のかを指定。
+
+blocking_write に CL_TRUE
+を指定すると、OpenCL実装は
+ptrが参照するデータを複製し
+コマンドキューに書き込み操作
+を挿入。
+
+clEnqueueWriteImageが
+戻った後は、アプリケーション
+はptrが指すメモリを再利用で
+きる。
+
+blocking_writeに
+CL_FALSEを指定すると、
+OpenCL実装はptrを使用して
+ノンブロッキングで書き込み
+を行う。書き込みがノンブ
+ロッキングで行われるため、
+実装は直ちに戻る。呼び出
+しが戻った後も、ptrが指す
+メモリを再利用することは
+できない。event引数に戻
+されるイベントオブジェクト
+を利用し、書き込みコマンド
+の実行状況を確認できます。
+書き込みコマンドが完了す
+ると、アプリケーションは
+ptrが指すメモリを再利用で
+きるようになる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">origin</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">読み込みを行うイメー
+ジ内での (x, y, z) オ
+フセットをピクセルで指定。
+image が2Dイメージオブジ
+ェクトであるとき、origin[2]
+で指定する z 値は0でなけ
+ればなりません。
+
+1D、2D、3Dイメージ内の
+(x,y,z)オフセットをピク
+セルで指定。
+
+2Dイメージ配列内の(x,y)
+オフセットとイメージイン
+デックスを指定。
+
+1Dイメージ配列内の(x)オフ
+セットとイメージインデッ
+クスを指定。
+
+イメージが2Dイメージオブ
+ジェクトの場合、origin[2]
+は0となる。
+
+イメージが1Dイメージまた
+は1Dイメージバッファオブ
+ジェクトの場合、origin[1]
+とorigin[2]は0となる。
+
+イメージが1Dイメージ配列
+オブジェクトの場合、
+origin[1]は1Dイメージ配
+列のインデックス（添字）
+を記述する。
+
+イメージが2Dイメージ配列
+オブジェクトの場合、
+origin[2]は2Dイメージ配
+列のインデックス（添字）
+を記述する。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">region</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">1D、2D、3D矩形領域の
+(width, height, depth)
+をピクセルで定義。
+2D矩形領域の
+(width, height)をピクセ
+ルで定義し、2Dイメージ配列
+のイメージ個数の定義。
+
+1D矩形領域の(width)をピク
+セルで定義し、1Dイメージ配
+列のイメージ個数を定義。
+
+イメージが2Dイメージオブジ
+ェクトの場合、region[2]は
+1となる。
+
+イメージが1Dイメージまた
+は、1Dイメージバッファオ
+ブジェクトの場合、region[1]
+とregion[2]は1となる。
+
+イメージが1Dイメージ配列オ
+ブジェクトの場合、region[2]
+は1となる。regionの値は
+0とはならない。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">row_pitch(read)と
+input_row_pitch(write)</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">各行が使用する長さを
+バイトで指定。
+
+この値は、画素の
+バイトサイズ*width
+以上となる必要
+がある。row_pitchに0を
+設定すると、画素の
+バイトサイズ*width
+に基づいて適切な長さが
+計算される。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">slice_pitch(read)
+とinput_slice_pitch(write)</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">読み込み、または書
+き込まれる3Dイメージ
+内の3D領域の各2Dスラ
+イス、または1Dまたは2
+Dイメージ配列の各イメ
+ージが使用する長さを指
+定(バイトで表す)。
+
+イメージが1Dまたは2Dの
+場合は、この引数は0とな
+ります。
+
+この引数は
+row_pitch*heigth以上
+となります。
+slice_pitch
+（またはinput_slice_pitch）
+に0を指定すると、
+row_pitch*heightに基づ
+いて適切な長さが計算される。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">ptr</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">読み込む、または書き
+込むイメージデータの保存
+先となるホストメモリバッ
+ファへのポインタを指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">num_events_
+in_wait_list</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">event_wait_listで指定
+したイベントオブジェクト
+の数を指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_list</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">このコマンドが実行される
+前に完了されている
+イベントを指定。event_
+wait_listがNULLの場合、
+このコマンドはどのイベン
+トの完了待機もしない。
+
+event_wait_listがNULL
+の場合、num_events_in_
+wait_listは0となる必要が
+ある。
+
+event_wait_listがNULL
+ではない場合、event_
+wait_listが指す各イベン
+トは有効となり、またnum_
+events_in_wait_listは
+0より大きな値となる必要がある。
+
+event_wait_listに指定
+したイベントは同期点とし
+てふるまう。event_wait_
+list内のイベントと関連付
+けられたOpenCLコンテキス
+トと command_queueと関連
+付けられたOpenCLコンテキス
+トは同じとなる必要がある。
+
+event_wait_listと関連付
+けられたメモリ領域は関数
+が戻った後に、再利用か解
+放できる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">読み込み、または書き込み
+コマンドを識別するイベン
+トオブジェクトが戻され、
+コマンド完了の確認やコマ
+ンド完了の待機に使える。
+
+eventがNULLの場合、アプ
+リケーションはコマンドの
+状況確認やコマンド完了待
+ちができなくなる。
+
+event_wait_listと
+eventがNULLでない場合、
+eventはevent_wait_
+list配列の要素を参照す
+べきでない。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 成功した場合の戻り値</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> CL_SUCCESS</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 失敗した場合の戻り値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+COMMAND_QUEUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queueが有効
+なコマンドキューでない
+場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+CONTEXT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queueと
+imageに関連付けられた
+contextが同じでない場合。
+
+command_queueとevent_
+wait_list内のイベントに
+関連付けられたcontext
+が同じでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+MEM_OBJECT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">imageが有効なイメージ
+オブジェクトでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">originとregionで指定さ
+れた、読み込まれる、書き込
+まれる領域が、境界外にあ
+るか、ptrがNULL値の場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">originとregionの値が、
+originとregionの規則を
+守っていない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+EVENT_WAIT_LIST</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_listがNULL
+でnum_events_in_wait_
+listが0より大きい場合。
+
+event_wait_listがNULL
+でなくnum_events_in_
+wait_listが0のとき。
+又はevent_wait_
+list内のイベントオブジェ
+クトが有効なものでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+IMAGE_SIZE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">イメージの寸法（幅、
+高さ、行・スライスの長さ）
+がqueueに関連付けられた
+デバイスにサポートされ
+ていない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_IMAGE_
+FORMAT_NOT_
+SUPPORTED</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">イメージ型式（image
+channel orderやデータ型）
+がqueueに関連付けられ
+たデバイスにサポートさ
+れていない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_MEM_OBJECT_
+ALLOCATION_FAILURE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">イメージに関連付けられ
+たデータ保存領域の
+メモリの確保に失敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+OPERATION</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queueに関連
+付けられたデバイスが
+イメージをサポートし
+ない場合。
+（CL_DEVICE_
+IMAGE_SUPPORTがCL_FALSE）</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+OPERATION</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">clEnqueueReadImage
+が、CL_MEM_HOST_
+WRITE_ONLYまたは
+CL_MEM_HOST_NO_
+ACCESSで生成された
+イメージ上で呼びだ
+された場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+OPERATION</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">clEnqueueReadImage
+が、CL_MEM_HOST_
+READ_ONLYまたは
+CL_MEM_HOST_NO_
+ACCESSで生成された
+イメージ上で呼びださ
+れた場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_EXEC_STATUS_
+ERROR_FOR_EVENTS_
+IN_WAIT_LIST</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">読み込みと書き込み
+操作がブロッキングさ
+れ、event_wait_list
+にあるどのイベントの
+実行ステータスも負の
+整数値の場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+RESOURCES</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とするリソ
+ース確保に失敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+HOST_MEMORY</pre></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL
+実装が必要とするリソ
+ース確保に失敗した場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clenqueuecopyimage"></a>B.16.2. clEnqueueCopyImage</h3></div></div></div><div class="table"><a id="clEnqueueCopyImage"></a><p class="title"><strong>Table B.45. 表：clEnqueueCopyImage</strong></p><div class="table-contents"><table class="table" summary="表：clEnqueueCopyImage" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">関数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_int</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clEnqueueCopyImage (
+    cl_command_queue command_queue,
+    cl_mem src_image,
+    cl_mem dst_image,
+    const size_t *src_origin,
+    const size_t *dst_origin,
+    const size_t *region,
+    cl_uint num_events_in_wait_list,
+    const cl_event *event_wait_list,
+    cl_event *event
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">イメージオブジェクトの複製を行うコマンドを挿入。
+
+src_imageおよびdst_imageには1D、
+2D、3Dイメージオブジェクト、1D/2Dイメージ配列オブジェ
+クトを指定でき以下の操作が可能です。
+
+1Dイメージオブジェクトから1Dイメージオブジェクトへの複製
+
+1Dイメージオブジェクトから2Dイメージオブジェクトの走査線
+への複製(逆もまた同様)
+
+1Dイメージオブジェクトから3Dイメージオブジェクトの2D
+スライスの走査線への複製(逆もまた同様)
+
+1Dイメージオブジェクトから1Dまたは2Dイメージ配列オブ
+ジェクトの特定イメージインデックスの走査線への複製
+(逆もまた同様)
+
+2Dイメージオブジェクトから2Dイメージオブジェクトへの複製
+
+2Dイメージオブジェクトから3Dイメージオブジェクトの2D
+スライスへの複製(逆もまた同様)
+
+2Dイメージオブジェクトから2Dイメージ配列オブジェ
+クトの特定イメージインデックスへの複製(逆もまた同様)
+
+1Dイメージ配列オブジェクトのイメージから1Dイメー
+ジ配列オブジェクトへの複製。
+
+2Dイメージ配列オブジェクトのイメージから2Dイメー
+ジ配列オブジェクトへの複製。
+
+3Dイメージオブジェクトから3Dイメージオブジェ
+クトへの複製</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 引数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">command_queue</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">複製コマンドを挿入する
+コマンドキューを指定。
+command_queue、
+src_image、
+dst_imageと関連付けら
+れたOpenCLコンテキスト
+は同じとなる必要がある。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">src_origin</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">1D, 2D, 3Dイメージ内
+での (x, y, z) オフセ
+ットをピクセルで指定。
+
+2Dイメージ配列の（x, y）
+オフセットとイメージイ
+ンデックスを指定。
+
+1Dイメージ配列の（x）
+オフセットとイメージイ
+ンデックスを指定。
+
+イメージが2Dイメージオ
+ブジェクトの場合、
+src_origin[2]は0となる。
+
+src_imageが1Dイメージ
+オブジェクトの場合、
+src_origin[1]と
+src_origin[2]は0となる。
+
+src_imageが1Dイメ
+ージ配列オブジェクト
+の場合、src_origin[1]
+は1Dイメージ配列のイメー
+ジインデックス（添字）を記述する。
+
+src_imageが2Dイメ
+ージ配列オブジェクト
+の場合、src_origin[2]
+は2Dイメージ配列のイ
+メージインデックス（添字）
+を記述する。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">dst_origin</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">1D, 2D, 3Dイメージ
+内での (x, y, z)
+オフセットをピクセルで指定。
+
+2Dイメージ配列の
+（x, y）オフセットと
+イメージインデックスを指定。
+
+1Dイメージ配列の（x）
+オフセットとイメージ
+インデックスを指定。
+
+dst_imageが2Dイメージ
+オブジェクトの場合、
+dst_origin[2]は0となる。
+
+dst_imageが1Dイメージ
+または1Dイメージバッファ
+オブジェクトの場合、
+dst_origin[1]と
+dst_origin[2]は0となる。
+
+dst_imageが1Dイメージ
+配列オブジェクトの場合、
+dst_origin[2]は0となる。
+
+dst_imageが1Dイメージ
+配列オブジェクトの場合、
+dst_origin[1]は1D
+イメージ配列のイメージ
+インデックス（添字）を記述する。
+
+dst_imageが2Dイメージ
+配列オブジェクトの場合、
+dst_origin[2]は2D
+イメージ配列のイメージ
+インデックス（添字）を記述する。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">region</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">1D、2D、3D矩形領域の
+(width, height,
+depth) をピクセルで定義。
+
+2D矩形領域の(width,
+height)をピクセルで定義し、
+2Dイメージ配列のイメージ
+個数の定義。
+
+1D矩形領域の(width)を
+ピクセルで定義し、1Dイメ
+ージ配列のイメージ個数を定義。
+
+イメージが2Dイメージオブ
+ジェクトの場合、region[2]
+は1となる。
+
+イメージが1Dイメージま
+たは、1Dイメージバッファ
+オブジェクトの場合、
+region[1]とregion[2]
+は1となる。
+
+イメージが1Dイメージ配列
+オブジェクトの場合、
+region[2]は1となる。
+regionの値は0とはならない。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">num_events_
+in_wait_list</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_listで
+指定したイベントオブジェ
+クトの数を指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">event_wait_list</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">このコマンドが実行される
+前に完了されているイベン
+トを指定。event_wait_
+listがNULLの場合、この
+コマンドはどのイベントの
+完了待機もしない。
+
+event_wait_listがNULL
+の場合、num_events_in_
+wait_listは0となる必要
+がある。
+
+event_wait_listがNULL
+ではない場合、event_
+wait_listが指す各イベン
+トは有効となり、またnum_
+events_in_wait_listは
+0より大きな値となる必要が
+ある。
+
+event_wait_listに指定
+したイベントは同期点とし
+てふるまう。event_wait_
+list内のイベントと関連付
+けられたOpenCLコンテキス
+トと command_queueと関
+連付けられたOpenCLコンテ
+キストは同じとなる必要がある。
+
+event_wait_listと関連
+付けられたメモリ領域は関
+数が戻った後に、再利用
+か解放できる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">event</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">複製コマンドを識別する
+イベントオブジェクトが
+戻され、コマンド完了の
+確認やコマンド完了の待
+機に使える。
+
+eventがNULLの場合、
+アプリケーションはコマンド
+の状況確認やコマンド完了
+待ちができなくなる。
+
+event_wait_listと
+eventがNULLでない場合、
+eventはevent_wait_
+list配列の要素を参照す
+べきでない。
+
+clEnqueueBarrier
+WithWaitListを代わりに
+使うことができる。event_
+wait_listとevent引数
+NULLでない場合、event
+引数はevent_wait_list
+内の要素を参照すべきでない。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 成功した場合の戻り値</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> CL_SUCCESS</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 失敗した場合の戻り値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+COMMAND_QUEUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queueが
+有効なコマンドキュー
+でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+CONTEXT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queue、
+src_image、
+dst_image と関連付
+けられたコンテキスト
+が同じでない場合。
+
+command_queue と関
+連付けられたコンテキス
+トとevent_wait_list
+内のイベントと関連付けら
+れたコンテキストが同じ
+でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+MEM_OBJECT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_image、
+dst_imageが有効なイ
+メージオブジェクトでな
+い場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_IMAGE_
+FORMAT_MISMATCH</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_imageと
+dst_imageが使用する
+イメージ形式が同じで
+ない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_origin および
+src_origin + region
+が指す2Dもしくは
+3D矩形領域が、
+src_imageの範囲外の場合。
+dst_originおよび
+dst_origin+region
+が指す2Dもしくは
+3D矩形領域が、
+dst_imageの範囲外の場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_origin,
+dst_originとregion
+の値が規則に従わない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+EVENT_WAIT_LIST</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_listが
+NULLで、num_events_
+in_wait_list &gt; 0の場合。
+
+event_wait_listが
+NULLでない場合で、
+num_events_in_wait_
+listが0の場合。
+
+event_wait_listの
+イベントオブジェクトが
+有効なイベントでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+IMAGE_SIZE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_imageまたは
+dst_imageのイメージ
+の寸法（幅、高さ、
+行・スライスの長さ）
+がキューに関連づけら
+れたデバイスにサポ
+ートされていない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_IMAGE_
+FORMAT_NOT_
+SUPPORTED</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_imageまたは
+dst_imageのイメージ
+形式がキューに関連づ
+けられたデバイスに
+サポートされていない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_MEM_OBJECT_
+ALLOCATION_FAILURE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_imageまたは
+dst_imageと関連づけ
+られたデータストア
+のメモリ領域の確保
+に失敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+RESOURCES</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とするリ
+ソース確保に失敗し
+た場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+HOST_MEMORY</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL
+実装が必要とするリソ
+ース確保に失敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+OPERATION</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queueに
+関連付けられたデバイ
+スがイメージをサポー
+トしない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_MEM_
+COPY_OVERLAP</pre></td><td style="" align="left" valign="top"><pre class="literallayout">src_imageとdst_
+imageが同じイメージ
+オブジェクトで、ソー
+スと行き先の領域が
+オーバラップする場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clenqueuefillimage"></a>B.16.3. clEnqueueFillImage</h3></div></div></div><div class="table"><a id="clEnqueueFillImage"></a><p class="title"><strong>Table B.46. 表：clEnqueueFillImage</strong></p><div class="table-contents"><table class="table" summary="表：clEnqueueFillImage" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>関数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>cl_int</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clEnqueueFillImage (
+    cl_command_queue command_queue,
+    cl_mem image,
+    const void *fill_color,
+    const size_t *origin,
+    const size_t *region,
+    cl_uint num_events_in_wait_list,
+    const cl_event *event_wait_list,
+    cl_event *event
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>イメージオブジェクトを指定した色彩に塗りつ
+ぶすコマンドをキューに挿入。
+clEnguqueFillImageはカーネル/ホストによる
+メモリオブジェクトへの読み込み・書き込みにつ
+いての使用情報や、イメージが生成された際に指
+定したcl_mem_flagsを無視します。</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>引数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>command_queue</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">fillコマンドが挿入
+されるcommand-queue
+を指定。command-queue
+とimageが関連するOpenCL
+コンテキストは同じもの
+となる必要がある。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>image</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">有効なイメージオブ
+ジェクトを指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>fill_color</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">フィルカラー（塗り
+つぶす色）を指定。
+
+イメージチャネルデー
+タ型が非正規符号付き
+・符号無し整数でない
+場合、フィルカラーは4
+つの要素で構成するRGBA
+浮動小数点色彩値となる。
+
+イメージチャネルデータ
+型が非正規符号付き整数型
+の場合、４要素符号付き
+整数となる。
+
+イメージチャネルデータ
+型が非正規符号無し整数
+型の場合、４要素符号無
+し整数となる。
+
+フィルカラーは適切な
+イメージチャネル型式に
+変換される。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>origin</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">1D、2D、3Dイメージ内
+の(x,y,z)オフセット
+をピクセルで指定。
+
+2Dイメージ配列内の
+(x,y)オフセットと
+イメージインデックスを
+指定。
+
+1Dイメージ配列内の
+(x)オフセットとイメー
+ジインデックスを指定。
+
+イメージが2Dイメージ
+オブジェクトの場合、
+origin[2]は0となる。
+
+イメージが1Dイメージ
+または1Dイメージバッ
+ファオブジェクトの場合、
+origin[1]とorigin[2]
+は0となる。
+
+イメージが1Dイメージ
+配列オブジェクトの場合、
+origin[1]は1Dイメージ
+配列のインデックス
+（添字）を記述する。
+
+イメージが2Dイメージ
+配列オブジェクトの
+場合、origin[2]は
+2Dイメージ配列のイン
+デックス（添字）を
+記述する。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>region</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">1D、2D、3D矩形領域の
+(width, height,
+depth) をピクセルで定義。
+
+2D矩形領域の(width,
+height)をピクセルで定
+義し、2Dイメージ配列の
+イメージ個数の定義。
+
+1D矩形領域の(width)
+をピクセルで定義し、
+1Dイメージ配列のイメー
+ジ個数を定義。
+
+イメージが2Dイメージ
+オブジェクトの場合、
+region[2]は1となる。
+
+イメージが1Dイメージ
+または、1Dイメージバ
+ッファオブジェクトの
+場合、region[1]と
+region[2]は1となる。
+
+イメージが1Dイメージ
+配列オブジェクトの場合、
+region[2]は1となる。
+regionの値は0とはならない。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>num_events_
+in_wait_list</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> event_wait_list
+で指定したイベントオ
+ブジェクトの数を指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>event_wait_list</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> このコマンドが実行
+される前に完了されてい
+るイベントを指定。
+event_wait_listが
+NULLの場合、このコマ
+ンドはどのイベントの完
+了待機もしない。
+
+event_wait_listが
+NULLの場合、num_
+events_in_wait_list
+は0となる必要がある。
+
+event_wait_listが
+NULLではない場合、
+event_wait_listが指
+す各イベントは有効となり、
+またnum_events_in_
+wait_listは0より大き
+な値となる必要がある。
+
+event_wait_listに指
+定したイベントは同期点
+としてふるまう。event_
+wait_list内のイベント
+と関連付けられたOpenCL
+コンテキストと
+command_queueと関連
+付けられたOpenCLコンテ
+キストは同じとなる必要
+がある。
+
+event_wait_listと関
+連付けられたメモリ領域
+は関数が戻った後に、再
+利用か解放できる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>event</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">このコマンドを識別する
+イベントオブジェクトが
+戻され、コマンド完了の
+確認やコマンド完了の待
+機に使える。
+
+eventがNULLの場合、
+アプリケーションはコマ
+ンドの状況確認やコマン
+ド完了待ちができなくなる。
+
+event_wait_listと
+eventがNULLでない場合
+、eventはevent_
+wait_list配列の要素を
+参照すべきでない。
+
+clEnqueueBarrier
+WithWaitListを代わり
+に使うことができる。
+event_wait_listと
+event引数NULLでない
+場合、event引数は
+event_wait_list内
+の要素を参照すべきでない。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>成功した場合の戻り値</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>CL_SUCCESS</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>失敗した場合の戻り値</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+COMMAND_QUEUE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queueが
+有効なコマンドキュー
+でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+CONTEXT</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queueと
+imageに関連付けられ
+たコンテキストが同じ
+でない場合。
+
+command_queueと
+関連付けられたコンテ
+キストとevent_wait_
+list内のイベントと
+関連付けられたコンテ
+キストが同じでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+MEM_OBJECT</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">imageが有効なイメー
+ジオブジェクトでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+VALUE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">フィルカラーがNULL
+の場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+VALUE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">originとregionで
+指定したフィルする領
+域が範囲外の場合。
+ptrがNULLの場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+VALUE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">originとregionの
+値が規則に従わない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+EVENT_WAIT_LIST</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_listが
+NULLで、num_events_
+in_wait_list &gt; 0の場合。
+
+event_wait_listが
+NULLでなく、num_events_
+in_wait_listが0の場合。
+
+event_wait_list内
+のイベントオブジェクト
+が有効なイベントでな
+い場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+IMAGE_SIZE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">イメージの寸法（幅、
+高さ、行・スライスの
+長さ）がcommand_queue
+と関連付けられたデバイス
+でサポートされていない
+場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_IMAGE_
+FORMAT_NOT_
+SUPPORTED</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">イメージ型式
+（image channel
+orderやデータ型）が
+queueに関連付けられ
+たデバイスにサポート
+されていない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_MEM_OBJECT_
+ALLOCATION_FAILURE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">データ格納領域のメ
+モリ確保に失敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_
+OF_RESOURCES</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とするリソ
+ース確保に失敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_
+OF_HOST_MEMORY</em></span></p></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL
+実装が必要とするリ
+ソース確保に失敗した
+場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clenqueuecopyimagetobuffer"></a>B.16.4. clEnqueueCopyImageToBuffer</h3></div></div></div><div class="table"><a id="clEnqueueCopyImageToBuffer"></a><p class="title"><strong>Table B.47. 表：clEnqueueCopyImageToBuffer</strong></p><div class="table-contents"><table class="table" summary="表：clEnqueueCopyImageToBuffer" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>関数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>cl_int</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clEnqueueCopyImageToBuffer (
+    cl_command_queue command_queue,
+    cl_mem src_image,
+    cl_mem dst_buffer,
+    const size_t *src_origin,
+    const size_t *region,
+    size_t dst_offset,
+    cl_uint num_events_in_wait_list,
+    const cl_event *event_wait_list,
+    cl_event *event
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>イメージオブジェクトからバッファオブジェ
+クトへの複製を行うコマンドを挿入。</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>引数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>command_queue</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">複製コマンドを挿入する
+コマンドキューを指定。
+command_queue、
+src_image、
+dst_buffer
+と関連付けられたOpenCL
+コンテキストは同じとな
+る必要がある。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>src_image</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">複製元となる有効な
+イメージオブジェクトを
+指定します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>dst_buffer</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">複製先となる有効な
+バッファオブジェクトを
+指定します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>src_origin</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">1D, 2D, 3Dイメージ内
+での (x, y, z) オフセ
+ットをピクセルで指定。
+
+2Dイメージ配列の（x, y）
+オフセットとイメージイ
+ンデックスを指定。
+
+1Dイメージ配列の（x）
+オフセットとイメージイン
+デックスを指定。
+
+イメージが2Dイメージオ
+ブジェクトの場合、
+src_origin[2]は0となる。
+
+src_imageが1Dイメージ
+オブジェクトの場合、
+src_origin[1]と
+src_origin[2]は0となる。
+
+src_imageが1Dイメー
+ジ配列オブジェクトの場
+合、src_origin[1]は1D
+イメージ配列のイメージイン
+デックス（添字）を記述する。
+
+src_imageが2Dイメージ
+配列オブジェクトの場
+合、src_origin[2]は
+2Dイメージ配列のイメー
+ジインデックス（添字）
+を記述する。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>region</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">1D、2D、3D矩形領域
+の(width, height,
+depth) をピクセルで
+定義。
+
+2D矩形領域の(width,
+height)をピクセルで
+定義し、2Dイメージ配列
+のイメージ個数の定義。
+
+1D矩形領域の(width)
+をピクセルで定義し、
+1Dイメージ配列のイメ
+ージ個数を定義。
+
+イメージが2Dイメージ
+オブジェクトの場合、
+region[2]は1となる。
+
+イメージが1Dイメージ
+または、1Dイメージ
+バッファオブジェクトの
+場合、region[1]と
+region[2]は1となる。
+
+イメージが1Dイメージ
+配列オブジェクトの
+場合、region[2]は
+1となる。regionの値
+は0とはならない。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>dst_offset</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">dst_bufferへのデー
+タの複製を行なう際に、
+書き込み開始位置をどれ
+だけずらすかを指定。
+
+src_imageが3Dイメー
+ジオブジェクトの場合、
+複製領域のバイトサイズ
+(dst_cb) は
+width*height*depth
+*（画素あたりのバイトサイズ）
+で求められる。
+
+src_imageが2Dイメージ
+オブジェクトの場合、複製
+領域のバイトサイズ(dst_cb)
+はwidth*height*（画素あ
+たりのバイトサイズ）で求め
+られる。
+
+src_imageが2Dイメージ
+配列オブジェクトの場合、
+複製領域のバイトサイズ
+(dst_cb) はwidth*height*
+配列サイズ*（画素あたりのバ
+イトサイズ）で求められる。
+
+src_imageが1Dイメージオブ
+ジェクトまたは1Dイメージバ
+ッファオブジェクトの場合、
+複製領域のバイトサイズ
+(dst_cb) はwidth*（画素
+あたりのバイトサイズ）で求
+められる。
+
+src_imageが1Dイメージ
+配列オブジェクトの場合、
+複製領域のバイトサイズ
+(dst_cb) はwidth*
+配列サイズ*（画素あたり
+のバイトサイズ）で求められる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>num_events_
+in_wait_list</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_list
+で指定したイベントオブ
+ジェクトの数を指定します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>event_
+wait_list</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">このコマンドが実行さ
+れる前に完了されている
+イベントを指定。event_
+wait_listがNULLの場
+合、このコマンドはどの
+イベントの完了待機もしない。
+
+event_wait_listが
+NULLの場合、num_
+events_in_wait_
+listは0となる必要がある。
+
+event_wait_listが
+NULLではない場合、
+event_wait_listが指す
+各イベントは有効となり、
+またnum_events_in_
+wait_listは0より大き
+な値となる必要がある。
+
+event_wait_listに
+指定したイベントは同期
+点としてふるまう。
+event_wait_list内の
+イベントと関連付けられ
+たOpenCLコンテキストと
+command_queueと関連付
+けられたOpenCLコンテキス
+トは同じとなる必要がある。
+
+event_wait_listと関連
+付けられたメモリ領域は関
+数が戻った後に、再利用か
+解放できる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>event</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">複製コマンドを識別する
+イベントオブジェクトが戻
+され、コマンド完了の確認
+やコマンド完了の待機に使
+える。
+
+eventがNULLの場合、アプ
+リケーションはコマンドの
+状況確認やコマンド完了待
+ちができなくなる。
+
+event_wait_listと
+eventがNULLでない場合、
+eventはevent_wait_
+list配列の要素を参照す
+べきでない。
+
+clEnqueueBarrier
+WithWaitListを代わり
+に使うことができる。
+event_wait_listと
+event引数NULLでない
+場合、event引数は
+event_wait_list内
+の要素を参照すべきでない。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>成功した場合の戻り値</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>CL_SUCCESS</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>失敗した場合の戻り値</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+COMMAND_QUEUE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queueが
+有効なコマンドキュ
+ーでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+CONTEXT</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queue、
+src_image、
+dst_bufferと関連付
+けられたコンテキストが
+同じでない場合
+
+command_queueと関連
+付けられたコンテキスト
+とevent_wait_list内
+のイベントと関連付けら
+れたコンテキストが同じ
+でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+MEM_OBJECT</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_imageが有効な
+イメージオブジェクトで
+ない場合。
+
+dst_bufferが有効な
+バッファオブジェクトで
+ない場合。
+
+src_imageがdst_buffer
+で生成された1Dイメージ
+バッファオブジェクトの場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+VALUE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_originおよび
+src_origin+regionが
+指す1D、2D、3D矩形領域
+が、src_imageの範囲外
+の場合。
+
+もしくは、dst_offset
+およびdst_offset+dst_cb
+が指す領域が、dst_buffer
+の範囲外の場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+VALUE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_originとregion
+の値が規則に従わない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+EVENT_WAIT_LIST</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_listが
+NULLでnum_events_in_
+wait_listが0より大きい
+場合。
+
+event_wait_listが
+NULLでなくnum_events_
+in_wait_listが0の場合。
+
+event_wait_list内の
+イベントオブジェクトが
+有効なものでないとき。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_MISALIGNED_
+SUB_BUFFER_OFFSET</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">dst_bufferがサブバッ
+ファオブジェクトで、この
+サブバッファオブジェクト
+を生成する際に指定したオ
+フセットがcommand_queue
+と関連付けられたデバイスの
+CL_DEVICE_MEM_BASE_
+ADDR_ALIGNにアラインさ
+れていない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+IMAGE_SIZE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_imageの寸法（幅、
+高さ、行・スライスの長さ）
+がcommand_queueと関連付
+けられたデバイスでサポート
+されていない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_IMAGE_
+FORMAT_NOT_
+SUPPORTED</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_imageに対するイ
+メージ型式（image channel
+orderやデータ型）がqueue
+に関連付けられたデバイスに
+サポートされていない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_MEM_OBJECT_
+ALLOCATION_FAILURE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_imageもしくは
+dst_bufferと関連付けられた
+データ保存領域のための
+メモリの確保に失敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+OPERATION</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queueと関連
+付けられたデバイスが
+イメージ機能をサポートし
+ていない（clGetDeviceInfo
+で取得できる CL_DEVICE_
+IMAGE_SUPPORTが CL_FALSE
+である）場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_OF_
+RESOURCES</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL実装
+が必要とするリソース確保
+に失敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_OF_
+HOST_MEMORY</em></span></p></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL実装が
+必要とするリソース確保に
+失敗した場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clenqueuecopybuffertoimage"></a>B.16.5. clEnqueueCopyBufferToImage</h3></div></div></div><div class="table"><a id="clEnqueueCopyBufferToImage"></a><p class="title"><strong>Table B.48. 表：clEnqueueCopyBufferToImage</strong></p><div class="table-contents"><table class="table" summary="表：clEnqueueCopyBufferToImage" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>関数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>cl_int</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clEnqueueCopyBufferToImage (
+    cl_command_queue command_queue,
+    cl_mem src_buffer,
+    cl_mem dst_image,
+    size_t src_offset,
+    const size_t *dst_origin,
+    const size_t *region,
+    cl_uint num_events_in_wait_list,
+    const cl_event *event_wait_list,
+    cl_event *event
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>バッファオブジェクトからイメージオブジェクト
+への複製を行うコマンドを挿入。</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>引数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>command_queue</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">複製コマンドを挿入する
+コマンドキューを指定します。
+command_queue、
+src_buffer、
+dst_imageと関連付けられた
+OpenCLコンテキストは同じと
+なる必要がある。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>src_buffer</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">複製元となる有効なバッファ
+オブジェクトを指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>dst_image</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">複製先となる有効なイメージ
+オブジェクトを指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>src_offset</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_bufferから複製を
+行う際に、読み込み開始位
+置をどれだけずらすかを指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>dst_origin</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">1D、2D、3Dイメージ内の
+(x,y,z)オフセットをピク
+セルで指定。
+
+2Dイメージ配列内の(x,y)
+オフセットとイメージイン
+デックスを指定。
+
+1Dイメージ配列内の(x)
+オフセットとイメージイン
+デックスを指定。
+
+イメージが2Dイメージオブ
+ジェクトの場合、origin[2]
+は0となる。
+
+イメージが1Dイメージまた
+は1Dイメージバッファオブ
+ジェクトの場合、origin[1]
+とorigin[2]は0となる。
+
+イメージが1Dイメージ配列
+オブジェクトの場合、
+origin[1]は1Dイメージ配列の
+インデックス（添字）を記
+述する。
+
+イメージが2Dイメージ配列
+オブジェクトの場合、
+origin[2]は2Dイメージ配列
+のインデックス（添字）を記述する。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>region</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">1D、2D、3D矩形領域の
+(width, height, depth)
+をピクセルで定義。
+
+2D矩形領域の(width,
+height)をピクセルで定
+義し、2Dイメージ配列の
+イメージ個数の定義。
+
+1D矩形領域の(width)を
+ピクセルで定義し、1D
+イメージ配列のイメージ
+個数を定義。
+
+イメージが2Dイメージ
+オブジェクトの場合、
+region[2]は1となる。
+
+イメージが1Dイメージ
+または、1Dイメージバッ
+ファオブジェクトの場合、
+region[1]とregion[2]
+は1となる。
+
+イメージが1Dイメージ配列
+オブジェクトの場合、
+region[2]は1となる。
+regionの値は0とはならない。
+
+src_bufferから複製
+を行うとき、複製領域
+のバイトサイズ (src_cb)
+は、src_imageが3Dイ
+メージオブジェクトであ
+る場合、width*height*
+depth*（画素あたりのバ
+イトサイズ）で求められる。
+
+src_imageが2Dイメー
+ジオブジェクトである場合、
+width*height*
+（画素あたりのバイト
+サイズ）で求められる。
+
+src_imageが2Dイメ
+ージ配列オブジェクト
+である場合、width*height*
+配列サイズ*（画素あた
+りのバイトサイズ）で求
+められる。
+
+src_imageが1Dイメージ
+または1Dイメージバッフ
+ァオブジェクトである場合
+、width*（画素あたりの
+バイトサイズ）で求められる。
+
+src_imageが1Dイメージ
+配列オブジェクトである
+場合、width*配列サイズ*
+（画素あたりのバイトサ
+イズ）で求められる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>num_events_
+in_wait_list</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_list
+で指定したイベントオ
+ブジェクトの数を指
+定します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>event_wait_
+list</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">このコマンドが実行
+される前に完了されて
+いるイベントを指定。
+event_wait_listが
+NULLの場合、このコ
+マンドはどのイベント
+の完了待機もしない。
+
+event_wait_listが
+NULLの場合、num_
+events_in_wait_list
+は0となる必要がある。
+
+event_wait_listが
+NULLではない場合、
+event_wait_listが指
+す各イベントは有効となり、
+またnum_events_in_
+wait_listは0より大き
+な値となる必要がある。
+
+event_wait_listに
+指定したイベントは同期
+点としてふるまう。
+event_wait_list内の
+イベントと関連付けられ
+たOpenCLコンテキストと
+command_queueと関連
+付けられたOpenCLコンテ
+キストは同じとなる必要
+がある。
+
+event_wait_listと
+関連付けられたメモリ領
+域は関数が戻った後に、
+再利用か解放できる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>event</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">複製コマンドを識別する
+イベントオブジェクト
+が戻され、コマンド完了
+の確認やコマンド完了
+の待機に使える。
+
+eventがNULLの場合、
+アプリケーションはコマ
+ンドの状況確認やコマン
+ド完了待ちができなくなる。
+
+event_wait_listと
+eventがNULLでない
+場合、eventはevent_
+wait_list配列の要素
+を参照すべきでない。
+
+clEnqueueBarrier
+WithWaitListを代わ
+りに使うことができる。
+event_wait_listと
+event引数NULLでない
+場合、event引数は
+event_wait_list内
+の要素を参照すべきでない。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>成功した場合の戻り値</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>CL_SUCCESS</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>失敗した場合の戻り値</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+COMMAND_QUEUE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queueが有効
+なコマンドキューでない
+場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+CONTEXT</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queue、
+src_buffer、
+dst_image
+と関連付けられたコンテ
+キストが同じでない場合
+
+command_queueと関連
+付けられたコンテキスト
+とevent_wait_list内の
+イベントと関連付けられた
+コンテキストが同じでな
+い場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+MEM_OBJECT</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_bufferが有効
+なバッファオブジェク
+トでない場合。
+
+dst_imageが有効な
+イメージオブジェクト
+でない場合。
+
+dst_imageがsrc_buffer
+から生成された1Dイメー
+ジバッファオブジェクト
+の場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+VALUE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">dst_originおよび
+dst_origin + region
+が指す1D、2D、3D矩形
+領域が、dst_imageの範
+囲外の場合。
+
+src_offsetおよび
+src_offset + src_cb
+が指す領域が、
+src_bufferの範囲外
+の場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+VALUE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">dst_originとregion
+の値が規則に従わない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+EVENT_WAIT_LIST</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_list
+がNULLでnum_events_
+in_wait_listが0より
+大きい場合。
+
+event_wait_listが
+NULLでなくnum_events_
+in_wait_listが0の場合。
+
+またはevent_wait_list内
+のイベントオブジェクトが有
+効なものでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_MISALIGNED_
+SUB_BUFFER_OFFSET</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_buffer がサブ
+バッファオブジェクト
+で、このサブバッファオ
+ブジェクトを作成する際
+に指定したオフセットが
+command_queueと関連
+付けられたデバイスの
+CL_DEVICE_MEM_BASE_
+ADDR_ALIGNにアラインさ
+れていない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+IMAGE_SIZE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">dst_imageの寸法
+（幅、高さ、行・スライス
+の長さ）がcommand_queue
+と関連付けられたデバイス
+でサポートされていない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_IMAGE_
+FORMAT_NOT_
+SUPPORTED</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">dst_imageに対するイ
+メージ型式（image channel
+orderやデータ型）がqueue
+に関連付けられたデバイスに
+サポートされていない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_MEM_OBJECT_
+ALLOCATION_FAILURE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">src_bufferまたは
+dst_imageと関連付けられ
+たデータ保存領域のための
+メモリの確保に失敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+OPERATION</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queueと関連
+付けられたデバイスがイメ
+ージ機能をサポートしてい
+ない（CL_DEVICE_IMAGE_
+SUPPORTがCL_FALSEである）
+場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_OF_
+RESOURCES</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とするリソース
+確保に失敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_OF_
+HOST_MEMORY</em></span></p></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL
+実装が必要とするリソー
+ス確保に失敗した場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apbs15.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apb.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apbs17.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

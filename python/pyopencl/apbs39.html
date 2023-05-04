@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>B.39. 整数関数</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="apb.html" title="Appendix B. OpenCL 1.2 API Reference" /><link rel="prev" href="apbs38.html" title="B.38. 組み込み関数" /><link rel="next" href="apbs40.html" title="B.40. その他の関数" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="apbs38.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apbs40.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_整数関数_2"></a>B.39. 整数関数</h2></div></div></div><div class="table"><a id="basic_ops"></a><p class="title"><strong>Table B.110. 表：四則・絶対値・最小最大値関数</strong></p><div class="table-contents"><table class="table" summary="表：四則・絶対値・最小最大値関数" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><thead><tr><th style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top">関数</th><th style="border-bottom: 1px solid #527bbd; " align="left" valign="top">詳細
+￼</th></tr></thead><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">ugentype abs (gentype x)
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">| x |を計算します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">ugentype abs_diff (gentype x, gentype y)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">オーバーフローを発生
+させずに| x – y |を
+計算します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype hadd (gentype x, gentype y)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">和のオーバーフローを
+発生させずに(x + y) &gt;&gt; 1
+を計算します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype rhadd (gentype x, gentype y)￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">和のオーバーフローを発生
+させずに(x + y + 1) &gt;&gt; 1
+を計算します。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype clamp (gentype x,
+    gentype minval,
+    gentype maxval)
+gentype clamp (gentype x,
+    sgentype minval,
+    sgentype maxval)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">min(max(x, minval), maxval)
+を計算します。
+結果はminval &gt; maxval
+のときに未定義です。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype clz (gentype x)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">最上位ビットから連続
+する0のビット数を計算
+します。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype max (gentype x, gentype y)
+gentype max (gentype x, sgentype y)￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">x &lt; yのときは、y
+それ以外のときは、
+xを計算します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype min (gentype x, gentype y)
+gentype min (gentype x, sgentype y)
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">y &lt; xのときは、y
+れ以外のときは、xを計算します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype rotate (gentype v, gentype i)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">vの各要素に対して、iビット
+の左シフトを行ないます。
+左シフトで押し出されたビッ
+トは右側に挿入されます。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">short upsample (char hi, uchar lo)
+ushort upsample (uchar hi, uchar lo)
+shortn upsample (charn hi, ucharn lo)
+ushortn upsample (ucharn hi, ucharn lo)
+int upsample (short hi, ushort lo)
+uint upsample (ushort hi, ushort lo)
+intn upsample (shortn hi, ushortn lo)
+uintn upsample (ushortn hi, ushortn lo)
+long upsample (int hi, uint lo)
+ulong upsample (uint hi, uint lo)
+longn upsample (intn hi, uintn lo)
+ulongn upsample (uintn hi, uintn lo)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">以下の計算をします。
+result[i] = ((short)hi[i] &lt;&lt; 8) | lo[i]
+result[i] = ((ushort)hi[i] &lt;&lt; 8) | lo[i]
+result[i] = ((int)hi[i] &lt;&lt; 16) | lo[i]
+result[i] = ((uint)hi[i] &lt;&lt; 16) | lo[i]
+result[i] = ((long)hi[i] &lt;&lt; 32) | lo[i]
+result[i] = ((ulong)hi[i] &lt;&lt; 32) | lo[i]
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype popcount (gentype x)
+￼</pre></td><td style="" align="left" valign="top"><pre class="literallayout">引数xの0でないビットの数を計算します。</pre></td></tr></tbody></table></div></div><br class="table-break" /><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_madと乗算_2"></a>B.39.1. MADと乗算</h3></div></div></div><div class="table"><a id="mad"></a><p class="title"><strong>Table B.111. 表：乗算関数</strong></p><div class="table-contents"><table class="table" summary="表：乗算関数" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><thead><tr><th style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top">関数</th><th style="border-bottom: 1px solid #527bbd; " align="left" valign="top">詳細</th></tr></thead><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype mul_hi (
+    gentype x,
+    gentype y)￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">x * yを計算し、算出し
+た値の上半分を返します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype mad_hi (
+    gentype a,
+    gentype b,
+    gentype c)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">mul_hi(a, b) + c
+を計算します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype mad24 (
+    gentype x,
+    gentype y,
+    gentype z)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">2つの24ビット整数値x
+とyの積を計算し、32ビッ
+ト整数値zを足します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype mul24 (
+    gentype x,
+    gentype y)</pre></td><td style="" align="left" valign="top"><pre class="literallayout">2つの24ビット整数値xと
+yの積を計算します。xとy
+は両方とも32ビット整数値
+ですが計算では下位24ビッ
+トのみを使います。xとyの
+両方が符号つきのときは、
+[-223, 223-1]、符号無し
+のときは [0, 224-1] の
+範囲内にあるとき使うこと
+が推奨されています。xとy
+がこれらの範囲内にないと
+き、計算結果は実装システ
+ムに依存します。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_飽和演算_2"></a>B.39.2. 飽和演算</h3></div></div></div><div class="table"><a id="saturation"></a><p class="title"><strong>Table B.112. 表：（飽和）加算・減算関数</strong></p><div class="table-contents"><table class="table" summary="表：（飽和）加算・減算関数" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><thead><tr><th style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top">関数</th><th style="border-bottom: 1px solid #527bbd; " align="left" valign="top">詳細</th></tr></thead><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype sub_sat (gentype x, gentype y)
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">x - yを計算します。
+結果については飽和を
+適用します</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype add_sat (gentype x, gentype y)
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">x + yを計算します。
+結果については飽和を
+適用します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">gentype mad_sat (
+    gentype a,
+    gentype b,
+    gentype c)</pre></td><td style="" align="left" valign="top"><pre class="literallayout">a * b + cを計算します。
+結果については飽和を
+適用します。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_整数型openclマクロ_2"></a>B.39.3. 整数型OpenCLマクロ</h3></div></div></div><p><a id="integer_macro"></a><strong>表：整数型マクロ. </strong>
+</p><pre xmlns="" class="prettyprint">#define CHAR_BIT 8
+#define CHAR_MAX SCHAR_MAX
+#define CHAR_MIN SCHAR_MIN
+#define INT_MAX 2147483647
+#define INT_MIN (-2147483647 – 1)
+#define LONG_MAX 0x7fffffffffffffffL
+#define LONG_MIN (-0x7fffffffffffffffL – 1)
+#define SCHAR_MAX 127
+#define SCHAR_MIN (-127 – 1)
+#define SHRT_MAX 32767
+#define SHRT_MIN (-32767 – 1)
+#define UCHAR_MAX 255
+#define USHRT_MAX 65535
+#define UINT_MAX 0xffffffff
+#define ULONG_MAX 0xffffffffffffffffUL</pre><p>
+</p><div class="table"><a id="interop_integer"></a><p class="title"><strong>Table B.113. 表：ホストAPIとデータ型の対応</strong></p><div class="table-contents"><table class="table" summary="表：ホストAPIとデータ型の対応" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><thead><tr><th style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top">OpenCL Cマクロ</th><th style="border-bottom: 1px solid #527bbd; " align="left" valign="top">OpenCL APIマクロ</th></tr></thead><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CHAR_BIT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_CHAR_BIT</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CHAR_MAX</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_CHAR_MAX
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CHAR_MIN</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_CHAR_MIN</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">INT_MAX</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_INT_MAX</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">INT_MIN</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_INT_MIN</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">LONG_MAX</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_LONG_MAX</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">LONG_MIN</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_LONG_MIN</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">SCHAR_MAX
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_SCHAR_MAX</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">SCHAR_MIN</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_SCHAR_MIN</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">SHRT_MAX</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_SHRT_MAX</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">SHRT_MIN</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_SHRT_MIN</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">UCHAR_MAX</pre></td><td style="" align="left" valign="top"><pre class="literallayout">CL_UCHAR_MAX</pre></td></tr></tbody></table></div></div><br class="table-break" /></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apbs38.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apb.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apbs40.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

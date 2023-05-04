@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>9.1. pyopencl.clmathライブラリ</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch09.html" title="Chapter 9. 組み込み数値計算ライブラリ" /><link rel="prev" href="ch09.html" title="Chapter 9. 組み込み数値計算ライブラリ" /><link rel="next" href="ch10.html" title="Chapter 10. カスタムカーネル(組み込み)" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch09.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch10.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_pyopencl_clmathライブラリ"></a>9.1. pyopencl.clmathライブラリ</h2></div></div></div><p>PyOpenCLでは独自の数値処理ライブラリ、clmathを提供しています。参考までに実装例を以下に掲載しますが、このライブラリは使用するには便利なものですがパフォーマンス的に問題があります。</p><p>筆者のスタンスとしては、このライブラリを使わない方針であり、読者にはPyOpenCLのOpenCLバインディングを経由する方式を推奨します。</p><p><strong>CLMathTrigonometry.py. </strong>
+</p><pre xmlns="" class="prettyprint">import numpy as np
+import pyopencl as cl
+import pyopencl.array as clarr
+import pyopencl.tools as cltool
+import pyopencl.clmath as clm
+import warnings
+
+import os
+os.environ['PYOPENCL_COMPILER_OUTPUT'] = '1'
+
+a = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]).astype(np.float32)
+b = np.array([10, 9, 8, 7, 6, 5, 4, 3, 2, 1]).astype(np.float32)
+
+platforms = cl.get_platforms()
+ctx = cl.Context([platforms[0].get_devices(cl.device_type.GPU)[0]])
+queue = cl.CommandQueue(ctx)
+
+a_mem = clarr.to_device(queue, a)
+b_mem = clarr.to_device(queue, b)
+
+# arc trigonometry
+acos_result = clm.acos(a_mem / 10)
+print("acos: " + str(acos_result))
+
+# cospi = cos(x * pi)
+cospi_result = clm.cospi(a_mem)
+print("cospi" + str(cospi_result))
+
+sinh_result = clm.sinh(a_mem / 10)
+print("sinh: " + str(sinh_result))
+
+cosh_result = clm.cosh(a_mem / 10)
+print("cosh: " + str(cosh_result))
+
+# arc tangent, -1/2 * pi &lt; f &lt; 1/2 * pi
+atan_result = clm.atan(a_mem)
+print("atan: " + str(atan_result))
+
+# atan2 is the arc tangent of y / x.
+atan2_result = clm.atan2(a_mem, b_mem)
+print("atan2: " + str(atan2_result))
+
+# atanpi computes atan (x) / pi.
+atanpi_result = clm.atanpi(a_mem)
+print("atanpi: " + str(atanpi_result))
+
+# atan2pi computes atan2 (y, x) / pi.
+atan2pi_result = clm.atan2pi(a_mem, b_mem)
+print("atan2pi: " + str(atan2pi_result))
+
+# logarithm
+log2_result = clm.log2(a_mem)
+print("log2: " + str(log2_result))
+
+# Multiply xby 2 to the power n
+ldexp_result = clm.ldexp(a_mem, a_mem)
+print("ldexp: " + str(ldexp_result))
+
+# Modulus. Returns x - y * trunc (x/y)
+fmod_result = clm.fmod(a_mem, b_mem)
+print("fmod: " + str(fmod_result))</pre><p>
+</p><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">/Library/Frameworks/Python.framework/Versions/3.5/bin/python3.5 /Users/komatsu/PycharmProjects/MyPythonProject/CLMathTrigonometry.py
+acos: [ 1.47062898  1.36943841  1.26610374  1.15927958  1.04719758  0.92729521
+  0.79539883  0.6435011   0.45102671  0.        ]
+cospi[-1.  1. -1.  1. -1.  1. -1.  1. -1.  1.]
+sinh: [ 0.10016675  0.201336    0.30452025  0.4107523   0.52109528  0.63665366
+  0.75858366  0.88810593  1.0265168   1.17520118]
+cosh: [ 1.00500417  1.02006674  1.04533851  1.08107233  1.12762594  1.18546522
+  1.25516903  1.33743489  1.43308651  1.54308057]
+atan: [ 0.78539819  1.10714877  1.24904585  1.3258177   1.37340081  1.40564775
+  1.42889929  1.44644141  1.46013916  1.47112775]
+atan2: [ 0.09966865  0.21866895  0.35877067  0.51914608  0.69473827  0.8760581
+  1.05165029  1.21202576  1.35212743  1.47112775]
+atanpi: [ 0.25        0.3524164   0.39758363  0.42202085  0.43716705  0.44743156
+  0.45483276  0.46041659  0.46477669  0.46827447]
+atan2pi: [ 0.03172551  0.06960449  0.11420025  0.16524932  0.22114205  0.27885795
+  0.33475068  0.38579977  0.43039551  0.46827447]
+log2: [ 0.          1.          1.58496249  2.          2.32192802  2.58496261
+  2.80735493  3.          3.16992497  3.32192802]
+ldexp: [  2.00000000e+00   8.00000000e+00   2.40000000e+01   6.40000000e+01
+   1.60000000e+02   3.84000000e+02   8.96000000e+02   2.04800000e+03
+   4.60800000e+03   1.02400000e+04]
+fmod: [ 1.  2.  3.  4.  5.  1.  3.  2.  1.  0.]</pre><p>
+</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch09.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch09.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch10.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

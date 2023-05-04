@@ -1,0 +1,698 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>B.33. カーネルの実行</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="apb.html" title="Appendix B. OpenCL 1.2 API Reference" /><link rel="prev" href="apbs32.html" title="B.32. カーネルオブジェクト情報の取得" /><link rel="next" href="apbs34.html" title="B.34. Flush・Finish" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="apbs32.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apbs34.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_カーネルの実行_2"></a>B.33. カーネルの実行</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clenqueuendrangekernel"></a>B.33.1. clEnqueueNDRangeKernel</h3></div></div></div><div class="table"><a id="clEnqueueNDRangeKernel"></a><p class="title"><strong>Table B.88. 表：clEnqueueNDRangeKernel</strong></p><div class="table-contents"><table class="table" summary="表：clEnqueueNDRangeKernel" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">関数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_int</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clEnqueueNDRangeKernel (
+    cl_command_queue command_queue,
+    cl_kernel kernel,
+    cl_uint work_dim,
+    const size_t *global_work_offset,
+    const size_t *global_work_size,
+    const size_t *local_work_size,
+    cl_uint num_events_in_wait_list,
+    const cl_event *event_wait_list,
+    cl_event *event
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> OpenCLデバイス上でカーネルを実行するコマンドを挿入。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 引数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queue</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">有効なコマンドキュ
+ーを指定。カーネルは
+command_queueに関連
+付けられたOpenCLデバ
+イス上での実行待ちに
+追加される。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">kernel</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">有効なカーネルオブ
+ジェクトを指定。kernel
+と関連付けられた
+OpenCLコンテキストと
+command_queueと関連付
+けられたOpenCLコンテキ
+ストは同じとなる必要
+がある。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">work_dim</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">グローバルワーク
+アイテム数とワークグ
+ループ内のワークアイ
+テム数を決定する際の
+次元数を指定。work_dim
+は0より大きく
+CL_DEVICE_MAX_WORK_
+ITEM_DIMENSIONS以下
+の値となる必要がある。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">global_
+work_offset</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">要素数work_dimの
+配列でワークアイテムの
+グローバルIDを決定する
+際のオフセット値を指
+定。global_work_
+offsetがNULLの場合、
+グローバルIDはオフ
+セット値
+`(0,0,...0)`
+で始まる値となる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">global_
+work_size</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">要素数work_dim
+の配列で、カーネル関数
+を実行するwork_dim次元
+のグローバルワークアイ
+テムの個数を指定。グロ
+ーバルワークアイテムの
+総数は、
+`global_work_size[0] `
+`* global_work_size[1] `
+`* ... `
+`* global_work_size`
+`[work_dim - 1]` です。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">local_
+work_size</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">要素数work_dimの
+配列で、カーネル関数を
+実行する各ワークグルー
+プを構成するワークアイ
+テムの数（ワークグルー
+プのサイズとも呼ぶ）を
+指定。
+
+ワークグループ内のワー
+クアイテムの総数は、
+`local_work_size[0]`
+`* local_work_size[1]`
+`* ... * local_work_`
+`size[work_dim - 1]`
+となる。ワークグループ内の
+ワークアイテムの総数は、
+CL_DEVICE_MAX_WORK_
+GROUP_SIZEの値以下とな
+る必要がある。
+`local_work_size[0], `
+`... local_work_size`
+`[work_dim - 1]`で指定
+するワークアイテム数は、対応す
+る`CL_DEVICE_MAX_WORK_`
+`ITEM_SIZES[0], ...`
+`CL_DEVICE_MAX_WORK_`
+`ITEM_SIZES[work_dim - 1]`
+の値以下となる必要がある。
+
+local_work_sizeは、
+global_work_sizeで
+指定したグローバルワーク
+アイテムをどのようにして
+ワークグループに分割する
+のかを決定するために使用
+できる。
+local_work_sizeを指定
+した場合、
+`global_work_size[0], `
+`... global_work_size`
+`[work_dim - 1]`で指定し
+た値は対応する
+`local_work_size[0], `
+`... local_work_size`
+`[work_dim - 1]`の値で
+整除できる必要がある。
+
+kernel を実行するワーク
+グループのサイズは、
+`__attribute__((reqd_`
+`work_group_size(X, Y, Z)))`
+修飾子を利用してプログラ
+ムのソース中で指定できる。
+この場合、local_work_
+size で指定したワークグ
+ループサイズは、reqd_work_
+group_size 属性修飾子で
+指定した値と一致している
+必要がある。
+
+local_work_size には
+NULLを指定することもでき、
+この場合はグローバルワー
+クアイテムをどのようにワ
+ークグループに分割するか
+OpenCL実装が決定。これら
+のワークグループのインスタ
+ンスは複数の計算ユニットで
+並列または、同じ計算ユニッ
+トで並行に実行される。
+
+各ワークアイテムは、グロー
+バル識別子を利用して一意に
+識別できる。カーネル内で利
+用できる「グローバルID」は、
+global_work_size と
+global_work_offset
+の値から決定できる。
+
+ワークグループ内で一意の
+ローカルIDを利用してワー
+クアイテムを識別することも
+できる。カーネル内で利用
+できるローカルIDは、
+local_work_sizeの値を
+使って決定でき、ローカル
+IDはいつも
+`(0,0, ... , 0)`
+から始まります。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">num_events_
+in_wait_list</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">event_wait_listで
+指定したイベントオブジェ
+クトの数を指定します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_
+list</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">このコマンドが実行
+される前に完了されて
+いるイベントを指定。
+event_wait_listが
+NULLの場合、このコマン
+ドはどのイベントの完了
+待機もしない。
+
+event_wait_listが
+NULLの場合、
+num_events_in_wait_
+listは0となる必要がある。
+
+event_wait_listが
+NULLではない場合、
+event_wait_listが指す
+各イベントは有効となり、
+またnum_events_in_
+wait_listは0より大き
+な値となる必要がある。
+
+event_wait_listに
+指定したイベントは同
+期点としてふるまう。
+event_wait_list内の
+イベントと関連付けられ
+たOpenCLコンテキストと
+command_queueと関連付
+けられたOpenCLコンテ
+キストは同じとなる必要がある。
+
+event_wait_listと関
+連付けられたメモリ領
+域は関数が戻った後に、
+再利用か解放できる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">カーネルコマンドを識別
+するイベントオブジェ
+クトが戻され、コマン
+ド完了の確認やコマン
+ド完了の待機に使える。
+
+eventがNULLの場合、
+アプリケーションは
+コマンドの状況確認
+やコマンド完了待ち
+ができなくなる。
+
+event_wait_list
+とeventがNULLでな
+い場合、eventは
+event_wait_list
+配列の要素を参照す
+べきでない。
+
+clEnqueueBarrier
+WithWaitListを代わ
+りに使うことができる。
+event_wait_listと
+event引数NULLでない場
+合、event引数はevent_
+wait_list内の要素を
+参照すべきでない。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 成功した場合の戻り値</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> CL_SUCCESS</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 失敗した場合の戻り値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+PROGRAM_
+EXECUTABLE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queueと関
+連付けられたデバイス上
+で実行可能な、正常に
+ビルドされたプログラ
+ムが一つもない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+COMMAND_QUEUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queueが
+有効なコマンドキュー
+でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+KERNEL</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">kernelが有効なカー
+ネルオブジェクトでな
+い場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+CONTEXT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queueと
+関連付けられたコンテ
+キストとkernelと関連
+付けられたコンテキスト
+が同じでない場合。
+command_queueと関連
+付けられたコンテキス
+トとevent_wait_list
+内のイベントと関連付け
+られたコンテキストが
+同じでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+KERNEL_ARGS</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">カーネル引数が指定
+されていない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+WORK_DIMENSION</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">work_dimが有効な値
+（1から3）でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+GLOBAL_WORK_
+SIZE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">global_work_size
+がNULLの場合。
+`global_work_size[0],`
+`... global_work_size`
+`[work_dim - 1]`で指定した
+値のいずれかが0の場合。
+
+カーネルを実行するデバイス上
+での sizeof(size_t)で与
+えられる範囲をこえている場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+GLOBAL_OFFSET</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">いずれかの次元での
+(global_work_size で指
+定した値 + 対応する
+global_work_offset の値)
+がカーネルを実行するデバイ
+ス上での sizeof(size_t)
+をこえている場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+WORK_GROUP_SIZE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">local_work_sizeを
+指定していて、global_
+work_sizeで指定したワー
+クアイテム数がlocal_work_
+sizeで指定したワークグル
+ープサイズの値で整除でき
+ない場合。
+
+プログラムソース内で
+`__attribute__((reqd_`
+`work_group_size(X, Y, Z)))`
+修飾子を利用して指定した
+ワークグループサイズと
+local_work_sizeで指定
+した値が一致しない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+WORK_GROUP_SIZE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">local_work_sizeを
+指定し、
+`local_work_size[0] *`
+`... * local_work_size`
+`[work_dim - 1]`で求めら
+れるワークグループ内のワー
+クアイテムの総数が
+CL_DEVICE_MAX_WORK_
+GROUP_SIZEの値をこえて
+いる場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+WORK_GROUP_SIZE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">local_work_sizeが
+NULLで、プログラムソース
+内で
+`((reqd_work_group_`
+`size(X, Y, Z)))` 修飾子
+を利用してワークグループサイ
+ズを宣言している場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+WORK_ITEM_SIZE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">`local_work_size[0],`
+`... local_work_size`
+`[work_dim – 1]`で求めら
+れるワークアイテムの総数が、
+対応する`CL_DEVICE_MAX_`
+`WORK_ITEM_SIZES[0], ....`
+`CL_DEVICE_MAX_WORK_`
+`ITEM_SIZES[work_dim – 1]`
+で指定した値が大きい場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_MISALIGNED_
+SUB_BUFFER_OFFSET</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">このサブバッファオブ
+ジェクトを生成する際に
+指定した、バッファオブ
+ジェクトの引数と、オフ
+セットがcommand_queue
+と関連付けられたデバイ
+スの CL_DEVICE_MEM_
+BASE_ADDR_ALIGNにア
+ラインされていない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+IMAGE_SIZE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">カーネルの引数にイメー
+ジオブジェクトが指定さ
+れていて、イメージの次元
+（幅、高さ、行/カラム
+の長さ）が
+command_queueと関連
+付けられたデバイスでサポ
+ートされていない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_IMAGE_
+FORMAT_NOT_
+SUPPORTED</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">イメージオブジェクト
+が引数として指定され、
+そのイメージ型式
+（image channel
+orderやデータ型）が
+queueに関連付けられた
+デバイスにサポートさ
+れていない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+RESOURCES</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">カーネルを実行する
+のに必要なリソースが
+不足しているために
+カーネル実行を挿入で
+きないとき。
+
+例：local_work_
+sizeを指定すると、
+レジスタやローカル
+メモリのような
+リソースの不足により
+カーネルを実行できない。
+
+例：kernelの引数に
+指定した読み取り専用
+イメージオブジェクト
+の数がデバイスの
+CL_DEVICE_MAX_
+READ_IMAGE_ARGS
+をこえている場合
+
+例：kernelの引数に
+指定した書き込み専用
+イメージオブジェクト
+の数がデバイスのCL_
+DEVICE_MAX_WRITE_
+IMAGE_ARGS をこえ
+ている場合
+
+例：kernelの引数に
+指定したサンプラーの
+数がデバイスの
+CL_DEVICE_MAX_
+SAMPLERSをこえてい
+る場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_MEM_
+OBJECT_
+ALLOCATION_
+FAILURE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">カーネルに指定した
+イメージまたはバッファ
+オブジェクトと関連付
+けられたデータ格納領
+域のメモリの確保に失敗
+した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+EVENT_WAIT_LIST</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_listが
+NULLで、num_events_
+in_wait_list &gt; 0の
+場合。
+
+event_wait_listが
+NULLでなくnum_
+events_in_wait_list
+が0の場合。
+
+event_wait_list内
+のイベントオブジェ
+クトが有効なイベント
+でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_
+OF_RESOURCES</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_
+OF_HOST_MEMORY</pre></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clenqueuetask"></a>B.33.2. clEnqueueTask</h3></div></div></div><div class="table"><a id="clEnqueueTask"></a><p class="title"><strong>Table B.89. 表：clEnqueueTask</strong></p><div class="table-contents"><table class="table" summary="表：clEnqueueTask" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>関数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>cl_int</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clEnqueueTask (
+    cl_command_queue command_queue,
+    cl_kernel kernel,
+    cl_uint num_events_in_wait_list,
+    const cl_event *event_wait_list,
+    cl_event *event
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>デバイス上でカーネルを実行するコマンドを挿入。一
+つのワークアイテムを使いカーネルを実行。</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>引数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>command_queue</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">有効なコマンドキュー
+を指定。カーネルはコマ
+ンドキューと関連付けら
+れたデバイス上で実行の
+ためにキューに入れられる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>kernel</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">有効なカーネルオブジェクト。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>num_events_
+in_wait_list</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_list
+で指定したイベントオ
+ブジェクトの数を指定
+します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>event_wait_
+list</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">このコマンドが実行
+される前に完了されて
+いるイベントを指定。
+event_wait_listが
+NULLの場合、このコマ
+ンドはどのイベントの
+完了待機もしない。
+
+event_wait_listが
+NULLの場合、
+num_events_in_
+wait_listは0となる
+必要がある。
+
+event_wait_listが
+NULLではない場合、
+event_wait_listが指
+す各イベントは有効とな
+り、またnum_events_
+in_wait_listは0より
+大きな値となる必要が
+ある。
+
+event_wait_listに
+指定したイベントは同期
+点としてふるまう。
+
+event_wait_list内の
+イベントと関連付けられた
+OpenCLコンテキストと
+command_queueと関連
+付けられたOpenCLコン
+テキストは同じとなる必
+要がある。
+
+event_wait_listと
+関連付けられたメモリ
+領域は関数が戻った後
+に、再利用か解放できる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>event</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">カーネルコマンドを識
+別するイベントオブジ
+ェクトが戻され、コマ
+ンド完了の確認やコマ
+ンド完了の待機に使え
+る。
+
+eventがNULLの場合、
+アプリケーションはコマ
+ンドの状況確認やコマ
+ンド完了待ちができな
+くなる。
+
+event_wait_list
+とeventがNULLでな
+い場合、eventは
+event_wait_list
+配列の要素を参照すべ
+きでない。
+
+clEnqueueBarrier
+WithWaitListを代
+わりに使うことができ
+る。event_wait_
+listとevent引数
+NULLでない場合、
+event引数はevent_
+wait_list内の要素
+を参照すべきでない。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>成功した場合の戻り値</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>CL_SUCCESS</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>失敗した場合の戻り値</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+PROGRAM_
+EXECUTABLE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queue
+に関連付けられたデ
+バイスのためにビルド
+に成功した実行可能プ
+ログラムがない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+COMMAND_QUEUE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queueが
+有効なコマンドキュ
+ーでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+KERNEL</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">kernelが有効なカ
+ーネルオブジェクトで
+ない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+CONTEXT</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queueと
+kernelに関連付け
+られたコンテキスト
+が同じでない場合。
+command_queueと、
+event_wait_list
+内のイベントに関連
+付けられたコンテキ
+ストが同じでない
+場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+KERNEL_ARGS</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">カーネル引数の値が
+指定されてない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+WORK_GROUP_SIZE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">プログラムソース内で
+`__attribute__((reqd_`
+`work_group_size(X,`
+`Y, Z)))`修飾子を使って
+カーネルのワークグループ
+サイズを指定したが、
+(1,1,1)でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_MISALIGNED_
+SUB_BUFFER_OFFSET</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">サブバッファオブジェ
+クトが、バッファオブジ
+ェクトを引数の値として
+指定され、サブバッファ
+オブジェクトが生成され
+た際のオフセットがqueue
+に関連付けられたデバイ
+スに対してCL_DEVICE_
+MEM_BASE_ADDR_
+ALIGNとアラインされ
+て場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+IMAGE_SIZE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">カーネルの引数にイメ
+ージオブジェクトが指
+定されていて、イメージ
+の次元（幅、高さ、行/
+カラムの長さ）が
+command_queueと関
+連付けられたデバイスで
+サポートされていない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_IMAGE_
+FORMAT_NOT_
+SUPPORTED</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">イメージオブジェク
+トが引数として指定さ
+れ、そのイメージ型式
+（image channel
+orderやデータ型）が
+queueに関連付けら
+れたデバイスにサポー
+トされていない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_
+OF_RESOURCES</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">コマンドキュー上の
+カーネルの実行インス
+タンスをキューに入れ
+るのに、リソースが
+不足して失敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_MEM_
+OBJECT_
+ALLOCATION_
+FAILURE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">カーネルに指定した
+イメージまたはバッフ
+ァオブジェクトと関連
+付けられたデータ格納
+領域のメモリの確保に
+失敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+EVENT_WAIT_LIST</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_listが
+NULLで、
+num_events_in_
+wait_list &gt; 0の場合。
+
+event_wait_listが
+NULLでなくnum_
+events_in_wait_
+listが0の場合。
+
+event_wait_list
+内のイベントオブジェ
+クトが有効なイベント
+でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_
+OF_RESOURCES</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_
+OF_HOST_MEMORY</em></span></p></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clenqueuenativekernel"></a>B.33.3. clEnqueueNativeKernel</h3></div></div></div><div class="table"><a id="clEnqueueNativeKernel"></a><p class="title"><strong>Table B.90. 表：clEnqueueNativeKernel</strong></p><div class="table-contents"><table class="table" summary="表：clEnqueueNativeKernel" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">関数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_int</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clEnqueueNativeKernel (
+    cl_command_queue command_queue,
+    void (CL_CALLBACK *user_func)(void *)
+    void *args,
+    size_t cb_args,
+    cl_uint num_mem_objects,
+    const cl_mem *mem_list,
+    const void **args_mem_loc,
+    cl_uint num_events_in_wait_list,
+    const cl_event *event_wait_list,
+    cl_event *event
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> OpenCLコンパイラを使い、コンパイルされてないネイティ
+ブC/C++関数を実行するコマンドを挿入。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 引数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queue</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">有効なコマンドキ
+ューを指定。ネイティ
+ブユーザ関数は、
+CL_DEVICE_EXECUTION_
+CAPABILITIESを
+CL_EXEC_NATIVE_
+KERNEL機能に設定し
+たデバイスで生成される
+command-queue上で
+実行される。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">user_func</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">ホストが呼び出
+せる関数を指すポイ
+ンタを指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">args</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">user_funcを呼
+び出す際の引数リスト
+を指すポインタを指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cb_args</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">引数リストのバイ
+トサイズを指定。args
+とcb_argsバイトサイ
+ズが指すデータは複数
+されて、複製した領域
+はuser_funcに渡され
+る。複製をする理由は、
+argsが保持するメモリ
+オブジェクト（cl_mem
+の値）が変更したり、
+グローバルメモリを指
+すポインタと交換する
+ため。
+clEnqueueNative
+Kernelが戻る場合、
+argsが指すメモリ領
+域はアプリケーション
+で再利用できる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">num_mem_
+objects</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">argsに渡される
+バッファオブジェクト
+の個数を指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">mem_list</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">num_mem_objects
+&gt; 0の場合、有効なバッ
+ファオブジェクトのリス
+トを指定。mem_listで
+指定されたバッファオブ
+ジェクトの値は、
+clCreateBufferが戻
+すメモリオブジェクトの
+ハンドルか、NULLと
+なる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">args_mem_
+loc</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">argsが指すメモリ
+オブジェクトのハンド
+ルが格納される領域を
+指すポインタ。ユーザ
+関数が実行される前に、
+メモリオブジェクトの
+ハンドルはグローバル
+メモリへのポインタと
+交換される。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 成功した場合の戻り値</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> CL_SUCCESS</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 失敗した場合の戻り値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+COMMAND_QUEUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queueが有効なコマンドキューでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+CONTEXT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">command_queueと
+event_wait_list内
+のイベントと関連付け
+られるコンテキストが
+同じでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">user_funcが
+NULLの場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">argsはNULL値で、
+cb_args &gt; 0の場合。
+argsはNULL値で、
+num_mem_objects
+&gt; 0の場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">argsがNULLでな
+い場合で、cb_args
+が0の場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">num_mem_objects
+&gt; 0で、mem_list
+またはargs_mem_
+locがNULLの場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">num_mem_objects
+= 0で、mem_listま
+たはargs_mem_loc
+がNULLでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+OPERATION</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">コマンドキューが関
+連付けられたデバイス
+がネイティブカーネル
+を実行できない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+MEM_OBJECT</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">mem_listに指定した
+一つ以上のメモリオブ
+ジェクトが有効でない、
+またはバッファオブジ
+ェクトでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+RESOURCES</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">コマンドキュー上の
+カーネルの実行インス
+タンスをキューに入
+れるのに、リソースが
+不足して失敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_MEM_
+OBJECT_
+ALLOCATION_
+FAILURE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">カーネルに指定した
+イメージまたはバッ
+ファオブジェクトと
+関連付けられたデータ
+格納領域のメモリの
+確保に失敗した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+EVENT_WAIT_LIST</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">event_wait_listが
+NULLで、
+num_events_in_
+wait_list &gt; 0の場合。
+
+event_wait_list
+がNULLでなく
+num_events_in_
+wait_listが0の場合。
+
+event_wait_list内
+のイベントオブジェク
+トが有効なイベント
+でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+RESOURCES</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+HOST_MEMORY</pre></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apbs32.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apb.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apbs34.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

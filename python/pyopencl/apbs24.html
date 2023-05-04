@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>B.24. プログラムのリンク、コンパイル</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="apb.html" title="Appendix B. OpenCL 1.2 API Reference" /><link rel="prev" href="apbs23.html" title="B.23. 実行プログラムのビルド" /><link rel="next" href="apbs25.html" title="B.25. プログラムのリンク" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="apbs23.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apbs25.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_プログラムのリンク_コンパイル"></a>B.24. プログラムのリンク、コンパイル</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clcompileprogram"></a>B.24.1. clCompileProgram</h3></div></div></div><div class="table"><a id="clCompileProgram"></a><p class="title"><strong>Table B.68. 表：clCompileProgram</strong></p><div class="table-contents"><table class="table" summary="表：clCompileProgram" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">関数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_int</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clCompileProgram (
+    cl_program program,
+    cl_uint num_devices,
+    const cl_device_id *device_list,
+    const char *options,
+    cl_uint num_input_headers,
+    const cl_program *input_headers,
+    const char **header_include_names,
+    void (CL_CALLBACK *pfn_notify)
+    (
+        cl_program program,
+        void *user_data
+    ),
+    void *user_data
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> プログラムと関連付けられたOpenCLコンテキス
+ト内の全てのデバイスまたは特定のデバイスに対して
+プログラムのソースコードをコンパイル。
+
+プログラムのソースがコンパイルされる前にプリプロ
+セッサーは処理を開始。コンパイルされたバイナリは、
+プログラムと関連付けられた全てのデバイスまたは、
+指定されたデバイスのリストに対してビルドされます。
+
+コンパイルされたバイナリ
+の情報は
+`clGetProgramInfo`
+`(program, `
+`CL_PROGRAM_BINARIES, `
+`...)`を使用して取得でき、
+clCreateProgramWith
+Binaryを使って新しい
+プログラムオブジェクト
+を生成することに指定
+が可能。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 引数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout"> program</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">コンパイルのターゲット
+となるプログラム
+オブジェクト。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">device_list</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">プログラムに関連付
+けられたデバイスの
+リストを指すポインタ。
+device_listがNULL
+値の場合、全ての関連
+付けられたデバイスに
+対してコンパイルが
+行なわれる。
+device_listが非
+NULL値の場合は、
+リストに指定した
+デバイスに対して
+コンパイルを行なう。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">num_devices</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">device_listにある
+デバイスの個数。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">options</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">実行可能プログラムを
+ビルドする際に適用する
+コンパイルオプション
+指定するNULL終端文字
+列へのポインタを指定。
+&lt;&lt;compiler_option&gt;&gt;
+を参照のこと。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">num_input_
+headers</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">input_headersが参照
+する配列内のヘッダーを
+記述するプログラムの
+個数を指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">input_headers</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">clCreateProgram
+WithSourceで生成した、
+プログラムの組込みヘッ
+ダーの配列を指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">header_
+include_names</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">input_headersと1対1
+の関係を持つ配列。
+header_include_names
+の各エントリは、プログ
+ラムの組込みヘッダー内の
+ソースに使用されたインク
+ルードの名称を指定。組込
+みヘッダーは、-Iコンパイ
+ルオプションで指定された
+ヘッダーの前に、最初に検索
+される。
+header_include_names
+の複数のエントリが同じヘッ
+ダー名を参照する場合、最
+初に見つけたものが使われる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">pfn_notify</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">通知ルーチンへの関数
+ポインタ。通知ルーチン
+はアプリケーションが登
+録できるコールバック関
+数であり、実行可能プロ
+グラムがコンパイルされ
+た際に成功失敗に関わら
+ず呼び出される。
+
+pfn_notifyがNULLでな
+い場合、
+clCompileProgram
+はコンパイルの完了を待つ
+必要が無くなりすぐに戻
+ることができる。コンテ
+キスト、ソースやバイナリ
+がコンパイル・ビルドさ
+れたプログラム、デバイス
+のリストおよび指定された
+ビルドオプションが全て有
+効な場合、ビルド処理は開
+始可能となる。
+
+pfn_notifyがNULLの
+場合、clCompileProgram
+はコンパイルが完了するま
+で戻らない。このコール
+バック関数は非同期的に
+呼び出される。コールバック
+関数がスレッドセーフであ
+ることを保証するのはア
+プリケーション側の
+責任です。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">user_data</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">pfn_notifyを呼び
+出す際、user_data
+引数として渡します。
+NULL値を指定可能。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 成功した場合の戻り値</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> CL_SUCCESS</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 失敗した場合の戻り値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+PROGRAM</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">programが有効なプロ
+グラムオブジェクトで
+ない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">device_listがNULL
+で、num_devicesが0
+より大きい場合。
+
+device_listがNULL
+でなく、num_devices
+が0の場合</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">num_input_headers
+が0で、
+header_include_names
+または input_headers
+がNULLでない場合。
+
+num_input_headers
+が0でなく、
+header_include_names
+または input_headers
+がNULLの場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">pfn_notifyがNULL
+だが、user_dataが
+NULLでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+DEVICE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">device_listの
+リスト内にあるOpenCL
+デバイスがprogramに
+関連付けられたデバイス
+のリストの中にない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+COMPILER_
+OPTIONS</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">オプションで指定した
+コンパイラオプション
+が有効でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+OPERATION</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">clCompileProgram
+または
+clBuildProgramを
+事前に呼び出した
+device_list内の全て
+のデバイスに対しての、
+実行可能プログラムの
+コンパイルまたはビルド
+が終了していない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_COMPILER_
+NOT_AVAILABLE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">コンパイラが利用
+可能でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_COMPILE_
+PROGRAM_FAILURE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">プログラムソースの
+コンパイルに失敗
+した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+OPERATION</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">プログラムに付属
+したカーネルオブジ
+ェクトがある場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+OPERATION</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">プログラムにソース
+がない場合。
+（clCreateProgram
+WithSourceで生成
+していない場合）</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_
+OF_RESOURCES</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+HOST_MEMORY</pre></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL実装
+が必要とするリソース
+確保に失敗した場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apbs23.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apb.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apbs25.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

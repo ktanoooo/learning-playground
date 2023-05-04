@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>13.14. Autovectorization</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch13.html" title="Chapter 13. OpenCLの概要" /><link rel="prev" href="ch13s13.html" title="13.13. SIMD" /><link rel="next" href="ch13s15.html" title="13.15. Compute UnitとProcessing Element" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch13s13.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch13s15.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_autovectorization"></a>13.14. Autovectorization</h2></div></div></div><p>Intel OpenCL SDKやMax OS XはAutovectorizationという、自動ベクトル化、すなわちSIMD命令コードに自動で翻訳してくれる機能が附属しています。</p><p>複雑なロジックをベクトル化するのは、手間がかかりバグの余地も大きくるため、最近はOpenCLの実装ライブラリを提供する大半のベンダーが、自動ベクトル化をサポートしているので、2010〜2012年頃のベクトルだらけのコードベースは可読性をおとします。</p><p>自動ベクトル化がサポートされている場合はベクトル型を使わないという選択肢があることを念頭におくようにしてください。</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_明示的ベクトル化"></a>13.14.1. 明示的ベクトル化</h3></div></div></div><p>明示的ベクトル化は「Explicit Autovectorization」の直訳です。明示的の意味をあえて解説するならば、OpenCLのベクトル型で定義したベクトルにすることです。</p><p>これにより各ベクトルの要素がSSE/AVXのSIMDの幅で4または8個の32ビットデータ型の場合は、1実行サイクルで並列に処理します。Intelの内蔵GPUではfloat4やint4/uint4が推奨されています。</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_暗黙的ベクトル化"></a>13.14.2. 暗黙的ベクトル化</h3></div></div></div><p>SIMDを活用する場合にAuto-Vectorizationが明示的となると毎回、float8にアルゴリズムを改変するように迫られることは開発者にとって大きな負担となります。</p><p>暗黙的ベクトル化は、4または8要素のfloatのベクトル型に修正せずとも、ワークアイテムをSSE/AVX等のSIMDチャンネルに自動マッピングするために、ロックステップでのSIMD処理をOpenCL実装がバックグラウンドで行ないます。</p><p>SIMDの演算器のビット数（32bit）に適合したデータ型、特にfloat型、int型がワークアイテムにマップされやすいとされます。</p><p>暗黙的ベクトル化は複雑なアルゴリズムになればなるほど重宝する機能であり、むしろベクトルに無理にでも変換しようとする強引な手法を減らす良い契機になるかもしれません。</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_mac_os_x_autovectorizer"></a>Mac OS X Autovectorizer</h4></div></div></div><p>本書の検証環境はMac OS XのためAutovectorizerという機能を使います。下表のように、cl-auto-vectorize-enableが真の値になってる必要があります。既定の設定は「自動ベクトル化有効」となります。</p><div class="informaltable"><table class="informaltable" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; "><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /><col class="col_4" /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="strong"><strong>設定</strong></span></p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="strong"><strong>型</strong></span></p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="strong"><strong>既定値</strong></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">コマンドラインフラグ</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="strong"><strong>Auto-vectorizer</strong></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="strong"><strong>Boolean</strong></span></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><span class="strong"><strong>YES</strong></span></p></td><td style="" align="left" valign="top"><pre class="literallayout"> cl-auto-vectorize-enable
+cl-auto-vectorize-disable</pre></td></tr></tbody></table></div><p>次にMac OS XのOpenCLフレームワークでは、自動ベクトル化を阻むのでやらない方がいい３つの非推奨設定・コーディングがあります。以下がやるべきでない事です。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+ワークアイテムのIDに依存した制御フロー
+</li><li class="listitem">
+特定のデバイスへの最適化
+</li><li class="listitem">
+配列の要素にアクセスするときは、連続するワークアイテムIDが、連続する配列要素にアクセスする（アクセスパターン、例：行列乗算の際に、行列を転置）
+</li><li class="listitem">
+メモリーへのアクセスを制御フロー外に移動
+</li></ul></div><p>最後の点は以下のようなコードを指します。</p><pre xmlns="" class="prettyprint">if(条件)
+    a[id] = 10;
+else
+    a[id] = 50;</pre><p>まずこうした分岐の入る制御フローがあるので、可能な限り避けます。もし制御フローが必要な場合は、if文からメモリーへのアクセスを外に移動させてしまいます。</p><pre xmlns="" class="prettyprint">if(条件)
+    tmp = 10;
+else
+    tmp = 50;
+
+a[id] = tmp;</pre><p>Mac OS Xではスカラ型の浮動小数点演算をコードした場合、CPUではコアの一部分のみが処理をして、他はアイドル状態となるが、自動ベクトル化によってこの問題を解決（コアの稼働率を上げることが）できるとしています。</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_intel_implicit_autovectorization_module"></a>Intel Implicit Autovectorization Module</h4></div></div></div><p>Intelの暗黙的自動ベクトル化モジュールは原則として4バイト（32ビット）なので、floatやintのスカラ型を処理する限りカーネルは自動でベクトル化されます。</p><p>32bit長以外のベクトルを使う場合はベクトル型の属性をコンパイラに知らせておくことで、自動ベクトル化をコンパイラがやりやすくするための助けとします。</p><pre xmlns="" class="prettyprint">__attribute__((vec_type_hint(&lt;typen&gt;)))</pre><p>typenのデフォルトはint型です。例えば、typenをfloat4とする場合は、カーネルで行なう処理の大半が、float4でベクトル化されることをコンパイラに伝えます。Intel CPUのAVXであれば256ビット長のレジスタがあるので、float型が8つおさまりますが、float4が2つ並ぶようにしたい場合には以下のように宣言します。</p><pre xmlns="" class="prettyprint">__kernel __attribute__((vec_type_hint(float4)))
+void foo( __global float4 *p ) {
+}</pre><p>基本演算幅が、intの32ビットでなく、128bitということをコンパイラに知らせることにより、自動ベクトル化の際の幅の決定がやりやすくなります。</p><p>Intelが推奨する基本ガイドラインには以下のようなものがあります。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+メモリーアラインメントを調整する。
+</li><li class="listitem">
+ポインタエイリアシング（画像処理のエイリアシングではなく、メモリ操作の一種）を避けること。restrict修飾子を使用する。
+</li><li class="listitem">
+分岐の入る制御フローを避ける。
+</li><li class="listitem">
+forループの使用を避ける。
+</li><li class="listitem">
+配列構造体（SOA、Structure of Array）をやめて、構造体配列(AOS, Array of Structure)にする。
+</li></ul></div><p>最後の点について補足です。SOAは以下のように、ベクトル型の配列を指します。</p><pre xmlns="" class="prettyprint">__kernel void mul(__global float4* input, __global float* output)
+{
+    size_t gid  = get_global_id(0);
+    output[gid] = input[gid].x * input[gid].y * input[gid].z * input[gid].w;
+}</pre><p>これをAOSにするには、単純にベクトル型をアンパックしてスカラ型に変更します。</p><pre xmlns="" class="prettyprint">__kernel void mul(
+    __global float* x,
+    __global float* y,
+    __global float* z,
+    __global float* w,
+    __global float* output)
+{
+    size_t gid  = get_global_id(0);
+    output[gid] = x[gid] * y[gid] * z[gid] * w[gid];
+}</pre><p>SOAの方が明らかにエレガントなコードではあるのですが、パフォーマンス上ではペナルティを受ける可能性があります。このように処理するデータによっては最適化によってコードが見苦しくなるケースもあります。</p></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch13s13.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch13.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch13s15.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

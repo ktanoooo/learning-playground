@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>3.2. Pythonの基本パッケージのインストール</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch03.html" title="Chapter 3. Python環境設定" /><link rel="prev" href="ch03s01.html" title="3.1. Pythonのインストール" /><link rel="next" href="ch03s03.html" title="3.3. PyOpenCLのインストール" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch03s01.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch03s03.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_pythonの基本パッケージのインストール"></a>3.2. Pythonの基本パッケージのインストール</h2></div></div></div><p>次にPyOpenCLで必要となる基本パッケージをインストールします。これに関してはパッケージ管理システムを使います。</p><pre xmlns="" class="prettyprint">$ pip3 install Mako
+$ pip3 install numpy
+$ pip3 install PyOpenGL</pre><p>参考までに下記はインストール時のログとなります。</p><pre xmlns="" class="prettyprint">$ pip3 install Mako
+Collecting Mako
+  Using cached Mako-1.0.4.tar.gz
+Collecting MarkupSafe&gt;=0.9.2 (from Mako)
+  Using cached MarkupSafe-0.23.tar.gz
+Installing collected packages: MarkupSafe, Mako
+  Running setup.py install for MarkupSafe
+  Running setup.py install for Mako
+Successfully installed Mako-1.0.4 MarkupSafe-0.23
+You are using pip version 7.1.2, however version 8.1.2 is available.
+You should consider upgrading via the 'pip install --upgrade pip' command.
+
+$ pip3 install numpy
+Collecting numpy
+  Using cached numpy-1.11.0-cp35-cp35m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl
+Installing collected packages: numpy
+Successfully installed numpy-1.11.0
+You are using pip version 7.1.2, however version 8.1.2 is available.
+You should consider upgrading via the 'pip install --upgrade pip' command.</pre><p><strong>Ubuntu 18.04. </strong>
+</p><pre xmlns="" class="prettyprint">$ pip3 install Mako
+Collecting Mako
+  Downloading https://files.pythonhosted.org/packages/28/03/329b21f00243fc2d3815399413845dbbfb0745cff38a29d3597e97f8be58/Mako-1.1.1.tar.gz (468kB)
+    100% |████████████████████████████████| 471kB 890kB/s
+Collecting MarkupSafe&gt;=0.9.2 (from Mako)
+  Downloading https://files.pythonhosted.org/packages/b2/5f/23e0023be6bb885d00ffbefad2942bc51a620328ee910f64abe5a8d18dd1/MarkupSafe-1.1.1-cp36-cp36m-manylinux1_x86_64.whl
+Building wheels for collected packages: Mako
+  Running setup.py bdist_wheel for Mako ... done
+  Stored in directory: /home/komatsu/.cache/pip/wheels/ff/50/a9/0ddeed8679a1fb65bf4677cb9c92701828b2c1821e22ef72fd
+Successfully built Mako
+Installing collected packages: MarkupSafe, Mako
+Successfully installed Mako-1.1.1 MarkupSafe-1.1.1
+$ pip3 install numpy
+Collecting numpy
+  Downloading https://files.pythonhosted.org/packages/62/20/4d43e141b5bc426ba38274933ef8e76e85c7adea2c321ecf9ebf7421cedf/numpy-1.18.1-cp36-cp36m-manylinux1_x86_64.whl (20.1MB)
+    100% |████████████████████████████████| 20.2MB 80kB/s
+Installing collected packages: numpy
+Successfully installed numpy-1.18.1</pre><p>
+</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch03s01.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch03.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch03s03.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

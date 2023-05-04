@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>17.7. 幾何関数</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch17.html" title="Chapter 17. OpenCL C言語プログラミング" /><link rel="prev" href="ch17s06.html" title="17.6. 型変換" /><link rel="next" href="ch17s08.html" title="17.8. 比較関数" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch17s06.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch17s08.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_幾何関数"></a>17.7. 幾何関数</h2></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：幾何関数」（<a class="xref" href="apbs41.html#geometric" title="Table B.116. 表：幾何関数">Table B.116, “表：幾何関数”</a>）を参照ください。</p></div><p>幾何関数はクロス積とドット積等の行列演算に欠かせない処理を含みます。</p><p>例えば3次元の座標の計算をする場合は、p0.xyzとp1.xyzのクロス積とドット積を計算します。</p><pre xmlns="" class="prettyprint">float4 cross (float4 p0, float4 p1)
+float3 cross (float3 p0, float3 p1)</pre><p>戻り値のfloat4のw要素は0.0となります。</p><pre xmlns="" class="prettyprint">float dot (floatn p0, floatn p1)</pre><p>p0とp1のドット積を求めます。</p><p><strong>サンプル. </strong>
+</p><pre xmlns="" class="prettyprint">float4 matrix[3];
+matrix[0] = (float4)(1.0f, 2.0f, 3.0f, 0.0f);
+matrix[1] = (float4)(4.0f, 5.0f, 6.0f, 0.0f);
+matrix[2] = (float4)(7.0f, 8.0f, 9.0f, 0.0f);
+
+float4 vector;
+vector = (float4)(1.0f,2.0f,3.0f,4.0f);
+
+float dot_result = dot(*matrix, vector);
+printf("dot_result: %f\n", dot_result);
+
+printf("%#v4f\n",matrix[0]);
+printf("%#v4f\n",vector);
+// 2 x 6 - 3 x 5 = -3
+// 3 x 4 - 1 x 6 = 6
+// 1 x 5 - 2 x 4 = -3
+float4 cross_result = cross(matrix[1], vector);
+printf("cross_result: %#v4f\n", cross_result);</pre><p>
+</p><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">dot_result: 14.000000
+1.000000,2.000000,3.000000,0.000000
+1.000000,2.000000,3.000000,4.000000
+cross_result: 3.000000,-6.000000,3.000000,0.000000</pre><p>
+</p><p>この例のドット積は（1,2,3,0）と(1,2,3,4)を積を算出した和（1+4+9）を求めています。</p><p>クロス積の計算は複雑なため、数学の入門書籍ではない本書では解説はしません。線形数学の入門書の導入部分や、ネット等で情報は見つかるものと思います。</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch17s06.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch17.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch17s08.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

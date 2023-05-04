@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>17.1. カーネルプログラミング</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch17.html" title="Chapter 17. OpenCL C言語プログラミング" /><link rel="prev" href="ch17.html" title="Chapter 17. OpenCL C言語プログラミング" /><link rel="next" href="ch17s02.html" title="17.2. 組み込みデータ型" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch17.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch17s02.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_カーネルプログラミング_2"></a>17.1. カーネルプログラミング</h2></div></div></div><p>CPU、FPGA、GPUといったヘテロジニアス・デバイスでプログラムを動作させるにはカーネルと呼ばれる関数をOpenCL C言語で記述する必要があります。このカーネルのコードはPythonのソースコード内で文字列として記述し、OpenCL C言語の文字列を読み込んでホストアプリケーションでビルドまたは、ビルド済みバイナリをロードして実行します。</p><p>OpenCL C言語は、C99(ISO/IEC 9899:1999)規格に準拠します。OpenCL-Cの特徴として、カーネルというホストアプリケーションから直接呼び出すことはできません。ホストアプリケーションはカーネルの実行をコマンドキューに挿入することで間接的な呼び出しが可能となります。</p><p>まず以下のOpenCL C言語で「01234」と「0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15」という数値を出力するカーネル関数を見てみましょう。</p><p><strong>カーネル関数. </strong>
+</p><pre xmlns="" class="prettyprint">__kernel void helloworld(__global uchar16* bow)
+{
+    printf("input array elements are %d%d%d%d%d\\n", (*bow).s0, (*bow).s1, (*bow).s2, (*bow).s3, (*bow).s4);
+    printf("vector is %v16d\\n", *bow);
+}</pre><p>
+</p><p>注目頂きたい点としては、__kernelという修飾子が関数の導入箇所にあることです。全てのkernel関数はこの修飾子をつける必要があります。</p><p>また戻り値型がvoidとなっていますが、これもカーネル関数の特徴であり、常に戻り値型はvoidとします。最後に引数のbowですが、これはホストアプリケーションの中で初期化したデータをデバイスの管理するメモリ空間にコピーしたものです。</p><pre xmlns="" class="prettyprint">import numpy as np
+import pyopencl as cl
+
+devices = [cl.get_platforms()[0].get_devices(cl.device_type.GPU)[0]]
+
+ctx = cl.Context(devices)
+queue = cl.CommandQueue(ctx)
+mf = cl.mem_flags
+
+bow = np.arange(16).astype(np.uint8)
+bow_mem = cl.Buffer(ctx, mf.USE_HOST_PTR, hostbuf=bow)
+
+program = cl.Program(ctx, """
+    __kernel void helloworld(__global uchar16* bow)
+    {
+        printf("input array elements are %d%d%d%d%d\\n", (*bow).s0, (*bow).s1, (*bow).s2, (*bow).s3, (*bow).s4);
+        printf("vector is %v16d\\n", *bow);
+    }
+    """).build()
+
+kernel = cl.Kernel(program, name="helloworld")
+kernel.set_arg(0, bow_mem)
+
+cl.enqueue_task(queue, kernel)</pre><p>このように配列の初期化をホストプログラム内で行なっています。</p><p>この関数の出力は以下のようになります。</p><pre xmlns="" class="prettyprint">input array elements are 01234
+vector is 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15</pre><p>uchar16という16の要素でなる8bit整数を要素に持つベクトルである、bowという変数を取り出して「0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15」という配列を出力できました。</p><p>この例ではuchar16というOpenCL-Cのベクトル型が登場しましたが、以降の項目で詳細の解説を行います。</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch17.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch17.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch17s02.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

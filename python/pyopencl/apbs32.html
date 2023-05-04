@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>B.32. カーネルオブジェクト情報の取得</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="apb.html" title="Appendix B. OpenCL 1.2 API Reference" /><link rel="prev" href="apbs31.html" title="B.31. カーネル引数設定" /><link rel="next" href="apbs33.html" title="B.33. カーネルの実行" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="apbs31.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apbs33.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_カーネルオブジェクト情報の取得_2"></a>B.32. カーネルオブジェクト情報の取得</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clgetkernelinfo"></a>B.32.1. clGetKernelInfo</h3></div></div></div><div class="table"><a id="clGetKernelInfo"></a><p class="title"><strong>Table B.82. 表：clGetKernelInfo</strong></p><div class="table-contents"><table class="table" summary="表：clGetKernelInfo" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>関数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>cl_int</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clGetKernelInfo (
+    cl_kernel kernel,
+    cl_kernel_info param_name,
+    size_t param_value_size,
+    void *param_value,
+    size_t *param_value_size_ret
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>カーネルオブジェクトについての情報を取得。</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>引数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>kernel</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">有効なカーネル
+オブジェクトを指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>param_name</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">取得する情報を指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>param_value</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">param_nameに指定
+した情報についての値
+が戻されるメモリ空間
+へのポインタ。NULLの
+場合は無視。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>param_value_
+size</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">param_valueが指す
+メモリのサイズをバイ
+トで指定。このサイズ
+は戻り値型のサイズ以上
+となる必要がある。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>param_value_
+size_ret</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">param_valueにコ
+ピーされるデータの実
+際のサイズをバイトで
+戻す。NULLの場合は無
+視。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>成功した場合の戻り値</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>CL_SUCCESS</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>失敗した場合の戻り値</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+VALUE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> param_nameがサ
+ポートされている値で
+ない場合
+param_value_size
+で指定されたサイズが
+戻り値の型のサイズよ
+り小さく、
+param_valueがNULL
+でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+KERNEL</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">kernelが有効な
+カーネルオブジェクト
+でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_OF_
+RESOURCES</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_OF_
+HOST_MEMORY</em></span></p></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_cl_kernel_info"></a>B.32.2. cl_kernel_info</h3></div></div></div><div class="table"><a id="cl_kernel_info"></a><p class="title"><strong>Table B.83. 表：cl_kernel_info</strong></p><div class="table-contents"><table class="table" summary="表：cl_kernel_info" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_kernel_
+info
+￼
+￼</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">戻り値型
+￼
+￼
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">param_value
+に戻す情報
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_KERNEL_
+FUNCTION_
+NAME</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">char[]</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">kernelの関数名を
+戻す。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_KERNEL_
+NUM_ARGS</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_uint</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">kernelの引数の数
+を戻す。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_KERNEL_
+REFERENCE_
+COUNT</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_uint￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">kernelの参照カウ
+ントを戻す。
+
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_KERNEL_
+CONTEXT</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_context
+￼
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">kernelと関連付けら
+れたOpenCLコンテ
+キストを戻す。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_KERNEL_
+PROGRAM</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_program
+￼
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">kernelと関連付け
+られたプログラムオブ
+ジェクトを戻す。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_KERNEL_
+ATTRIBUTES</pre></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">char[]
+￼
+￼</pre></td><td style="" align="left" valign="top"><pre class="literallayout">プログラムソース内
+のカーネル関数で宣言
+した__attribute__
+修飾子を使って指定し
+た属性を戻す。
+
+属性は
+__attribute__((...))
+として宣言したように
+戻る。（スペースと改
+行は除去）
+
+複数の属性がある場合、
+戻り値は一つのスペース
+で区切られた文字列と
+なる。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clgetkernelworkgroupinfo"></a>B.32.3. clGetKernelWorkGroupInfo</h3></div></div></div><div class="table"><a id="clGetKernelWorkGroupInfo"></a><p class="title"><strong>Table B.84. 表：clGetKernelWorkGroupInfo</strong></p><div class="table-contents"><table class="table" summary="表：clGetKernelWorkGroupInfo" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>関数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>cl_int</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clGetKernelWorkGroupInfo (
+    cl_kernel kernel,
+    cl_device_id device,
+    cl_kernel_work_group_info param_name,
+    size_t param_value_size,
+    void *param_value,
+    size_t *param_value_size_ret
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>カーネルオブジェクトに関するデバイス特有の情報を取得。</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>引数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>kernel</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">カーネルオブジェクト
+を指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>device</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">kernelに関連付け
+られたOpenCLデバイ
+スデバイスのリストの
+中からひとつを指定。
+デバイスのリストは、
+カーネルと関連付けら
+れたOpenCLコンテキス
+ト内のデバイスのリスト
+となる。カーネルと関連
+付けられたデバイスの
+リストにデバイスが1つ
+しかない場合、このパラ
+メータにNULLを設定
+できる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>param_name</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">取得する情報を指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>param_value</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">param_nameに指定し
+た情報についての値が
+戻されるメモリ空間へ
+のポインタ。NULLの場
+合は無視。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>param_value_
+size</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">param_valueが指
+すメモリのサイズを
+バイトで指定。この
+サイズは戻り値型の
+サイズ以上でなけれ
+ばなりません。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>param_value_
+size_ret</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">param_valueに複
+製されるデータの実
+際のサイズをバイト
+で戻す。NULLの場合
+は無視。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>成功した場合の戻り値</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>CL_SUCCESS</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>失敗した場合の戻り値</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+DEVICE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">deviceがkernelに
+関連付けられたリス
+トの中にない場合
+deviceにNULL値が指
+定されてるのにカーネ
+ルに複数の関連付けが
+ある場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+VALUE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">param_nameがサポ
+ートされている値でな
+い場合
+
+param_value_size
+で指定されたサイズが
+戻り値型のサイズより
+小さくかつ
+param_valueがNULL
+でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+VALUE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">param_nameが
+CL_KERNEL_GLOBAL_
+WORK_SIZEで、デバイ
+スがカスタムデバイス
+でない場合か、kernel
+が組込みカーネルでな
+い場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+KERNEL</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">kernelが有効な
+カーネルオブジェク
+トでない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_
+OF_RESOURCES</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_OUT_OF_
+HOST_MEMORY</em></span></p></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_cl_kernel_work_group_info"></a>B.32.4. cl_kernel_work_group_info</h3></div></div></div><div class="table"><a id="cl_kernel_work_group_info"></a><p class="title"><strong>Table B.85. 表：cl_kernel_work_group_info</strong></p><div class="table-contents"><table class="table" summary="表：cl_kernel_work_group_info" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_kernel_
+work_group_
+info
+￼
+￼</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">戻り値型
+￼
+￼
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">param_value
+に戻す情報
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_KERNEL_
+GLOBAL_WORK_
+SIZE</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">size_t</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">deviceで指定した
+カスタムデバイス上、
+またはdeviceで指定し
+たOpenCLデバイス上の
+組込みカーネルでアプリ
+ケーションがカーネルを
+実行するときに使える
+最大グローバルサイズを
+取得する仕組みを提供。
+（clEnqueueNDRange
+Kernelで宣言する
+global_work_size引数）
+
+デバイスがカスタム
+デバイスでない場合や、
+kernelが組込みカーネ
+ルでない場合は、
+clGetKernelArgInfo
+はCL_INVALID_VALUE
+エラーを戻す。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_KERNEL_
+WORK_
+GROUP_SIZE</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">size_t
+￼
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">deviceで指定したデ
+バイス上でカーネルを
+実行する際に利用できる
+最大ワークグループサイ
+ズを戻す。OpenCL実装
+は指定したカーネルが
+必要とするリソース
+（レジスタの使用量な
+ど）をもとに、ワーク
+グループサイズを決定。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_KERNEL_
+COMPILE_
+WORK_GROUP_
+SIZE</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">size_t
+￼
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">`__attribute__((reqd_`
+`work_group_size(X, Y, Z)))`
+修飾子で指定されている
+ワークグループサイズを
+戻す。この修飾を使った指
+定をしない場合、
+(0, 0, 0)が戻る。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_KERNEL_
+LOCAL_MEM_SIZE</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_ulong</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">カーネルによって使用さ
+れるローカルメモリの量
+をバイトで戻す。
+
+カーネルの実行、カーネ
+ル内で `__local`アド
+レス修飾子を用いて宣言さ
+れた変数、__localアド
+レス修飾子を用いてポイン
+タとして宣言されたカーネ
+ルの引数について確保さ
+れるclSetKernelArgで
+指定されたサイズのロー
+カルメモリなどで必要と
+なるローカルメモリを含
+む。
+
+__localアドレス修飾子
+を用いて宣言されたカー
+ネル引数のローカルメモ
+リサイズを指定しない場
+合、サイズは0を前提と
+する。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_KERNEL_
+PREFERRED_
+WORK_GROUP_
+SIZE_MULTIPLE</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">size_t</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">ワークグループサイズ
+の推奨の倍数を戻す。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_KERNEL_
+PRIVATE_MEM_
+SIZE</pre></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_ulong
+￼
+￼</pre></td><td style="" align="left" valign="top"><pre class="literallayout">カーネル内の各ワーク
+アイテムで使われる
+プライベートメモリの
+最小量をバイトで戻す。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clgetkernelarginfo"></a>B.32.5. clGetKernelArgInfo</h3></div></div></div><div class="table"><a id="clGetKernelArgInfo"></a><p class="title"><strong>Table B.86. 表：clGetKernelArgInfo</strong></p><div class="table-contents"><table class="table" summary="表：clGetKernelArgInfo" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>関数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><span class="emphasis"><em>cl_int</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clGetKernelArgInfo (
+    cl_kernel kernel,
+    cl_uint arg_indx,
+    cl_kernel_arg_info param_name,
+    size_t param_value_size,
+    void *param_value,
+    size_t *param_value_size_ret
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>カーネル引数に関する情報を戻す。カーネル引数
+の情報は、kernelと関連付けられたプログラムオブジェ
+クトがclCreateProgramWithSourceで生成され、
+実行可能プログラムが、clBuildProgramまたは
+clCompileProgramのオプション引数の-cl-kernel
+-arg-infoオプションを指定しビルドした場合に限り、使用が可能。</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>引数</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>kernel</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">カーネルオブジェ
+クトを指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>arg_indx</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">引数添字（インデックス）
+を指定。kernelへの引
+数は、0からn - 1で定義
+（  nはkernelに宣言し
+た引数の総数）される添字
+で参照することができる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>param_name</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">調べたい引数情報を指定。
+サポートされる
+param_name型のリスト
+とparam_valueで戻さ
+れる情報はcl_kernel_
+arg_infoを参照のこと。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>param_value</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">適切な結果が戻るメ
+モリを指すポインタ。
+param_valueがNULL
+の場合は無視。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>param_value_
+size</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">param_valueが指す
+メモリのバイトサイズ
+（バイトで表す）を指定。
+このサイズは戻り値型の
+サイズよりも大きい必要
+がある。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>param_value_
+size_ret</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">param_valueに複製
+されるデータのサイズの
+バイトを戻す。param_
+value_size_retが
+NULLの場合は無視。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>成功した場合の戻り値</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>CL_SUCCESS</em></span></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><p><span class="emphasis"><em>失敗した場合の戻り値</em></span></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+ARG_INDEX</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">arg_indxが有効な
+引数添字でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+VALUE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">param_nameが有効
+でない場合。
+param_value_sizeが
+指定するバイトサイズ
+が戻り値の型より小さく、
+param_valueがNULL
+の場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_KERNEL_
+ARG_INFO_NOT_
+AVAILABLE</em></span></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">引数情報をkernel
+が利用できない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><p><span class="emphasis"><em>CL_INVALID_
+KERNEL</em></span></p></td><td style="" align="left" valign="top"><pre class="literallayout">kernelが有効な
+カーネルオブジェクト
+でない場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_cl_kernel_arg_info"></a>B.32.6. cl_kernel_arg_info</h3></div></div></div><div class="table"><a id="cl_kernel_arg_info"></a><p class="title"><strong>Table B.87. 表：cl_kernel_arg_info</strong></p><div class="table-contents"><table class="table" summary="表：cl_kernel_arg_info" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_kernel_
+arg_info
+￼
+￼</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">戻り値型
+￼
+￼
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">param_value
+に戻る情報
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_KERNEL_
+ARG_
+ADDRESS_
+QUALIFIER</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_kernel_
+arg_
+address_
+qualifier</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">arg_indxで指定
+した引数のアドレス
+修飾子を戻す。次
+のどれかの値をとる。
+
+CL_KERNEL_ARG_
+ADDRESS_GLOBAL
+
+CL_KERNEL_ARG_
+ADDRESS_LOCAL
+
+CL_KERNEL_ARG_
+ADDRESS_CONSTANT
+
+CL_KERNEL_ARG_
+ADDRESS_PRIVATE
+
+アドレス修飾子を指定
+しない場合は、
+CL_KERNEL_ARG_
+ADDRESS_PRIVATE
+が既定の値となる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_KERNEL_
+ARG_ACCESS_
+QUALIFIER
+￼</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_kernel_
+arg_
+access_
+qualifier</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">arg_indxで指定
+した引数のアクセス
+修飾子を戻す。次の
+どれかの値をとる。
+
+CL_KERNEL_ARG_
+ACCESS_READ_ONLY
+
+CL_KERNEL_ARG_
+ACCESS_WRITE_ONLY
+
+CL_KERNEL_ARG_
+ACCESS_READ_WRITE
+
+CL_KERNEL_ARG_
+ACCESS_NONE
+
+引数がイメージ型でな
+い場合、
+CL_KERNEL_ARG_
+ACCESS_NONEが戻される。
+引数がイメージ型の場合
+は、指定したアクセス
+修飾子か既定値が戻さ
+れる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_KERNEL_
+ARG_TYPE_
+QUALIFIER</pre></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_kernel_
+arg_
+type_qualifier</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">arg_indxで指定した
+引数のタイプ修飾子
+を戻す。次のどれか
+の値をとる。
+
+CL_KERNEL_ARG_
+TYPE_CONST
+
+CL_KERNEL_ARG_
+TYPE_RESTRICT
+
+CL_KERNEL_ARG_
+TYPE_VOLATILE
+
+CL_KERNEL_ARG_
+TYPE_NONE
+
+例：
+CL_KERNEL_ARG_
+TYPE_VOLATILEは、
+
+global int volatile *x
+
+と宣言した場合に戻る。
+
+CL_KERNEL_ARG_
+TYPE_CONSTは
+
+global int const *x
+
+と宣言した場合に戻る。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_KERNEL_
+ARG_NAME</pre></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">char[]</pre></td><td style="" align="left" valign="top"><pre class="literallayout">arg_indxで指定し
+た引数の名称を戻す。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apbs31.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apb.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apbs33.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

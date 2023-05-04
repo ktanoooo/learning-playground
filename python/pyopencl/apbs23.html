@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>B.23. 実行プログラムのビルド</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="apb.html" title="Appendix B. OpenCL 1.2 API Reference" /><link rel="prev" href="apbs22.html" title="B.22. プログラムオブジェクト" /><link rel="next" href="apbs24.html" title="B.24. プログラムのリンク、コンパイル" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="apbs22.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apbs24.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_実行プログラムのビルド_2"></a>B.23. 実行プログラムのビルド</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clbuildprogram"></a>B.23.1. clBuildProgram</h3></div></div></div><div class="table"><a id="clBuildProgram"></a><p class="title"><strong>Table B.67. 表：clBuildProgram</strong></p><div class="table-contents"><table class="table" summary="表：clBuildProgram" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout">関数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">cl_int</pre></td><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">clBuildProgram (
+    cl_program program,
+    cl_uint num_devices,
+    const cl_device_id *device_list,
+    const char *options,
+    void (CL_CALLBACK *pfn_notify)
+    (
+        cl_program program,
+        void *user_data
+    ),
+    void *user_data
+)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> programと関連付けられたOpenCLコンテ
+キスト内の全てもしくは特定のデバイス用の実行
+可能プログラムを、プログラムソースもしくは
+バイナリからビルド（コンパイルとリンク）する。
+
+プログラムソースもしくはバイナリを使用して実行
+可能プログラムをビルド可能。clBuildProgramは
+clCreateProgramWithSourceまたは
+clCreateProgramWithBinaryを呼び出し
+て生成したprogramに対して使用する。
+
+プログラムがclCreateProgramWithBinaryを
+使用して生成された場合、プログラムバイナリは
+実行バイナリとなる（ライブラリ等ではない）。
+
+実行バイナリの情報はclGetProgramInfo
+(program, CL_PROGRAM_BINARIES,
+...)を使用して取得でき、clCreateProgram
+WithBinaryを使用して新しいプログラムオブジ
+ェクトを生成する際に指定できる。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 引数</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">program</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">有効なプログラムオ
+ブジェクトを指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">device_list</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">programと関連付けら
+れたデバイスのリスト
+へのポインタを指定。
+
+deivce_listがNULL
+の場合、programと
+関連付けられた全ての
+デバイスに対しての
+実行可能プログラムが
+ビルドされる。
+
+deivce_listがNULL
+でない場合、ソース
+またはバイナリがロード
+されたリストに指定され
+たデバイスに対しての
+実行可能プログラムが
+ビルドされる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">num_devices</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">device_list引数に
+渡したデバイスの個数
+を指定。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">options</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">実行可能プログラム
+をビルドする際に適用
+するビルドオプション
+を指定するNULL終端文
+字列へのポインタを指
+定。
+&lt;&lt;compiler_option&gt;&gt;
+を参照のこと。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">pfn_notify</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">通知ルーチンへの関数
+ポインタ。通知ルーチン
+はアプリケーションが登録
+できるコールバック関数
+であり、実行可能プログ
+ラムがビルドされた際に
+成功失敗に関わらず呼び
+出されます。
+
+pfn_notifyがNULLで
+ない場合、
+clBuildProgram
+はビルドの完了を待つ
+必要が無くなりすぐに
+戻ることができる。
+コンテキスト、ソースや
+バイナリがコンパイル・
+ビルドされたプログラム、
+デバイスのリストおよび
+指定された
+ビルドオプションが
+全て有効な場合、
+ビルド処理は開始可能
+となる。
+
+pfn_notifyがNULLの
+場合、clBuildProgram
+はビルドが完了するまで
+戻らない。このコール
+バック関数は非同期的
+に呼び出される。コール
+バック関数がスレッド
+セーフであることを保証
+するのはアプリケーショ
+ン側の責任です。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">user_data</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">pfn_notifyを呼び出
+す際、user_data引数と
+して渡します。NULL値を
+指定可能。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 成功した場合の戻り値</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> CL_SUCCESS</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="3" align="left" valign="top"><pre class="literallayout"> 失敗した場合の戻り値</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+PROGRAM</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">programが有効なプロ
+グラムオブジェクトで
+ない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">device_listが
+NULLで、num_devices
+が０より大きい場合。
+またはdevice_listが
+NULLではなく、
+num_devicesが０の
+場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+VALUE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">pfn_notifyが
+NULLだが、
+user_dataがNULL
+でない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+DEVICE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">device_listで
+指定されているOpenCL
+デバイスがprogram
+と関連付けられたデバ
+イスのリストにない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+BINARY</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">programが
+clCreateProgram
+WithBinaryで生成
+され、device_list
+にあるデバイスが有効
+なバイナリプログラム
+をロードしていない
+場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+BUILD_OPTIONS</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">指定されたビルド
+オプションが無効
+な場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+OPERATION</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">clBuildProgram
+に前回呼び出した
+実行可能プログラム
+のビルドが終了して
+いない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_COMPILER_
+NOT_AVAILABLE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">programが
+clCreateProgram
+WithSourceで生成
+され、コンパイラが
+使用できない場合。
+（CL_DEVICE_
+COMPILER_
+AVAILABLEが
+CL_FALSEに設定
+されている場合）</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_BUILD_
+PROGRAM_FAILURE</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">実行可能プログラム
+のビルドに失敗
+した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+OPERATION</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">programに付いて
+いるカーネルオブジ
+ェクトがある場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_INVALID_
+OPERATION</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">programが
+clCreateProgram
+WithSourceまたは
+clCreateProgram
+WithBinaryで生成
+されていない場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+RESOURCES</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">デバイス上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">CL_OUT_OF_
+HOST_MEMORY</pre></td><td style="" align="left" valign="top"><pre class="literallayout">ホスト上のOpenCL
+実装が必要とする
+リソース確保に失敗
+した場合。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_ビルドオプション_2"></a>B.23.2. ビルドオプション</h3></div></div></div><p><a class="xref" href="apbs26.html#compiler_option" title="Table B.70. コンパイラ・ビルドオプション">Table B.70, “コンパイラ・ビルドオプション”</a>を参照のこと。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apbs22.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apb.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apbs24.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>15.4. Context</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch15.html" title="Chapter 15. OpenCLホストAPI" /><link rel="prev" href="ch15s03.html" title="15.3. Deviceのクエリー" /><link rel="next" href="ch16.html" title="Chapter 16. OpenCLランタイム" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch15s03.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch16.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="context-chapter"></a>15.4. Context</h2></div></div></div><p>Contextオブジェクトは、クラスツリー内の中心にあり各コンポーネント間が連携を行う中間点となります。</p><p>クラス宣言は以下のようになります。</p><pre xmlns="" class="prettyprint">class pyopencl.Context(
+    devices=None, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO17-1"></a>(1)
+    properties=None, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO17-2"></a>(2)
+    dev_type=None, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO17-3"></a>(3)
+    cache_dir=None) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO17-4"></a>(4)</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO17-1">(1)</a> </p></td><td valign="top" align="left"><p>
+デバイスリストを指定。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO17-2">(2)</a> </p></td><td valign="top" align="left"><p>
+propertiesはキーがcontext_propertiesのタプル(tuple)です。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO17-3">(3)</a> </p></td><td valign="top" align="left"><p>
+デバイスの種類（device_typeのプロパティ）を指定。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO17-4">(4)</a> </p></td><td valign="top" align="left"><p>
+プログラムインスタンスのビルドの既定キャッシュディレクトリを指定。
+</p></td></tr></table></div><p>Contextオブジェクトのコンストラクタの直接呼び出しについては、platformのインスタンスをpropertiesで指定しないと動作しないバグがあるとされており、次の項目のcreate_some_contextを使ってContextのインスタンスを生成することが推奨されています。</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_create_some_context"></a>15.4.1. create_some_context</h3></div></div></div><p>create_some_context関数はOpenCLコンテキストを生成します。</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳細は「表：clCreateContext」(<a class="xref" href="apbs10.html#clCreateContext" title="Table B.16. 表：clCreateContext">Table B.16, “表：clCreateContext”</a>)を参照ください。</p></div><pre xmlns="" class="prettyprint">pyopencl.create_some_context(
+    interactive=True,
+    answers=None,
+    cache_dir=None)</pre><p>この関数はContextを生成するためのユーティリティです。初期化を可能な限り省きたい場合に使うことができます。</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_コンテキストの生成例"></a>コンテキストの生成例</h4></div></div></div><p>clCreateContextを使ってOpenCLサポートデバイス情報取得するためのプログラムをコーディングしてみましょう。</p><pre xmlns="" class="prettyprint">import pyopencl as cl
+
+platforms = cl.get_platforms()
+
+## not recommended
+
+ctx_often_fail = cl.Context(
+    dev_type=cl.device_type.ALL)
+
+## highly recommended
+
+ctx_rec = cl.create_some_context()
+
+## recommended
+
+ctx = cl.Context(
+    dev_type=cl.device_type.ALL,
+    properties=[(cl.context_properties.PLATFORM, platforms[0])])
+
+## check with the context object
+
+ndev = ctx.get_info(cl.context_info.NUM_DEVICES)
+
+print("num_devices: " + str(ndev))
+
+devices = ctx.get_info(cl.context_info.DEVICES)
+vendor = devices[0].get_info(cl.device_info.VENDOR)
+
+print("Vendor: " + str(vendor))
+
+ctxref = ctx.from_int_ptr(ctx.int_ptr)
+
+if ctxref == ctx and type(ctxref) is type(ctx):
+    print("pointer identity is confirmed.")</pre></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_context_properties"></a>15.4.2. context_properties</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：cl_context_properties」（<a class="xref" href="apbs10.html#cl_context_properties" title="Table B.17. 表：cl_context_properties">Table B.17, “表：cl_context_properties”</a>）を参照ください。</p></div><p>コンテキストに対応するプラットフォームや拡張プラグインを指定できます。</p><pre xmlns="" class="prettyprint">class pyopencl.context_properties</pre><div class="table"><a id="idm5008"></a><p class="title"><strong>Table 15.1. pyopencl.context_properties</strong></p><div class="table-contents"><table class="table" summary="pyopencl.context_properties" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; "><colgroup><col class="col_1" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CGL_SHAREGROUP_KHR(cl_khr_gl_sharing)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">EGL_DISPLAY_KHR(cl_khr_gl_sharing)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">GLX_DISPLAY_KHR(cl_khr_gl_sharing)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">GL_CONTEXT_KHR</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">OFFLINE_DEVICES_AMD(cl_amd_offline_devices)</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">PLATFORM</pre></td></tr><tr><td style="" align="left" valign="top"><pre class="literallayout">WGL_HDC_KHR(cl_khr_gl_sharing)</pre></td></tr></tbody></table></div></div><br class="table-break" /><p>context_properties.CL_GL_CONTEXT_KHR context_properties.CL_EGL_DISPLAY_KHR context_properties.CL_GLX_DISPLAY_KHR context_properties.CL_WGL_HDC_KHR context_properties.CL_CGL_SHAREGROUP_KHR context_properties.CL_CGL_SHAREGROUP_APPLE</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_get_info_3"></a>15.4.3. get_info</h3></div></div></div><p>get_info関数はコンテキストについての情報の取得をします。</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：clGetContextInfo」（<a class="xref" href="apbs10.html#clGetContextInfo" title="Table B.21. 表：clGetContextInfo">Table B.21, “表：clGetContextInfo”</a>）と「表：cl_context_info」（<a class="xref" href="apbs10.html#cl_context_info" title="Table B.22. 表：cl_context_info">Table B.22, “表：cl_context_info”</a>）を参照ください。</p></div><pre xmlns="" class="prettyprint">get_info(param) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO18-1"></a>(1)</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO18-1">(1)</a> </p></td><td valign="top" align="left"><p>
+context_info.NUM_DEVICESやcontext_info.DEVICES等のcl_context_infoを指定します。
+</p></td></tr></table></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_context_info"></a>15.4.4. context_info</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳細は「表：cl_context_info」（<a class="xref" href="apbs10.html#cl_context_info" title="Table B.22. 表：cl_context_info">Table B.22, “表：cl_context_info”</a>）を参照ください。</p></div><pre xmlns="" class="prettyprint">class pyopencl.context_info</pre><div class="table"><a id="idm5053"></a><p class="title"><strong>Table 15.2. pyopencl.context_info</strong></p><div class="table-contents"><table class="table" summary="pyopencl.context_info" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; "><colgroup><col class="col_1" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">DEVICES</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">INTEROP_USER_SYNC</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">NUM_DEVICES</pre></td></tr><tr><td style="" align="left" valign="top"><pre class="literallayout">PROPERTIES</pre></td></tr></tbody></table></div></div><br class="table-break" /></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch15s03.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch15.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch16.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

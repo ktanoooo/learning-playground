@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>13.2. Pythonバインディング</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch13.html" title="Chapter 13. OpenCLの概要" /><link rel="prev" href="ch13s01.html" title="13.1. OpenCLバージョンについて" /><link rel="next" href="ch13s03.html" title="13.3. 最新動向" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch13s01.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch13s03.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_pythonバインディング"></a>13.2. Pythonバインディング</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_pycl"></a>13.2.1. PyCL</h3></div></div></div><p>PyCLはOpenCLのPythonバインディングを実装した軽量モジュールです。2016年時点の開発サイトによるとまだ完成度が低いとしており、現時点ではPyOpenCLの使用を推奨しています。</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_pyopencl_4"></a>13.2.2. PyOpenCL</h3></div></div></div><div class="warning" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Warning</h3><p>PyOpenCL使用の際にはライセンスを必ず確認するようにしてください。</p></div><p>PyOpenCLはC++で記述されたPythonバインディングです。PyOpenCLランタイムはOpenCLのホストAPIを忠実にPythonに移管したライブラリです。</p><p>OpenCLの基本知識があれば、短時間の学習で複雑なアプリケーション開発を行うことが可能です。</p><p>ライブラリには以下のような特徴があります。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+MITラインセンス
+</li><li class="listitem">
+オブジェクトのライフサイクル機能
+</li><li class="listitem">
+OpenCLエラーとPython例外のマッピング
+</li><li class="listitem">
+十分に高速なAPI
+</li><li class="listitem">
+clBlas（pyopencl_blas）ラッパー
+</li><li class="listitem">
+clFFT（ppyfft）ラッパー
+</li><li class="listitem">
+rekinaパッケージ（FFT等）
+</li></ul></div><p>これ以外にもPyOpenCLにはビルトインの数値計算ライブラリや、ベクトル型のファクトリ等のツールが提供されています。</p><p>ライセンス、ドキュメンテーション、ライブラリの完成度を考慮すると、現状ではPyOpenCL以外の選択肢はなく、本書ではPyOpenCLを紹介することとします。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch13s01.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch13.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch13s03.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

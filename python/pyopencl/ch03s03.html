@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>3.3. PyOpenCLのインストール</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch03.html" title="Chapter 3. Python環境設定" /><link rel="prev" href="ch03s02.html" title="3.2. Pythonの基本パッケージのインストール" /><link rel="next" href="ch03s04.html" title="3.4. PIL（Python Image Library）のインストール" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch03s02.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch03s04.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_pyopenclのインストール"></a>3.3. PyOpenCLのインストール</h2></div></div></div><div class="warning" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Warning</h3><p>numpy, Mako, PyOpenGLはPyOpenCLに先行してインストールしてください。</p></div><p>Pythonと同様にPyOpenCLはパッケージ管理システムを使用せずに、Githubのリポジトリをクローンしてダウンロードすることを推奨します。</p><p>筆者が確認したPyOpenCLのバイナリでは、PyOpenGLのサポートがされておらず、下記に示す手順の通りマニュアルでビルドを行いました。</p><p>まずGithubからPyOpenCLのプロジェクトをクローンします。</p><pre xmlns="" class="prettyprint">$ git clone https://github.com/pyopencl/pyopencl.git
+Cloning into 'pyopencl'...
+remote: Counting objects: 9294, done.
+remote: Compressing objects: 100% (26/26), done.
+remote: Total 9294 (delta 8), reused 0 (delta 0), pack-reused 9267
+Receiving objects: 100% (9294/9294), 3.49 MiB | 587.00 KiB/s, done.
+Resolving deltas: 100% (5871/5871), done.
+Checking connectivity... done.</pre><p>次にクローンしたディレクトリに移動し、サブモジュール（pyopencl/compyte）を有効にします。</p><pre xmlns="" class="prettyprint">$ cd pyopencl/
+
+$ git submodule init
+Submodule 'pyopencl/compyte' (https://github.com/inducer/compyte) registered for path 'pyopencl/compyte'
+Submodule 'src/c_wrapper/mingw-std-threads' (https://github.com/meganz/mingw-std-threads.git) registered for path 'src/c_wrapper/mingw-std-threads'
+
+$ git submodule update
+Cloning into 'pyopencl/compyte'...
+remote: Counting objects: 1889, done.
+remote: Total 1889 (delta 0), reused 0 (delta 0), pack-reused 1889
+Receiving objects: 100% (1889/1889), 739.73 KiB | 601.00 KiB/s, done.
+Resolving deltas: 100% (1085/1085), done.
+Checking connectivity... done.
+Submodule path 'pyopencl/compyte': checked out 'ac1c71d46428c14aa1bd1c09d7da19cd0298d5cc'
+Cloning into 'src/c_wrapper/mingw-std-threads'...
+remote: Counting objects: 191, done.
+remote: Total 191 (delta 0), reused 0 (delta 0), pack-reused 191
+Receiving objects: 100% (191/191), 190.23 KiB | 145.00 KiB/s, done.
+Resolving deltas: 100% (84/84), done.
+Checking connectivity... done.
+Submodule path 'src/c_wrapper/mingw-std-threads': checked out '776ce7faf9368ec9588ee77458799c281cb25737'</pre><pre xmlns="" class="prettyprint">$ python3 ./configure.py
+$ python3 -m pip install pybind11</pre><p>次にmakeコマンドを使ってください。</p><pre xmlns="" class="prettyprint">$ make
+ctags -R src || true
+/Library/Frameworks/Python.framework/Versions/3.5/bin/python3 setup.py build
+running build
+running build_py
+running egg_info
+writing requirements to pyopencl.egg-info/requires.txt
+writing dependency_links to pyopencl.egg-info/dependency_links.txt
+writing pyopencl.egg-info/PKG-INFO
+writing top-level names to pyopencl.egg-info/top_level.txt
+reading manifest file 'pyopencl.egg-info/SOURCES.txt'
+reading manifest template 'MANIFEST.in'
+warning: no files found matching 'src/c_wrapper/*.hpp'
+warning: no files found matching 'doc/_static/*.css'
+warning: no files found matching 'doc/_templates/*.html'
+writing manifest file 'pyopencl.egg-info/SOURCES.txt'
+running build_ext
+generating cffi module 'build/temp.macosx-10.6-intel-3.5/pyopencl._cffi.cpp'
+already up-to-date</pre><p>最後に「setup.py」を実行してインストールをします。この際使うPythonのバージョンは、PyOpenCLを使用するPythonのバージョンを指定してください。OSに付属するデフォルトのPythonインストレーション、またはPythonが一つしかない場合は、特に指定は不要です。</p><pre xmlns="" class="prettyprint">$ sudo python3 setup.py install
+
+Using /Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/decorator-4.0.9-py3.5.egg
+Searching for pytest==2.9.1
+Best match: pytest 2.9.1
+Processing pytest-2.9.1-py3.5.egg
+pytest 2.9.1 is already the active version in easy-install.pth
+Installing py.test-3.5 script to /Library/Frameworks/Python.framework/Versions/3.5/bin
+Installing py.test script to /Library/Frameworks/Python.framework/Versions/3.5/bin
+
+Using /Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/pytest-2.9.1-py3.5.egg
+Searching for pytools==2016.2.1
+Best match: pytools 2016.2.1
+Processing pytools-2016.2.1-py3.5.egg
+pytools 2016.2.1 is already the active version in easy-install.pth
+
+Using /Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/pytools-2016.2.1-py3.5.egg
+Searching for numpy==1.11.0
+Best match: numpy 1.11.0
+Adding numpy 1.11.0 to easy-install.pth file
+
+Using /Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages
+Searching for pycparser==2.14
+Best match: pycparser 2.14
+Processing pycparser-2.14-py3.5.egg
+pycparser 2.14 is already the active version in easy-install.pth
+
+Using /Users/komatsu/pyopencl-master/.eggs/pycparser-2.14-py3.5.egg
+Searching for py==1.4.31
+Best match: py 1.4.31
+Processing py-1.4.31-py3.5.egg
+py 1.4.31 is already the active version in easy-install.pth
+
+Using /Library/Frameworks/Python.framework/Versions/3.5/lib/python3.5/site-packages/py-1.4.31-py3.5.egg
+Finished processing dependencies for pyopencl==2016.2</pre><p>エラーがなければインストールは完了です。インストールについてはPython 2でも試しましたが特に問題はありませんでしたので、Pythonの2と3の両方とも問題なく動作するはずです。</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch03s02.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch03.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch03s04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

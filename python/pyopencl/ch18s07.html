@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>18.7. アトミック型のアルゴリズム</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch18.html" title="Chapter 18. ヒストグラム" /><link rel="prev" href="ch18s06.html" title="18.6. バンクコンフリクトの緩和対策の実装例" /><link rel="next" href="ch19.html" title="Chapter 19. 高速フーリエ変換（Fast Fourier Transform）" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch18s06.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch19.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_アトミック型のアルゴリズム"></a>18.7. アトミック型のアルゴリズム</h2></div></div></div><p>アトミック型のヒストグラム集計アルゴリズムは、並行・並列処理に慣れている読者には馴染みの手法となります。</p><p>各ワークグループで256要素のビン（カテゴリ）を保持するローカルメモリの空間を割り当て、そこに複数のスレッドから同時アクセスが来ても整合性がとれるように、アトミック関数を使って処理をします。</p><p>サンプルコードではこれを以下のように記述しています。</p><pre xmlns="" class="prettyprint">for(int i = 0; i &lt; BIN_SIZE; ++i)
+{
+   uchar value = data[group_id * local_size * BIN_SIZE + i * local_size + local_id];
+   atomic_inc(&amp;shared_local_memory[value]);
+}</pre><p>複数の並列するスレッド（ワークアイテム）がshared_local_memory変数をアクセスしますが、atomic_inc関数によってアトミックな加算処理が行われ正しい集計がとれます。</p><p><strong>HistogramAtomicTest.py. </strong>
+</p><pre xmlns="" class="prettyprint">import pyopencl as cl
+import numpy as np
+from numpy.random import *
+
+# Set the seed to 100
+np.random.seed(100)
+
+INT_BYTES = 4
+BIN_SIZE = 256
+LOCAL_SIZE = 128
+FACTOR = 64
+DATA_SIZE = BIN_SIZE * LOCAL_SIZE * FACTOR
+data = randint(0, 4, DATA_SIZE).astype(np.uint32)
+out = np.zeros(BIN_SIZE*FACTOR).astype(np.uint32)
+out.reshape((FACTOR, BIN_SIZE))
+
+devices = [cl.get_platforms()[0].get_devices(cl.device_type.GPU)[0]]
+
+ctx = cl.Context(devices)
+queue = cl.CommandQueue(ctx)
+mf = cl.mem_flags
+data_mem = cl.Buffer(ctx, mf.USE_HOST_PTR, hostbuf=data)
+out_mem = cl.Buffer(ctx, mf.WRITE_ONLY, size=out.nbytes)
+
+program = cl.Program(ctx, """
+    __kernel void histogram(
+            __global const uint* data,
+            __local uint* shared_local_memory,
+            __global uint* buckets)
+    {
+
+         size_t local_id   = get_local_id(0);
+         size_t group_id   = get_group_id(0);
+         size_t local_size = get_local_size(0);
+
+         shared_local_memory[local_id] = 0;
+         uint4* input = (uint4*) shared_local_memory;
+         for(int i = 0; i &lt; 64; i++)
+             input[i] = 0;
+         barrier(CLK_LOCAL_MEM_FENCE);
+
+         for(int i = 0; i &lt; BIN_SIZE; ++i)
+         {
+           uchar value = data[group_id * local_size * BIN_SIZE + i * local_size + local_id];
+           atomic_inc(&amp;shared_local_memory[value]);
+         }
+         barrier(CLK_LOCAL_MEM_FENCE);
+
+         // 0...127
+         if(local_id == 0) {
+             for(int i = 0; i &lt; BIN_SIZE; i++) {
+               buckets[group_id * BIN_SIZE  + i] = shared_local_memory[i]; // 0..63 * 256 + 0...255
+             }
+         }
+    }
+    """).build(options=["-DBIN_SIZE=256"])
+
+kernel = cl.Kernel(program, name="histogram")
+
+kernel.set_arg(0, data_mem)
+# size to be specified in bytes (ie., 32 bits -&gt; 4 bytes)
+kernel.set_arg(1, cl.LocalMemory(INT_BYTES*BIN_SIZE))
+kernel.set_arg(2, out_mem)
+
+cl.enqueue_nd_range_kernel(
+    queue=queue,
+    kernel=kernel,
+    global_work_size=(FACTOR* LOCAL_SIZE, 1, 1),
+    local_work_size=(LOCAL_SIZE, 1, 1))
+
+out = cl.enqueue_map_buffer(
+    queue=queue,
+    buf=out_mem,
+    flags=mf.WRITE_ONLY,
+    offset=0,
+    shape=(FACTOR, BIN_SIZE,),
+    dtype=np.uint32
+)
+
+#print(out[0][0][0:256])
+print(sum(sum(out[0])))</pre><p>
+</p><p>上記のプログラムの出力は以下のようになります。</p><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">2097152</pre><p>
+</p><p>ヒストグラムの総和が一致したことが確認できます。</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch18s06.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch18.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch19.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

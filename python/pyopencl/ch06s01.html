@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>6.1. 基本実装</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch06.html" title="Chapter 6. PyOpenCL" /><link rel="prev" href="ch06.html" title="Chapter 6. PyOpenCL" /><link rel="next" href="ch07.html" title="Chapter 7. メモリーモデル" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch06.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch07.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_基本実装"></a>6.1. 基本実装</h2></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>プラットフォーム、コンテキスト、コマンドキューの詳細についてはは、<a class="xref" href="ch13s06.html#platform-model-chapter" title="13.6.1. プラットフォームモデル">Section 13.6.1, “プラットフォームモデル”</a>、<a class="xref" href="ch13s06.html#context-model-chapter" title="コンテキスト">the section called “コンテキスト”</a>、<a class="xref" href="ch13s06.html#command-queue-model-chapter" title="CommandQueue">the section called “CommandQueue”</a>の項目を参照ください。</p></div><p>PyOpenCLでの開発には前提として、プラットフォーム、デバイス、コンテキスト、コマンドキュー等の役割等、OpenCLアーキテクチャの理解は必須であるものの、コーディング自体は極めてシンプルにできます。</p><p>例えばGPUデバイスに命令やデータを送るためのコマンドキューオブジェクトを生成する場合は、以下のように3行の記述で可能です。</p><pre xmlns="" class="prettyprint">import pyopencl as cl
+
+platforms = cl.get_platforms() #<a xmlns="http://www.w3.org/1999/xhtml" id="CO1-1"></a>(1)
+ctx = cl.Context([platforms[0].get_devices(cl.device_type.GPU)[0]]) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO1-2"></a>(2)
+queue = cl.CommandQueue(ctx) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO1-3"></a>(3)</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO1-1">(1)</a> </p></td><td valign="top" align="left"><p>
+プラットフォームのインスタンスを生成
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO1-2">(2)</a> </p></td><td valign="top" align="left"><p>
+コンテキストのインスタンスを生成。コンテキストがアクセスするデバイスについてはGPUに限定。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO1-3">(3)</a> </p></td><td valign="top" align="left"><p>
+コマンドキューのインスタンスを生成
+</p></td></tr></table></div><p>プラットフォーム、コンテキスト、コマンドキューはOpenCLプログラムに必須のオブジェクトですので、記述すべき行が3行で済むのは、C言語のOpenCL APIに対して相対的に優位といっても差し支えないでしょう。</p><p>もちろん読者は現時点では、プラットフォーム、コンテキスト、コマンドキューについては概念しか覚えがないはずですので、詳細についての解説は本書第3部にとっておきます。</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>各クラスのコンストラクタの仕様を知りたい方は<a class="xref" href="ch15s01.html" title="15.1. Platform">Section 15.1, “Platform”</a>、<a class="xref" href="ch15s04.html" title="15.4. Context">Section 15.4, “Context”</a>、<a class="xref" href="ch16s01.html#command-queue-chapter" title="16.1.1. CommandQueue">Section 16.1.1, “CommandQueue”</a>を参照ください。</p></div><p>この段階で読者が理解していただきたいのは、以下の依存性です。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+デバイスオブジェクトの生成はプラットフォームに依存
+</li><li class="listitem">
+コンテキストオブジェクトの生成はデバイスに依存
+</li><li class="listitem">
+コマンドキューオブジェクトの生成はコンテキストに依存
+</li></ul></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳細は<a class="xref" href="ch13s06.html#platform-model-chapter" title="13.6.1. プラットフォームモデル">Section 13.6.1, “プラットフォームモデル”</a>、<a class="xref" href="ch13s06.html#execution-model-chapter" title="13.6.2. 実行モデル（Execution Model）">Section 13.6.2, “実行モデル（Execution Model）”</a>等を参照ください。</p></div><p>この依存性の続きには以下の依存性も存在します。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+OpenCLプログラムオブジェクトの生成はコマンドキューに依存
+</li><li class="listitem">
+カーネルオブジェクトの生成はプログラムに依存
+</li><li class="listitem">
+プログラム実行はコマンドキューとカーネルオブジェクトに依存
+</li></ul></div><p>つまりコマンドキューのインスタンスを生成するまでの3行のコードは最終的には、プログラム実行に不可欠なボイラープレートコード（Boilerplate Code）と言っても良いでしょう。</p><div class="important" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Important</h3><p>第一部でカバーするPyOpenCLの機能では、プログラムオブジェクト、カーネルオブジェクトの明示的生成は不要です。本書第三部で仔細を説明いたします。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch06.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch06.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch07.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

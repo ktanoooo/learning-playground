@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>11.1. 組み込みReductionカーネル</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch11.html" title="Chapter 11. MapReduceアルゴリズム" /><link rel="prev" href="ch11.html" title="Chapter 11. MapReduceアルゴリズム" /><link rel="next" href="ch12.html" title="Chapter 12. PrefixSumアルゴリズム" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch11.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch12.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_組み込みreductionカーネル"></a>11.1. 組み込みReductionカーネル</h2></div></div></div><p>PyOpenCLでもMapReduceを部分的に実装したReductionKernelクラスを提供しています。</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>PyOpenCLの組み込み関数を使えばMapReduceの実装は簡単です。しかしパフォーマンスペナルティを考慮すれば、PyOpenCL組み込みの演算機能を使うのは推奨できません。</p></div><pre xmlns="" class="prettyprint">class pyopencl.reduction.ReductionKernel(
+    ctx,
+    dtype_out, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO6-1"></a>(1)
+    neutral,
+    reduce_expr, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO6-2"></a>(2)
+    map_expr=None, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO6-3"></a>(3)
+    arguments=None, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO6-4"></a>(4)
+    name="reduce_kernel",
+    options=[], preamble="")</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO6-1">(1)</a> </p></td><td valign="top" align="left"><p>
+処理配列のデータ型を指定します。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO6-2">(2)</a> </p></td><td valign="top" align="left"><p>
+Reduce部分の表現を指定します。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO6-3">(3)</a> </p></td><td valign="top" align="left"><p>
+Map部分の表現を指定します。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO6-4">(4)</a> </p></td><td valign="top" align="left"><p>
+カーネル引数を指定します。
+</p></td></tr></table></div><p>参考までに以下に実装例を掲載します。</p><p><strong>CLReductionKernelTest.py. </strong>
+</p><pre xmlns="" class="prettyprint">from pyopencl.reduction import ReductionKernel
+import numpy as np
+import pyopencl as cl
+import pyopencl.array as clarr
+
+ctx = cl.Context(cl.get_platforms()[0].get_devices(cl.device_type.GPU))
+queue = cl.CommandQueue(ctx)
+
+a = clarr.arange(queue, 10, dtype=np.uint32)
+b = clarr.arange(queue, 10, dtype=np.uint32)
+
+reduction_kernel = ReductionKernel(
+    ctx, np.uint32, neutral="0",
+    reduce_expr="a+b", map_expr="x[i]+y[i]",
+    arguments="__global uint* x, __global uint* y"
+)
+
+result = reduction_kernel(a, b).get()
+
+print(result)
+
+reduction_kernel_product = ReductionKernel(
+    ctx, np.uint32, neutral="0",
+    reduce_expr="a+b", map_expr="x[i]*y[i]",
+    arguments="__global uint* x, __global uint* y"
+)
+
+result = reduction_kernel_product(a, b).get()
+
+print(result)
+
+reduction_kernel_single = ReductionKernel(
+    ctx, np.uint32, neutral="0",
+    reduce_expr="a+b", map_expr="x[i]",
+    arguments="__global uint* x"
+)
+
+result = reduction_kernel_single(a).get()
+
+print(result)</pre><p>
+</p><p>上記のプログラムの出力は以下のようになります。</p><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">/Library/Frameworks/Python.framework/Versions/3.5/bin/python3.5 /Users/komatsu/PycharmProjects/MyPythonProject/CLReductionKernelTest.py
+90
+285
+45</pre><p>
+</p><p>この実装例では3つのMapReduceのパターンに倣っています。まずMap時に変数を乗算するパターンです。</p><p>これは以下のような引数指定をします。</p><pre xmlns="" class="prettyprint">reduce_expr="a+b", map_expr="x[i]*y[i]"</pre><p>Map表現に乗算、Reduce表現に加算を指定します。Map時に変数を加算するパターンは次のようにします。</p><pre xmlns="" class="prettyprint">reduce_expr="a+b", map_expr="x[i]+y[i]"</pre><p>最後にMap表現を一つの変数とすると、シンプルにReductionパターンを計算します。</p><pre xmlns="" class="prettyprint">reduce_expr="a+b", map_expr="x[i]"</pre><p>出力結果は45となり、x[i]（1,2,3,…,9）の和と一致します。</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch11.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch11.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch12.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

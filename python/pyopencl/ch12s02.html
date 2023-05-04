@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>12.2. InclusiveScan</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch12.html" title="Chapter 12. PrefixSumアルゴリズム" /><link rel="prev" href="ch12s01.html" title="12.1. Scanカーネル" /><link rel="next" href="ch12s03.html" title="12.3. ExclusiveScan" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch12s01.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch12s03.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_inclusivescan"></a>12.2. InclusiveScan</h2></div></div></div><p>InclusiveScanはGenericScanKernelのパラメータの設定が煩雑なため用意された関数だと筆者は考えています。基本的な機能はGenericScanKernelと同じものと考えて良いかと思います。</p><p>以下がInclusiveScanの実装例です。</p><p><strong>CLInclusiveScanKernelTest.py. </strong>
+</p><pre xmlns="" class="prettyprint">import pyopencl.array as clarr
+import pyopencl as cl
+import numpy as np
+
+ctx = cl.Context(cl.get_platforms()[0].get_devices(cl.device_type.GPU))
+queue = cl.CommandQueue(ctx)
+
+from pyopencl.scan import InclusiveScanKernel
+
+iscan = InclusiveScanKernel(ctx, np.int32, "a+b", "0")
+
+a = np.arange(10).astype(np.int32)
+a_mem = clarr.to_device(queue, a)
+
+iscan(a_mem)
+
+print(a_mem.get())</pre><p>
+</p><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">/Library/Frameworks/Python.framework/Versions/3.5/bin/python3.5 /Users/komatsu/PycharmProjects/MyPythonProject/CLInclusiveScanKernelTest.py
+[ 0  1  3  6 10 15 21 28 36 45]</pre><p>
+</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch12s01.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch12.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch12s03.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

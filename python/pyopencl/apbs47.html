@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>B.47. イメージ情報の取得</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="apb.html" title="Appendix B. OpenCL 1.2 API Reference" /><link rel="prev" href="apbs46.html" title="B.46. イメージ書き込み関数" /><link rel="next" href="apbs48.html" title="B.48. OpenGLバッファとの同期" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="apbs46.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apbs48.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_イメージ情報の取得_2"></a>B.47. イメージ情報の取得</h2></div></div></div><div class="table"><a id="image_info_func"></a><p class="title"><strong>Table B.128. 表：イメージ情報の取得関数</strong></p><div class="table-contents"><table class="table" summary="表：イメージ情報の取得関数" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><thead><tr><th style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top">関数￼</th><th style="border-bottom: 1px solid #527bbd; " align="left" valign="top">詳細
+￼</th></tr></thead><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">int get_image_width (
+    image1d_t image)
+int get_image_width (
+    image1d_buffer_t image)
+int get_image_width (
+    image2d_t image)
+int get_image_width (
+    image3d_t image)
+int get_image_width (
+    image1d_array_t image)
+int get_image_width (
+    image2d_array_t image)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">イメージの幅をピクセル（pixel）で返します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">int get_image_height (
+    image2d_t image)
+int get_image_height (
+    image3d_t image)
+int get_image_height (
+    image2d_array_t image)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">イメージの高さをピクセル
+（pixel）で返します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">int get_image_depth (
+    image3d_t image)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">イメージの奥行きをピクセル
+（pixel）で返します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">int get_image_channel_data_type (
+    image1d_t image)
+int get_image_channel_data_type (
+    image1d_buffer_t image)
+int get_image_channel_data_type (
+    image2d_t image)
+int get_image_channel_data_type (
+    image3d_t image)
+int get_image_channel_data_type (
+    image1d_array_t image)
+int get_image_channel_data_type (
+    image2d_array_t image)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">チャンネルのデータ型を返
+します。適正な値は以下
+のものです。
+
+CLK_SNORM_INT8
+CLK_SNORM_INT16
+CLK_UNORM_INT8
+CLK_UNORM_INT16
+CLK_UNORM_SHORT_565
+CLK_UNORM_SHORT_555
+CLK_UNORM_SHORT_101010
+CLK_SIGNED_INT8
+CLK_SIGNED_INT16
+CLK_SIGNED_INT32
+CLK_UNSIGNED_INT8
+CLK_UNSIGNED_INT16
+CLK_UNSIGNED_INT32
+CLK_HALF_FLOAT
+CLK_FLOAT</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">int get_image_channel_order (
+    image1d_t image)
+int get_image_channel_order (
+    image1d_buffer_t image)
+int get_image_channel_order (
+    image2d_t image)
+int get_image_channel_order (
+    image3d_t image)
+int get_image_channel_order (
+    image1d_array_t image)
+int get_image_channel_order (
+    image2d_array_t image)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">イメージチャンネルのchannel orderを返します。適正な値は以下のものです。
+
+CLK_A
+CLK_R
+CLK_Rx
+CLK_RG
+CLK_RGx
+CLK_RA
+CLK_RGB
+CLK_RGBx
+CLK_RGBA
+CLK_ARGB
+CLK_BGRA
+CLK_INTENSITY
+CLK_LUMINANCE</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">int2 get_image_dim (
+    image2d_t image)
+int2 get_image_dim (
+    image2d_array_t image)
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">２次元イメージの幅と
+高さをint2型で返します。
+幅はxコンポーネント、高さ
+はyコンポーネントで返さ
+れます。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">int4 get_image_dim (
+    image3d_t image)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">３次元イメージの幅、高さ、
+奥行きをint4型で返します。
+幅はxコンポーネント、高さは
+yコンポーネント、奥行きはz
+コンポーネント、wコンポーネ
+ントは0で返されます。
+￼
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">size_t get_image_array_size(
+    image2d_array_t image)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">２次元イメージアレイ内
+のイメージの数を返します。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">size_t get_image_array_size(
+    image1d_array_t image)
+￼</pre></td><td style="" align="left" valign="top"><pre class="literallayout">１次元イメージアレイ内
+のイメージの数を返します。</pre></td></tr></tbody></table></div></div><br class="table-break" /><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_イメージチャンネルのマッピング_2"></a>B.47.1. イメージチャンネルのマッピング</h3></div></div></div><p>read_imageで戻された色彩値へイメージチャンネルをマップ。write_imageに渡された色彩値をイメージチャンネルにマップ。</p><div class="table"><a id="image_channel_order_mapping"></a><p class="title"><strong>Table B.129. 表：イメージチャンネルのマッピング</strong></p><div class="table-contents"><table class="table" summary="表：イメージチャンネルのマッピング" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">チャネル順序
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">float4、int4または
+uint4コンポーネント</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_R, CL_Rx</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">(r, 0.0, 0.0, 1.0)</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_A￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">(0.0, 0.0, 0.0, a)
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_RG, CL_RGx</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">(r, g, 0.0, 1.0)
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_RA</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">(r, 0.0, 0.0, a)
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_RGB, CL_RGBx</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">(r, g, b, 1.0)</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_RGBA, CL_BGRA, CL_ARGB</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">(r, g, b, a)</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_INTENSITY
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">(I, I, I, I)
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">CL_LUMINANCE
+￼
+￼</pre></td><td style="" align="left" valign="top"><pre class="literallayout">(L, L, L, 1.0)</pre></td></tr></tbody></table></div></div><br class="table-break" /></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apbs46.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apb.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apbs48.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

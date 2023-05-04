@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>14.4. HelloWorld（データ並列プログラミング）</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch14.html" title="Chapter 14. HelloWorldプログラム" /><link rel="prev" href="ch14s03.html" title="14.3. HelloWorld（タスク並列プログラミング）" /><link rel="next" href="ch15.html" title="Chapter 15. OpenCLホストAPI" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch14s03.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch15.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_helloworld_データ並列プログラミング"></a>14.4. HelloWorld（データ並列プログラミング）</h2></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>データ並列プログラミングの詳細については「<a class="xref" href="ch13s06.html#data-parallel-model" title="データ並列プログラミングモデル">the section called “データ並列プログラミングモデル”</a>」、「<a class="xref" href="ch13s06.html#kernelExecutionChapter" title="カーネルの実行">the section called “カーネルの実行”</a>」、「<a class="xref" href="ch13s18.html" title="13.18. NDRange">Section 13.18, “NDRange”</a>」、「<a class="xref" href="ch13s17.html" title="13.17. ワークグループ">Section 13.17, “ワークグループ”</a>」、「<a class="xref" href="ch17s04.html#workItemChapter" title="17.4.1. ワークアイテム関数">Section 17.4.1, “ワークアイテム関数”</a>」を参照ください。</p></div><p>データ並列プログラミングについては、タスク並列プログラミングと異なり、clEnqueueNDRangeKernel関数を使い、グローバル・ローカル空間の次元やサイズを指定する必要があります。</p><p>この実装例では「2 x 2」の行列の乗算をしてみます。式に起こすと、「A x B = C」とし、AとBを掛けてCを計算します。A、B、CはNxM(2 x 2)の行列とします。正確には、Aは(NxP)、Bは（PxM）、Cは(NxM)の実数空間とします。AとBは入力、Cは出力に使います。（つまりP=2、N=M=2）</p><p>行列はバッファオブジェクトとしてグローバルメモリ領域に保管します。このサンプルでは、ホストポインタを使った前の項目に対して、バッファの生成時は領域を空にして、バッファの書き込みコマンド（clEnqueueWriteBuffer関数）をキューに挿入します。また、出力行列Cについては、バッファの読み込みコマンド（clEnqueueReadBuffer関数）を使い演算結果を取得します。</p><p>またOpenCLのプロファイルフラグを有効とし、clGetEventProfilingInfo関数を使いカーネル実行時間を採集します。</p><p><strong>MultiplicationTest.py. </strong>
+</p><pre xmlns="" class="prettyprint">import pyopencl as cl
+import numpy as np
+
+data = np.arange(16).astype(np.int32)
+
+devices = [cl.get_platforms()[0].get_devices(cl.device_type.GPU)[0]]
+
+ctx = cl.Context(devices)
+queue = cl.CommandQueue(ctx)
+mf = cl.mem_flags
+data_mem = cl.Buffer(ctx, mf.USE_HOST_PTR, hostbuf=data)
+
+MAT_DIM = 2
+WORK_DIM = 2 #<a xmlns="http://www.w3.org/1999/xhtml" id="CO13-1"></a>(1)
+
+# 次元の設定：ここではsquare（N*N）にします。
+
+m_dim = MAT_DIM #<a xmlns="http://www.w3.org/1999/xhtml" id="CO13-2"></a>(2)
+n_dim = MAT_DIM #<a xmlns="http://www.w3.org/1999/xhtml" id="CO13-3"></a>(3)
+p_dim = MAT_DIM #<a xmlns="http://www.w3.org/1999/xhtml" id="CO13-4"></a>(4)
+
+# A in M by P : B in P by N : C in M by N dimensional spaces */
+
+a_size = n_dim * p_dim #<a xmlns="http://www.w3.org/1999/xhtml" id="CO13-5"></a>(5)
+b_size = p_dim * m_dim #<a xmlns="http://www.w3.org/1999/xhtml" id="CO13-6"></a>(6)
+c_size = n_dim * m_dim #<a xmlns="http://www.w3.org/1999/xhtml" id="CO13-7"></a>(7)
+
+global_size = (WORK_DIM, WORK_DIM, ) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO13-8"></a>(8)
+
+a = np.arange(a_size).astype(np.float32) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO13-9"></a>(9)
+b = np.arange(b_size).astype(np.float32) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO13-10"></a>(10)
+c = np.arange(c_size).astype(np.float32) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO13-11"></a>(11)
+
+print("a: " + str(a))
+print("b: " + str(b))
+
+a_mem = cl.Buffer(ctx, cl.mem_flags.USE_HOST_PTR, hostbuf=a) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO13-12"></a>(12)
+b_mem = cl.Buffer(ctx, cl.mem_flags.USE_HOST_PTR, hostbuf=b) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO13-13"></a>(13)
+c_mem = cl.Buffer(ctx, cl.mem_flags.USE_HOST_PTR, hostbuf=c) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO13-14"></a>(14)
+
+program = cl.Program(ctx, """
+    __kernel void mult(
+        const int m_dim,
+        const int n_dim,
+        const int p_dim,
+        global float* A,
+        global float* B,
+        global float* C)
+    {
+        int k;
+        int i = get_global_id(0);
+        int j = get_global_id(1);
+        float tmp;
+        if((i &lt; n_dim) &amp;&amp; (j &lt; m_dim)) {
+            tmp = 0.0f;
+            for(k=0; k&lt;p_dim;k++) {
+                tmp += A[i * n_dim + k] * B[k * p_dim + j];
+            }
+            C[i * n_dim + j] = tmp;
+        }
+    }
+    """).build()
+
+kernel = cl.Kernel(program, name="mult") #<a xmlns="http://www.w3.org/1999/xhtml" id="CO13-15"></a>(15)
+
+kernel.set_arg(0, np.int32(m_dim)) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO13-16"></a>(16)
+kernel.set_arg(1, np.int32(n_dim)) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO13-17"></a>(17)
+kernel.set_arg(2, np.int32(p_dim)) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO13-18"></a>(18)
+kernel.set_arg(3, a_mem) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO13-19"></a>(19)
+kernel.set_arg(4, b_mem) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO13-20"></a>(20)
+kernel.set_arg(5, c_mem) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO13-21"></a>(21)
+
+cl.enqueue_nd_range_kernel( #<a xmlns="http://www.w3.org/1999/xhtml" id="CO13-22"></a>(22)
+    queue, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO13-23"></a>(23)
+    kernel, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO13-24"></a>(24)
+    global_work_size=global_size, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO13-25"></a>(25)
+    local_work_size=(1, 1, )) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO13-26"></a>(26)
+
+out = np.ndarray(c_size).astype(np.float32) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO13-27"></a>(27)
+
+cl.enqueue_read_buffer(queue, mem=c_mem, hostbuf=out) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO13-28"></a>(28)
+
+print("OpenCL Output: " + str(out))
+
+mat = np.array([[0.0, 1.0], [2.0, 3.0]])
+
+out_check = np.dot(mat, mat)
+
+print("Numpy Output: " + str(out_check))</pre><p>
+</p><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO13-1">(1)</a> </p></td><td valign="top" align="left"><p>
+global_size（グローバル空間のサイズ）の次元を２次元に設定。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO13-2">(2)</a> </p></td><td valign="top" align="left"><p>
+Mを設定。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO13-3">(3)</a> </p></td><td valign="top" align="left"><p>
+Nを設定。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO13-4">(4)</a> </p></td><td valign="top" align="left"><p>
+Pを設定。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO13-5">(5)</a> </p></td><td valign="top" align="left"><p>
+Aの要素数を計算。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO13-6">(6)</a> </p></td><td valign="top" align="left"><p>
+Bの要素数を計算。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO13-7">(7)</a> </p></td><td valign="top" align="left"><p>
+Cの要素数を計算。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO13-8">(8)</a> </p></td><td valign="top" align="left"><p>
+グローバル空間の次元数を指定。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO13-9">(9)</a> </p></td><td valign="top" align="left"><p>
+行列Aのメモリ領域を確保。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO13-10">(10)</a> </p></td><td valign="top" align="left"><p>
+行列Bのメモリ領域を確保。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO13-11">(11)</a> </p></td><td valign="top" align="left"><p>
+行列Cのメモリ領域を確保。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO13-12">(12)</a> </p></td><td valign="top" align="left"><p>
+Aのバッファオブジェクトを宣言。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO13-13">(13)</a> </p></td><td valign="top" align="left"><p>
+Bのバッファオブジェクトを宣言。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO13-14">(14)</a> </p></td><td valign="top" align="left"><p>
+Cのバッファオブジェクトを宣言。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO13-15">(15)</a> </p></td><td valign="top" align="left"><p>
+カーネルオブジェクトのインスタンスを生成します。nameはカーネル関数に記述した関数名を指定します。この場合一つしかありませんが、複数あれば使いたい関数を指定します。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO13-16">(16)</a> </p></td><td valign="top" align="left"><p>
+引数0を指定。ポインタでない場合、numpyの値をそのまま代入可能。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO13-17">(17)</a> </p></td><td valign="top" align="left"><p>
+引数1を指定。ポインタでない場合、numpyの値をそのまま代入可能。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO13-18">(18)</a> </p></td><td valign="top" align="left"><p>
+引数2を指定。ポインタでない場合、numpyの値をそのまま代入可能。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO13-19">(19)</a> </p></td><td valign="top" align="left"><p>
+引数3を指定。バッファオブジェクトを指定します。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO13-20">(20)</a> </p></td><td valign="top" align="left"><p>
+引数4を指定。バッファオブジェクトを指定します。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO13-21">(21)</a> </p></td><td valign="top" align="left"><p>
+引数5を指定。バッファオブジェクトを指定します。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO13-22">(22)</a> </p></td><td valign="top" align="left"><p>
+enqueue_nd_range_kernelをコマンドキューに挿入して、カーネルオブジェクトを実行します。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO13-23">(23)</a> </p></td><td valign="top" align="left"><p>
+コマンドキューを指定。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO13-24">(24)</a> </p></td><td valign="top" align="left"><p>
+カーネルオブジェクトを指定。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO13-25">(25)</a> </p></td><td valign="top" align="left"><p>
+グローバルインデックス空間(2,2,)を指定。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO13-26">(26)</a> </p></td><td valign="top" align="left"><p>
+ローカルインデックス空間(1,1,)を指定。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO13-27">(27)</a> </p></td><td valign="top" align="left"><p>
+出力配列を初期化。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO13-28">(28)</a> </p></td><td valign="top" align="left"><p>
+enqueue_read_bufferを使って、デバイスからホストメモリ内にデータを読み込みます。
+</p></td></tr></table></div><p><strong>カーネル関数. </strong>
+</p><pre xmlns="" class="prettyprint">__kernel void mult(
+        const int m_dim, //<a xmlns="http://www.w3.org/1999/xhtml" id="CO14-1"></a>(1)
+        const int n_dim, //<a xmlns="http://www.w3.org/1999/xhtml" id="CO14-2"></a>(2)
+        const int p_dim, //<a xmlns="http://www.w3.org/1999/xhtml" id="CO14-3"></a>(3)
+        __global float* A, //<a xmlns="http://www.w3.org/1999/xhtml" id="CO14-4"></a>(4)
+        __global float* B, //<a xmlns="http://www.w3.org/1999/xhtml" id="CO14-5"></a>(5)
+        __global float* C) //<a xmlns="http://www.w3.org/1999/xhtml" id="CO14-6"></a>(6)
+{
+        int k;
+        int i = get_global_id(0); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO14-7"></a>(7)
+        int j = get_global_id(1); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO14-8"></a>(8)
+        float tmp;
+        if((i &lt; n_dim) &amp;&amp; (j &lt; m_dim)) {
+                tmp = 0.0f;
+                for(k=0; k&lt;p_dim;k++) {
+                        tmp += A[i * n_dim + k] * B[k * p_dim + j]; //<a xmlns="http://www.w3.org/1999/xhtml" id="CO14-9"></a>(9)
+                }
+        C[i * n_dim + j] = tmp; //<a xmlns="http://www.w3.org/1999/xhtml" id="CO14-10"></a>(10)
+        }
+}</pre><p>
+</p><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO14-1">(1)</a> </p></td><td valign="top" align="left"><p>
+ホストプログラムで指定したm_dim変数
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO14-2">(2)</a> </p></td><td valign="top" align="left"><p>
+ホストプログラムで指定したn_dim変数
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO14-3">(3)</a> </p></td><td valign="top" align="left"><p>
+ホストプログラムで指定したp_dim変数
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO14-4">(4)</a> </p></td><td valign="top" align="left"><p>
+Aのバッファオブジェクト
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO14-5">(5)</a> </p></td><td valign="top" align="left"><p>
+Bのバッファオブジェクト
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO14-6">(6)</a> </p></td><td valign="top" align="left"><p>
+Cのバッファオブジェクト
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO14-7">(7)</a> </p></td><td valign="top" align="left"><p>
+次元0のグローバルIDをiに代入
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO14-8">(8)</a> </p></td><td valign="top" align="left"><p>
+次元1のグローバルIDをjに代入
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO14-9">(9)</a> </p></td><td valign="top" align="left"><p>
+A(i,k)* B(k,j)を計算。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO14-10">(10)</a> </p></td><td valign="top" align="left"><p>
+C（i,j）を計算。
+</p></td></tr></table></div><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">a: [ 0.  1.  2.  3.]
+b: [ 0.  1.  2.  3.]
+OpenCL Output: [  2.   3.   6.  11.]
+Numpy Output: [[  2.   3.]
+ [  6.  11.]]</pre><p>
+</p><pre xmlns="" class="prettyprint">/* A * B = C
+ *
+ *   | 0   1 | * | 0   1 | = | 2  3  |
+ *   | 2   3 |   | 2   3 |   | 6  11 |
+ *
+ */</pre><p>上記の出力は想定結果と一致することが確認できます。</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>この項目のプログラムではワークグループは一つの最もシンプルな設計となります。ワークグループを複数とする実装例を見るのだれば「ワークグループ実装例」（<a class="xref" href="ch16s15.html#workgroup-sample" title="実装例">the section called “実装例”</a>）を参照ください。</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_例外クラス"></a>14.4.1. 例外クラス</h3></div></div></div><p>エラー発生時にPyOpenCLでは以下のErrorを継承した例外が投げられます。</p><pre xmlns="" class="prettyprint">class pyopencl.Error</pre><p>このErrorクラスを継承したのが以下の3つのクラスです。</p><pre xmlns="" class="prettyprint">class pyopencl.MemoryError
+class pyopencl.LogicError
+class pyopencl.RuntimeError</pre><p>PyOpenCLのエラーはOpenCLのエラーをPythonの例外クラスにマップしたものとなります。</p><p>詳細については「表：ランタイムエラー一覧」（<a class="xref" href="apc.html#error_code_runtime" title="Table C.1. 表：ランタイムエラー一覧">Table C.1, “表：ランタイムエラー一覧”</a>）と「表：コンパイルタイムエラー一覧」（<a class="xref" href="apc.html#error_code_compile" title="Table C.2. 表：コンパイルタイムエラー一覧">Table C.2, “表：コンパイルタイムエラー一覧”</a>）を参照ください。</p><div class="warning" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Warning</h3><p>本書ではコード行数が肥大するため、以降のサンプルコードではエラーコードの処理はしていません。</p></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch14s03.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch14.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch15.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

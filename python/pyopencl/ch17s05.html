@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>17.5. 整数関数</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch17.html" title="Chapter 17. OpenCL C言語プログラミング" /><link rel="prev" href="ch17s04.html" title="17.4. 組み込み関数" /><link rel="next" href="ch17s06.html" title="17.6. 型変換" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch17s04.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch17s06.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_整数関数"></a>17.5. 整数関数</h2></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：四則・絶対値・最小最大値関数」（<a class="xref" href="apbs39.html#basic_ops" title="Table B.110. 表：四則・絶対値・最小最大値関数">Table B.110, “表：四則・絶対値・最小最大値関数”</a>）を参照ください。</p></div><p>OpenCL-Cの整数型はC99と基本的には同じものと考えて構いません。符号付きと符号無しのintとuintがあり。整数をサポートする関数には、プロセッサの演算器の機能であるMAD演算を活用して、本来複数の処理に分ける計算を１つの計算サイクルで行なうことができます。</p><p>四則演算（加算、減算、除算、乗算）があり、ビット演算のために２〜３個便利な組込み関数が存在するだけです。</p><pre xmlns="" class="prettyprint">gentype rotate (gentype v, gentype i)</pre><p>vの各要素に対して、iビットの左シフトを行ないます。左シフトで押し出されたビットは右側に挿入されます。</p><pre xmlns="" class="prettyprint">uint x = 0x12345678;
+uint shift = 4;
+
+output = rotate(x, shift); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO48-1"></a>(1)
+printf("rotate: %x\n", output);</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO48-1">(1)</a> </p></td><td valign="top" align="left"><p>
+4桁左にシフトします。
+</p></td></tr></table></div><pre xmlns="" class="prettyprint">rotate: 23456781</pre><pre xmlns="" class="prettyprint">short upsample (char hi, uchar lo)
+ushort upsample (uchar hi, uchar lo)
+shortn upsample (charn hi, ucharn lo)
+ushortn upsample (ucharn hi, ucharn lo)
+int upsample (short hi, ushort lo)
+uint upsample (ushort hi, ushort lo)
+intn upsample (shortn hi, ushortn lo)
+uintn upsample (ushortn hi, ushortn lo)
+long upsample (int hi, uint lo)
+ulong upsample (uint hi, uint lo)
+longn upsample (intn hi, uintn lo)
+ulongn upsample (uintn hi, uintn lo)</pre><p>upsample関数は以下の計算をします。</p><pre xmlns="" class="prettyprint">result[i] = ((short)hi[i] &lt;&lt; 8) | lo[i]
+result[i] = ((ushort)hi[i] &lt;&lt; 8) | lo[i]
+result[i] = ((int)hi[i] &lt;&lt; 16) | lo[i]
+result[i] = ((uint)hi[i] &lt;&lt; 16) | lo[i]
+result[i] = ((long)hi[i] &lt;&lt; 32) | lo[i]
+result[i] = ((ulong)hi[i] &lt;&lt; 32) | lo[i]</pre><p>16ビット型であれば、hiを8ビット左にシフト、32ビットであれば、hiを16ビット左にシフトし、loを下位ビットに設定します。</p><pre xmlns="" class="prettyprint">uint hi = 0x888888;
+uint lo = 0x222222;
+ulong output_upsample;
+output_upsample = upsample(hi,lo);
+printf("upsample: %lx\n",output_upsample);
+printf("upsample for mad: %lx\n", upsample(mul_hi(a,b), a*b))</pre><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">upsample: 88888800222222
+upsample for mad: 10404204001</pre><p>
+</p><pre xmlns="" class="prettyprint">gentype popcount (gentype x)</pre><p>引数xの0でないビットの数を計算します。</p><pre xmlns="" class="prettyprint">uint nonzero = 0x00001111;
+output = popcount(nonzero); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO49-1"></a>(1)
+printf("popcount: %x\n", output);</pre><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">popcount: 4</pre><p>
+</p><pre xmlns="" class="prettyprint">gentype clz (gentype x)</pre><p>最上位ビットから連続する0のビット数を計算します。</p><pre xmlns="" class="prettyprint">printf("clz: %u\n", clz(0xf0001111)); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO49-2"></a>(1)
+printf("clz: %u\n", clz(0x00000000)); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO49-3"></a>(2)</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO49-2">(1)</a> </p></td><td valign="top" align="left"><p>
+上位ビットがfで0がありません。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO49-3">(2)</a> </p></td><td valign="top" align="left"><p>
+上位ビットから下位ビットまで全て0。
+</p></td></tr></table></div><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">clz: 0
+clz: 32</pre><p>
+</p><p>最後に加算をするための関数を２つご案内します。</p><pre xmlns="" class="prettyprint">gentype hadd (gentype x, gentype y)</pre><p>和のオーバーフローを発生させずに`(x + y) &gt;&gt; 1`を計算します。</p><pre xmlns="" class="prettyprint">gentype rhadd (gentype x, gentype y)</pre><p>和のオーバーフローを発生させずに`(x + y + 1) &gt;&gt; 1`を計算します。</p><pre xmlns="" class="prettyprint">output = hadd(a, b); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO50-1"></a>(1)
+printf("hadd: %#lx\n", output);
+
+output = rhadd(a, b); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO50-2"></a>(2)
+printf("rhadd: %#lx\n", output);</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO50-1">(1)</a> </p></td><td valign="top" align="left"><p>
+（概ね）`(a+b)/2`の計算をします。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO50-2">(2)</a> </p></td><td valign="top" align="left"><p>
+（概ね）`(a+b+1)/2`の計算をします。
+</p></td></tr></table></div><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">hadd: 0x102001
+rhadd: 0x102001</pre><p>
+</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_madと乗算"></a>17.5.1. MADと乗算</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：乗算関数」（<a class="xref" href="apbs39.html#mad" title="Table B.111. 表：乗算関数">Table B.111, “表：乗算関数”</a>）を参照ください。</p></div><p>基本的な乗算をより詳しく見てみましょう。例えばOpenCL-Cでuint型間で基本乗算を行なうと以下のような結果となります。</p><pre xmlns="" class="prettyprint">a = 102001
+b = 102001
+a * b = 4204001</pre><p>これをulong型にすると計算結果は`10404204001`となります。明らかに桁が少ないことになります。</p><p>下記が検証に使ったコードと出力です。</p><p><strong>サンプル. </strong>
+</p><pre xmlns="" class="prettyprint">uint a = 0x102001;
+uint b = 0x102001;
+uint c = 0;
+uint output;
+printf("a = %lx\n", a);
+printf("b = %lx\n", b);
+printf("c = %lx\n", c);
+
+output = a * b; //<a xmlns="http://www.w3.org/1999/xhtml" id="CO51-1"></a>(1)
+printf("a times b = %lx\n", output);
+
+ulong a_long = 0x102001;
+ulong b_long = 0x102001;
+ulong output_long;
+
+output_long = a_long * b_long; //<a xmlns="http://www.w3.org/1999/xhtml" id="CO51-2"></a>(2)
+printf("(ulong)a times b = %lx\n", output_long);</pre><p>
+</p><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO51-1">(1)</a> </p></td><td valign="top" align="left"><p>
+aとbのかけ算。結果はuintの最大値を超える。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO51-2">(2)</a> </p></td><td valign="top" align="left"><p>
+longでのかけ算。
+</p></td></tr></table></div><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">a = 102001
+b = 102001
+c = 0
+a times b = 4204001
+(ulong)a times b = 10404204001</pre><p>
+</p><p>もちろんlongを使えば溢れた桁についても結果に参入できますが、OpenCLではメモリのアラインメントが重要な最適化要因となるため、32ビットでの演算が望ましいと言えます。</p><p>その答えとしては以下の定義にあるmulやmadといった高速演算関数です。</p><pre xmlns="" class="prettyprint">gentype mul_hi (
+    gentype x,
+    gentype y)￼</pre><p>`x * y`を計算し、算出した値の上半分のビットを返します。</p><pre xmlns="" class="prettyprint">gentype mul24 (
+    gentype x,
+    gentype y)</pre><p>2つの24ビット整数値xとyの積を計算します。xとyは両方とも32ビット整数値ですが計算では下位24ビットのみを使います。xとyの両方が符号つきのときは、<code class="literal">[-223, 223-1]`、符号無しのときは</code>[0, 224-1]`の範囲内にあるとき使うことが推奨されています。xとyがこれらの範囲内にないとき、計算結果は実装システムに依存します。</p><pre xmlns="" class="prettyprint">gentype mad24 (
+    gentype x,
+    gentype y,
+    gentype z)</pre><p>2つの24ビット整数値xとyの積を計算し、32ビット整数値zを足します。</p><pre xmlns="" class="prettyprint">gentype mad_hi (
+    gentype a,
+    gentype b,
+    gentype c)</pre><p>`mul_hi(a, b) + c`を計算します。</p><p><strong>サンプル. </strong>
+</p><pre xmlns="" class="prettyprint">uint a = 0x102001;
+uint b = 0x102001;
+uint c = 0;
+uint output;
+
+output = mad24(a, b, c); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO52-1"></a>(1)
+printf("mad24: %lx\n", output);
+
+output = mul_hi(a, b); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO52-2"></a>(2)
+printf("mul_hi: %lx\n", output);
+
+output = mad_hi(a, b, c); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO52-3"></a>(3)
+printf("mad_hi: %lx\n", output);</pre><p>
+</p><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO52-1">(1)</a> </p></td><td valign="top" align="left"><p>
+24ビットの整数の積と32ビットの和。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO52-2">(2)</a> </p></td><td valign="top" align="left"><p>
+<code class="literal">x * y</code>
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO52-3">(3)</a> </p></td><td valign="top" align="left"><p>
+<code class="literal">mul_hi(a, b) + c</code>
+</p></td></tr></table></div><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">mad24: 4204001
+mul_hi: 104
+mad_hi: 104</pre><p>
+</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_飽和演算"></a>17.5.2. 飽和演算</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：（飽和）加算・減算関数」（<a class="xref" href="apbs39.html#saturation" title="Table B.112. 表：（飽和）加算・減算関数">Table B.112, “表：（飽和）加算・減算関数”</a>）を参照ください。</p></div><p>飽和演算とは信号処理の際に`0xFFFFFFFF`以上の値となる計算は全て、`0xFFFFFFFF`と一意的に処理を行なうような演算のことを指します。</p><p>前の項目のサンプルコードで使った、`mad_sat`関数がそれにあたります。以下がOpenCLでサポートしている、整数型の飽和演算です。</p><pre xmlns="" class="prettyprint">gentype mad_sat (
+    gentype a,
+    gentype b,
+    gentype c)</pre><p>`a * b + c`を計算します。結果については飽和を適用します。</p><pre xmlns="" class="prettyprint">gentype add_sat (gentype x, gentype y)</pre><p>`x + y`を計算します。結果については飽和を適用します。</p><pre xmlns="" class="prettyprint">uint a = 0x102001;
+uint b = 0x102001;
+uint c = 0;
+uint output;
+
+int a_complement = 0x100000;
+int b_complement = 0x100000;
+int c_complement = 1111;
+
+output = add_sat(a, b); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO53-1"></a>(1)
+printf("add_sat: %#lx\n", output);
+
+output = mad_sat(a, b, c); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO53-2"></a>(2)
+printf("mad_sat: %u\n", output);
+
+output = mad_sat(a_complement, b_complement, c_complement); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO53-3"></a>(3)
+printf("mad_sat with sign: %d\n", output);</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO53-1">(1)</a> <a href="#CO53-2">(2)</a> </p></td><td valign="top" align="left"><p>
+`a * b + c`の結果を飽和。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO53-3">(3)</a> </p></td><td valign="top" align="left"><p>
+`a_complement * b_complement + c_complement`の結果を飽和。
+</p></td></tr></table></div><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">add_sat: 0x204002 //<a xmlns="http://www.w3.org/1999/xhtml" id="CO54-1"></a>(1)
+mad_sat: 4294967295 //<a xmlns="http://www.w3.org/1999/xhtml" id="CO54-2"></a>(2)
+mad_sat with sign: 2147483647 //<a xmlns="http://www.w3.org/1999/xhtml" id="CO54-3"></a>(3)</pre><p>
+</p><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO54-1">(1)</a> </p></td><td valign="top" align="left"><p>
+飽和つき足し算。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO54-2">(2)</a> </p></td><td valign="top" align="left"><p>
+飽和つきmad(uint型)
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO54-3">(3)</a> </p></td><td valign="top" align="left"><p>
+飽和つきmad(int型)
+</p></td></tr></table></div><p>uintに格納できる整数の範囲は、`0〜4,294,967,295`となります。（2の補数で表す）intに格納できる整数の範囲は、`−2,147,483,648〜2,147,483,647`です。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch17s04.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch17.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch17s06.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

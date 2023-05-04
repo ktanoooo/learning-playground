@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>4.1. OpenCLのインストール</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch04.html" title="Chapter 4. OpenCL開発環境" /><link rel="prev" href="ch04.html" title="Chapter 4. OpenCL開発環境" /><link rel="next" href="ch04s02.html" title="4.2. Intel SDKインストール手順(Ubuntu)" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch04.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch04s02.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_openclのインストール"></a>4.1. OpenCLのインストール</h2></div></div></div><p>OpenCLにはベンダーが提供する２つのソフトウェアが必要です。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+OpenCL Runtimeライブラリ
+</li><li class="listitem">
+OpenCL デバイスドライバ
+</li></ul></div><p>このうちRuntimeライブラリは、SDKやフレームワークと呼ばれるものです。</p><p>デバイスドライバについては、各プラットフォームで事情が異なります。プラットフォームのサポートをベンダー別で以下にまとめました。</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+Apple
+</span></dt><dd>
+Mac OS Xに標準でインストールされています。（＊開発環境としてXCodeはインストールしてください。）
+</dd><dt><span class="term">
+Intel
+</span></dt><dd>
+Windowsでは無償で提供。過去Linuxでは有償のMedia Studioに附属（無償のBeignetもあります）していたが、2016年現在は第５〜６世代コアプロセッサのドライバは無償で提供している。
+</dd><dt><span class="term">
+AMD
+</span></dt><dd>
+Windows/Linuxで無償提供。公式HPからダウンロードしてください。
+</dd></dl></div><p>この中でIntelのLinuxが有償な点は悪いニュースですが、無償でIntelデバイスのLinuxドライバを提供してる`Beignet`があります。また第５〜６世代CPUについては無償のデバイスドライバのダウンロードもできます。</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+Beignet（OSS）
+</span></dt><dd>
+Intelの技術者がオープンソースで開発したLinux-Intel無償ドライバ。
+</dd></dl></div><p>`Beignet`は2016年時点で以下のプロセッサをサポートしてるとのことです。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+3rd Generation Intel Core Processors
+</li><li class="listitem">
+Intel “Bay Trail” platforms with Intel HD Graphics
+</li><li class="listitem">
+4th Generation Intel Core Processors "Haswell"（要パッチ）
+</li><li class="listitem">
+5th Generation Intel Core Processors "Broadwell".
+</li></ul></div><p>第３〜４世代のプロセッサで開発する場合にはBeignetを使えますが、バグがあるので公式ページでパッチを入手するようにしてください。</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_amd_linux_ubuntu"></a>4.1.1. AMD Linux(Ubuntu)</h3></div></div></div><div class="warning" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Warning</h3><p>参考までの掲載ですので未検証です。必ず「AMD APP SDK Installation Notes」（AMDのダウンロードサイトにあるAMD_APP_SDK_Installation_Notes.pdf）を確認するようにしてください。</p></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+`root`権限のあるアカウントがあることを確認します。
+</li><li class="listitem">
+過去にインストールした`APP SDK`を削除します。
+</li><li class="listitem">
+`AMD APP SDK`をダウンロードして、tarファイルを解凍します。
+</li><li class="listitem">
+`Install-AMD-APP.sh`スクリプトを実行します。
+</li><li class="listitem">
+`/opt/AMPAPP/`にバイナリがインストールされたことを確認します。
+</li><li class="listitem">
+`AMDAPPSDKROOT`と`LD_LIBRARY_PATH`が正しい値に設定されているか確認します。
+</li></ol></div><p>SDKはダウンロードしなくてもapt-get経由でも入手できます。</p><pre xmlns="" class="prettyprint">sudo apt-get install amd-opencl-dev</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_nvidia_linux"></a>4.1.2. NVIDIA Linux</h3></div></div></div><div class="warning" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Warning</h3><p>参考までの掲載ですので未検証です。NVIDIA公式サイトにある「OpenCL_Release_Notes.txt」等で確認してください。</p></div><p>`NVIDIA CUDA Toolkit`またはドライバを公式サイトからダウンロード、または下記のようにリポジトリからインストールする必要があります。</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+Redhat/Centos
+</span></dt><dd>
+rpmでリポジトリのメタデータを取得して、yum経由でインストールします。
+</dd></dl></div><pre xmlns="" class="prettyprint">$ sudo rpm --install cuda-repo-&lt;distro&gt;-&lt;version&gt;.&lt;architecture&gt;.rpm
+$ sudo yum clean expire-cache
+$ sudo yum install cuda</pre><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+Ubuntu
+</span></dt><dd>
+リポジトリのメタデータを取得して、apt経由でインストールします。
+</dd></dl></div><pre xmlns="" class="prettyprint">$ sudo dpkg -i cuda-repo-&lt;distro&gt;_&lt;version&gt;_&lt;architecture&gt;.deb
+$ sudo apt-get update
+$ sudo apt-get install cuda</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="intel-linux-ubuntu"></a>4.1.3. Intel Linux(Ubuntu)</h3></div></div></div><div class="warning" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Warning</h3><p>参考までの掲載ですので未検証です。必ず「Intel® SDK for OpenCL Applications 2016 release notes」で確認ください。</p></div><p>SDKについては「Intel® SDK for OpenCL™ Applications for Ubuntu」が用意されているので、インテル公式ページからダウンロードしてください。SDKには第５〜６世代のIntel Coreプロセッサと、Iris Pro、HD Graphicsのスタンドアローンドライバが含まれています。</p><p>ドライバについて以前IntelではMedia Server Studioという有償アプリケーションのライセンスを購入する必要がありましたが2016年現在では以下のドライバをダウンロードできるようになっています。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+OpenCL™ 1.2 Driver for Intel® HD, Iris™, and Iris™ Pro Graphics for Linux* (64-bit)
+</li><li class="listitem">
+OpenCL™ Driver for Intel® Iris™ and Intel® HD Graphics on Windows* (64-bit and 32-bit)
+</li></ul></div><p>もちろんSDKをダウンロードするだけで構いませんが、AMDのSDKを使ってIntelのSDKは使いたくない場合にはドライバ単体でダウンロードもできます。</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_intel_windows"></a>4.1.4. Intel Windows</h3></div></div></div><div class="warning" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Warning</h3><p>参考までの掲載ですので未検証です。必ず「Intel® SDK for OpenCL Applications 2016 release notes」で確認ください。</p></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+管理権限を持つアカウント(Administrator)でログインします。
+</li><li class="listitem">
+公式サイト（https://software.intel.com/en-us/intel-opencl）からSDKをダウンロードします。
+</li><li class="listitem">
+過去にインストールしたSDKを削除します。
+</li><li class="listitem">
+パッケージを起動してインストーラーを実行します。
+</li></ol></div><p>デフォルトのインストレーションフォルダは以下のようになります。</p><pre class="screen">C:\Program Files (x86)\Intel\OpenCL SDK</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_amd_linux_windows"></a>4.1.5. AMD Linux(Windows)</h3></div></div></div><div class="warning" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Warning</h3><p>参考までの掲載ですので未検証です。必ず「AMD APP SDK Installation Notes」（AMDのダウンロードサイトにあるAMD_APP_SDK_Installation_Notes.pdf）を確認するようにしてください。</p></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+管理権限のあるアカウントがあることを確認します。
+</li><li class="listitem">
+`APP SDK`をダウンロードしてインストーラーを起動します。カスタムではなく、エキスプレスインストールを選択します。
+</li><li class="listitem">
+`AMDAPPSDKROOT`と`AMDAPPSDKSAMPLESROOT`環境変数が設定されます。※カスタムインストールでは手動で設定する必要があります。
+</li></ol></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_nvidia_windows"></a>4.1.6. NVIDIA Windows</h3></div></div></div><div class="warning" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Warning</h3><p>参考までの掲載ですので未検証です。</p></div><p>NVIDIAの公式サイトのウィザードから適切なGPUドライバまたは<code class="literal">CUDA Toolkit 7.5`以降をダウンロードしてインストールしてください。インストール後には、`NVSDKCOMPUTE_ROOT</code> が設定されているかを確認してください。</p><p>OpenCL-1.2のサポートは、`CUDA Toolkit 7.0`以前ではされていませんので、注意してください。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch04.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch04.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch04s02.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

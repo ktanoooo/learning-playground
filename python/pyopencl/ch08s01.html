@@ -1,0 +1,538 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>8.1. Arrayクラス</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch08.html" title="Chapter 8. Arrayクラス" /><link rel="prev" href="ch08.html" title="Chapter 8. Arrayクラス" /><link rel="next" href="ch08s02.html" title="8.2. Arrayファクトリー" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch08.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch08s02.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_arrayクラス_2"></a>8.1. Arrayクラス</h2></div></div></div><p>ArrayクラスはPyOpenCLが独自に（つまりOpenCL規格とは独立して）定義する配列データのコンテナです。</p><p>クラスのコンストラクタは以下のように宣言されています。</p><pre xmlns="" class="prettyprint">class pyopencl.array.Array(
+    cq, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO3-1"></a>(1)
+    shape, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO3-2"></a>(2)
+    dtype, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO3-3"></a>(3)
+    order='C',
+    allocator=None,
+    data=None,
+    offset=0,
+    strides=None,
+    events=None)</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO3-1">(1)</a> </p></td><td valign="top" align="left"><p>
+OpenCLコンテキストまたはコマンドキューオブジェクトを指定。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO3-2">(2)</a> </p></td><td valign="top" align="left"><p>
+次元、要素数などのshapeパラメータを設定。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO3-3">(3)</a> </p></td><td valign="top" align="left"><p>
+配列要素のデータ型を指定。
+</p></td></tr></table></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_arrayの属性"></a>8.1.1. Arrayの属性</h3></div></div></div><p>Arrayクラスの属性はnumpyから派生したものか、OpenCLのバックグラウンドオブジェクトとの連携に使うものに分けられます。</p><p>OpenCL関連で最重要な属性はdataです。data属性はOpenCL Bufferに変換したオブジェクトを戻すことににって、OpenCL規格に基づいたPyOpenCLランタイムライブラリとの連携が可能となります。</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+data
+</span></dt><dd>
+Arrayの裏で生成されているpyopencl.MemoryObjectのインスタンスです。pyopencl.Bufferとして使用可能です。
+</dd></dl></div><p>numpy系統の属性は以下のものがあります。</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+shape
+</span></dt><dd>
+配列の次元の要素数を定義するタプル(tuple)です。numpyの多次元配列と同じものと考えて支障ないかと思います。
+</dd><dt><span class="term">
+ndim
+</span></dt><dd>
+shapeの次元数です。
+</dd><dt><span class="term">
+dtype
+</span></dt><dd>
+配列内要素のnumpy.dtypeです。
+</dd><dt><span class="term">
+size
+</span></dt><dd>
+配列内の要素数です。shapeの要素数をかけることにより算出可能です。
+</dd><dt><span class="term">
+nbytes
+</span></dt><dd>
+配列全体のバイト数です。dtype.itemsize*sizeで算出できます。
+</dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_arrayのメソッド"></a>8.1.2. Arrayのメソッド</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_get"></a>get</h4></div></div></div><p>getはデバイスが管理するメモリ空間からホストメモリにnumpy.ndarrayとしてコピーします。</p><pre xmlns="" class="prettyprint">get(queue=None, ary=None, async=False)</pre><p>引数は空でも構いません。</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_set"></a>set</h4></div></div></div><p>setはArrayクラス内に配列を設定します。</p><pre xmlns="" class="prettyprint">set(ary, queue=None, async=False)</pre><p>実行するとnumpy.ndarryオブジェクトの中身をデバイスメモリに移動します。</p><p>以下は実装例とその出力です。</p><p><strong>CLSetArrayTest.py. </strong>
+</p><pre xmlns="" class="prettyprint">import numpy as np
+import pyopencl as cl
+import pyopencl.array as clarr
+
+import os
+os.environ['PYOPENCL_COMPILER_OUTPUT'] = '1'
+
+platforms = cl.get_platforms()
+ctx = cl.Context([platforms[0].get_devices(cl.device_type.GPU)[0]])
+queue = cl.CommandQueue(ctx)
+
+a = np.arange(5).astype(np.uint32)
+
+a_mem = clarr.Array(queue, (5,), dtype=np.uint32)
+a_mem.set(a)
+
+print(a_mem.get())</pre><p>
+</p><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">/Library/Frameworks/Python.framework/Versions/3.5/bin/python3.5 /Users/komatsu/PycharmProjects/MyPythonProject/CLSetArrayTest.py
+[0 1 2 3 4]</pre><p>
+</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_部分配列"></a>部分配列</h4></div></div></div><p>Arrayクラスはnumpy配列と同じように部分配列にアクセスすることができます。</p><p>以下は実装例とその出力です。</p><p><strong>CLArraySubSeqTest.py. </strong>
+</p><pre xmlns="" class="prettyprint">import numpy as np
+import pyopencl as cl
+import pyopencl.array as clarr
+import warnings
+
+import os
+os.environ['PYOPENCL_COMPILER_OUTPUT'] = '1'
+
+a = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]).astype(np.float32)
+b = np.array([10, 20, 30, 40, 50,
+              60, 70, 80, 90, 100]).astype(np.float32)
+
+
+platforms = cl.get_platforms()
+ctx = cl.Context([platforms[0].get_devices(cl.device_type.GPU)[0]])
+queue = cl.CommandQueue(ctx)
+
+a_mem = clarr.to_device(queue, a)
+
+print(a_mem[4:9].get())</pre><p>
+</p><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">/Library/Frameworks/Python.framework/Versions/3.5/bin/python3.5 /Users/komatsu/PycharmProjects/MyPythonProject/CLArraySubSeqTest.py
+[ 5.  6.  7.  8.  9.]</pre><p>
+</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_view"></a>view</h4></div></div></div><p>viewは配列をそのままのデータで戻します。ただしdtypeに異なる型を指定した場合に、各要素のバイトから配列を再構成します。</p><pre xmlns="" class="prettyprint">view(dtype=None)</pre><p>引数はデータの再解釈をするdtypeを指定します。</p><p>以下は実装例とその出力です。</p><pre xmlns="" class="prettyprint">import numpy as np
+import pyopencl as cl
+import pyopencl.array as clarr
+import pyopencl.tools as cltool
+import warnings
+
+import os
+os.environ['PYOPENCL_COMPILER_OUTPUT'] = '1'
+
+a = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]).astype(np.uint32)
+
+platforms = cl.get_platforms()
+ctx = cl.Context([platforms[0].get_devices(cl.device_type.GPU)[0]])
+queue = cl.CommandQueue(ctx)
+
+a = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]).astype(np.uint32)
+
+a_mem = clarr.to_device(queue, a)
+
+a_view = a_mem.view()
+
+print(a_view)
+
+a.resize((5, 2))
+
+new_mem = clarr.to_device(queue, a)
+
+print(new_mem)
+
+new_view_16 = new_mem.view(np.uint8)
+
+print(new_view_16)</pre><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">[ 1  2  3  4  5  6  7  8  9 10]
+[[ 1  2]
+ [ 3  4]
+ [ 5  6]
+ [ 7  8]
+ [ 9 10]]
+[[ 1  0  0  0  2  0  0  0]
+ [ 3  0  0  0  4  0  0  0]
+ [ 5  0  0  0  6  0  0  0]
+ [ 7  0  0  0  8  0  0  0]
+ [ 9  0  0  0 10  0  0  0]]</pre><p>
+</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_reshape"></a>reshape</h4></div></div></div><p>新たなshapeを持った配列を戻します。</p><pre xmlns="" class="prettyprint">reshape(*shape, **kwargs)</pre><p>基本的な動作はnumpyと同様と考えて支障ないかと思います。</p><p>以下は実装例とその出力です。</p><p><strong>CLReshapeTest.py. </strong>
+</p><pre xmlns="" class="prettyprint">import numpy as np
+import pyopencl as cl
+import pyopencl.array as clarr
+
+import os
+os.environ['PYOPENCL_COMPILER_OUTPUT'] = '1'
+
+a = np.arange(10).reshape(5, 2).astype(np.uint32)
+
+print(a)
+
+platforms = cl.get_platforms()
+ctx = cl.Context([platforms[0].get_devices(cl.device_type.GPU)[0]])
+queue = cl.CommandQueue(ctx)
+a_mem = clarr.to_device(queue, a)
+
+new_mem = a_mem.reshape(1, 10)
+
+a_mem.finish()
+
+print(new_mem.get())</pre><p>
+</p><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">/Library/Frameworks/Python.framework/Versions/3.5/bin/python3.5 /Users/komatsu/PycharmProjects/MyPythonProject/CLReshapeTest.py
+[[0 1]
+ [2 3]
+ [4 5]
+ [6 7]
+ [8 9]]
+[[0 1 2 3 4 5 6 7 8 9]]</pre><p>
+</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_transpose"></a>transpose</h4></div></div></div><p>transposeは配列の転置ツールです。</p><pre xmlns="" class="prettyprint">transpose(axes=None)</pre><p>配列を転置し、転置した配列を戻します。axesは整数型のリストで指定すると、これを元に転置をします。オプションですので指定する必要はありません。</p><p>以下は実装例とその出力です。</p><p><strong>CLTransposeTest.py. </strong>
+</p><pre xmlns="" class="prettyprint">import numpy as np
+import pyopencl as cl
+import pyopencl.array as clarr
+from pyopencl.clrandom import rand as clrnd
+import warnings
+
+import os
+os.environ['PYOPENCL_COMPILER_OUTPUT'] = '1'
+
+platforms = cl.get_platforms()
+ctx = cl.Context([platforms[0].get_devices(cl.device_type.GPU)[0]])
+queue = cl.CommandQueue(ctx)
+
+a = np.arange(8).astype(np.uint32).reshape((4, 2))
+
+print(a)
+
+a_gpu = clarr.to_device(queue, a)
+
+print(a_gpu.transpose().get())</pre><p>
+</p><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">/Library/Frameworks/Python.framework/Versions/3.5/bin/python3.5 /Users/komatsu/PycharmProjects/MyPythonProject/CLTransposeTest.py
+[[0 1]
+ [2 3]
+ [4 5]
+ [6 7]]
+[[0 2 4 6]
+ [1 3 5 7]]</pre><p>
+</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_fill"></a>fill</h4></div></div></div><p>配列をスカラー型の要素で埋めます。</p><pre xmlns="" class="prettyprint">fill(value, queue=None, wait_for=None)</pre><p>valueにはスカラー型の値を指定します。値は元データと同じdtypeであるものとします。</p><p>以下が実装例と出力となります。</p><p><strong>CLFillTest.py. </strong>
+</p><pre xmlns="" class="prettyprint">import numpy as np
+import pyopencl as cl
+import pyopencl.array as clarr
+import warnings
+
+import os
+os.environ['PYOPENCL_COMPILER_OUTPUT'] = '1'
+
+platforms = cl.get_platforms()
+ctx = cl.Context([platforms[0].get_devices(cl.device_type.GPU)[0]])
+queue = cl.CommandQueue(ctx)
+
+
+a_gpu = clarr.Array(queue, (10,), dtype=np.float32)
+a_gpu.fill(1.0)
+a = a_gpu.get()
+
+print(a)</pre><p>
+</p><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">/Library/Frameworks/Python.framework/Versions/3.5/bin/python3.5 /Users/komatsu/PycharmProjects/MyPythonProject/CLFillTest.py
+[ 1.  1.  1.  1.  1.  1.  1.  1.  1.  1.]</pre><p>
+</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_ravel"></a>ravel</h4></div></div></div><p>ravelは多次元配列のレベルを削減する場合に使います。</p><pre xmlns="" class="prettyprint">ravel()</pre><p>配列を平らにしたデータを戻します。</p><p>実装例は以下のようになります。</p><p><strong>CLRavelTest.py. </strong>
+</p><pre xmlns="" class="prettyprint">import numpy as np
+import pyopencl as cl
+import pyopencl.array as clarr
+from pyopencl.clrandom import rand as clrnd
+import warnings
+
+import os
+os.environ['PYOPENCL_COMPILER_OUTPUT'] = '1'
+
+platforms = cl.get_platforms()
+ctx = cl.Context([platforms[0].get_devices(cl.device_type.GPU)[0]])
+queue = cl.CommandQueue(ctx)
+
+a = np.arange(8).astype(np.uint32).reshape(4, 2)
+print(a)
+
+a_mem = clarr.to_device(queue, a)
+
+print(a_mem.ravel().get())</pre><p>
+</p><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">/Library/Frameworks/Python.framework/Versions/3.5/bin/python3.5 /Users/komatsu/PycharmProjects/MyPythonProject/CLRavelTest.py
+[[0 1]
+ [2 3]
+ [4 5]
+ [6 7]]
+[0 1 2 3 4 5 6 7]</pre><p>
+</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_setitem"></a>setitem</h4></div></div></div><p>デバイスメモリ内の各要素にデータを指定するメソッドです。</p><pre xmlns="" class="prettyprint">setitem(subscript, value, queue=None, wait_for=None)</pre><p>subscriptは配列の添字、valueは値を指定します。</p><p><strong>CLSetItemTest.py. </strong>
+</p><pre xmlns="" class="prettyprint">import numpy as np
+import pyopencl as cl
+import pyopencl.array as clarr
+
+import os
+os.environ['PYOPENCL_COMPILER_OUTPUT'] = '1'
+
+platforms = cl.get_platforms()
+ctx = cl.Context([platforms[0].get_devices(cl.device_type.GPU)[0]])
+queue = cl.CommandQueue(ctx)
+
+a = np.arange(5).astype(np.uint32)
+
+a_mem = clarr.Array(queue, (5,), dtype=np.uint32)
+a_mem.setitem(4, 15)
+
+print(a_mem.get())</pre><p>
+</p><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">/Library/Frameworks/Python.framework/Versions/3.5/bin/python3.5 /Users/komatsu/PycharmProjects/MyPythonProject/CLSetItemTest.py
+[ 0  0  0  0 15]</pre><p>
+</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_minとmax"></a>minとmax</h4></div></div></div><p>Arrayは最大値と最小値関数を持ちます。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+min
+</li><li class="listitem">
+max
+</li><li class="listitem">
+subset_max
+</li><li class="listitem">
+subset_min
+</li></ul></div><p>subsetが付く関数は、添字を格納した配列で指定した範囲での最小・最大値を取得します。</p><p>実装例は以下のようになります。</p><p><strong>CLMinMaxTest.py. </strong>
+</p><pre xmlns="" class="prettyprint">import numpy as np
+import pyopencl as cl
+import pyopencl.array as clarr
+import warnings
+
+import os
+os.environ['PYOPENCL_COMPILER_OUTPUT'] = '1'
+
+a = np.arange(33, 99, 3).astype(np.float32)
+b = np.array([10, 9, 8, 7, 6, 5, 4, 3, 2, 1]).astype(np.uint32)
+
+platforms = cl.get_platforms()
+ctx = cl.Context([platforms[0].get_devices(cl.device_type.GPU)[0]])
+queue = cl.CommandQueue(ctx)
+
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    a_mem = clarr.to_device(queue, a)
+b_mem = clarr.to_device(queue, b)
+
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    a_mem = clarr.to_device(queue, a)
+    overall_max_a = clarr.max(a_mem)
+print(overall_max_a.get())
+
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    max_a = clarr.subset_max(b_mem, a_mem)
+print(max_a.get())
+
+c = np.array([5, 10, 15]).astype(np.uint32)
+c_mem = clarr.to_device(queue, c)
+
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    min_a = clarr.subset_min(c_mem, a_mem)
+print(min_a.get())</pre><p>
+</p><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">/Library/Frameworks/Python.framework/Versions/3.5/bin/python3.5 /Users/komatsu/PycharmProjects/MyPythonProject/CLMinMaxTest.py
+96.0
+63.0
+48.0</pre><p>
+</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_nan"></a>NaN</h4></div></div></div><p>numpy.isnanはArrayに対して適用可能です。</p><p>以下が実装例となります。</p><pre xmlns="" class="prettyprint">import numpy as np
+import pyopencl as cl
+import pyopencl.array as clarr
+
+import os
+os.environ['PYOPENCL_COMPILER_OUTPUT'] = '1'
+
+a = np.array([1, float('nan'), float('nan'), 4, 5, 6, 7, 8, 9, 10]).astype(np.float32)
+b = np.array([10, 9, 8, 7, 6, 5, 4, 3, 2, 1]).astype(np.float32)
+
+platforms = cl.get_platforms()
+ctx = cl.Context([platforms[0].get_devices(cl.device_type.GPU)[0]])
+queue = cl.CommandQueue(ctx)
+
+a_mem = clarr.to_device(queue, a)
+b_mem = clarr.to_device(queue, b)
+
+print((np.isnan(a_mem.get())).any())
+print((np.isnan(b_mem.get())).any())</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_operator"></a>operator</h4></div></div></div><p>PythonのoperatorモジュールをArrayに対して適用することができます。</p><p>以下が実装例となります。</p><p><strong>CLOperatorTest.py. </strong>
+</p><pre xmlns="" class="prettyprint">import numpy as np
+import pyopencl as cl
+import pyopencl.array as clarr
+import operator as op
+
+import os
+os.environ['PYOPENCL_COMPILER_OUTPUT'] = '1'
+
+a = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]).astype(np.float32)
+b = np.arange(10).astype(np.float32)
+
+platforms = cl.get_platforms()
+ctx = cl.Context([platforms[0].get_devices(cl.device_type.GPU)[0]])
+queue = cl.CommandQueue(ctx)
+
+a_mem = clarr.to_device(queue, a)
+b_mem = clarr.to_device(queue, b)
+
+eqtest = op.eq(a_mem, b_mem)
+
+print(eqtest)
+
+getest = op.ge(a_mem, b_mem)
+
+print(getest)
+
+gttest = op.gt(a_mem, b_mem)
+
+print(gttest)
+
+letest = op.le(a_mem, b_mem)
+
+print(letest)</pre><p>
+</p><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">/Library/Frameworks/Python.framework/Versions/3.5/bin/python3.5 /Users/komatsu/PycharmProjects/MyPythonProject/CLOperatorTest.py
+[0 0 0 0 0 0 0 0 0 0]
+[1 1 1 1 1 1 1 1 1 1]
+[1 1 1 1 1 1 1 1 1 1]
+[0 0 0 0 0 0 0 0 0 0]</pre><p>
+</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_reverse"></a>reverse</h4></div></div></div><p>reverse関数は配列の順序を逆転させます。操作としては、Arrayのインスタンスからreverseと呼び出すだけです。</p><pre xmlns="" class="prettyprint">a_mem = a_mem.reverse()</pre><p>以下が実装例となります。</p><p><strong>CLReverseTest.py. </strong>
+</p><pre xmlns="" class="prettyprint">import numpy as np
+import pyopencl as cl
+import pyopencl.array as clarr
+
+import os
+os.environ['PYOPENCL_COMPILER_OUTPUT'] = '1'
+
+a = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]).astype(np.float32)
+b = np.arange(10).astype(np.float32)
+
+platforms = cl.get_platforms()
+ctx = cl.Context([platforms[0].get_devices(cl.device_type.GPU)[0]])
+queue = cl.CommandQueue(ctx)
+
+a_mem = clarr.to_device(queue, b)
+
+a_mem = a_mem.reverse()
+
+print(a_mem.get())</pre><p>
+</p><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">/Library/Frameworks/Python.framework/Versions/3.5/bin/python3.5 /Users/komatsu/PycharmProjects/MyPythonProject/CLReverseTest.py
+[ 9.  8.  7.  6.  5.  4.  3.  2.  1.  0.]</pre><p>
+</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_take"></a>take</h4></div></div></div><p>[a[indices[0]], …, a[indices[n]]]という形態を持つArrayを戻します。</p><pre xmlns="" class="prettyprint">pyopencl.array.take(a, indices, out=None, queue=None, wait_for=None)</pre><p>indices自体がaの添字として機能します。</p><p>実装例は以下のようになります。</p><p><strong>CLTakeTest.py. </strong>
+</p><pre xmlns="" class="prettyprint">import numpy as np
+import pyopencl as cl
+import pyopencl.array as clarr
+
+import os
+os.environ['PYOPENCL_COMPILER_OUTPUT'] = '1'
+
+a = np.arange(100).astype(np.float32)
+b = np.arange(0, 36, 2).astype(np.int32)
+
+platforms = cl.get_platforms()
+ctx = cl.Context([platforms[0].get_devices(cl.device_type.GPU)[0]])
+queue = cl.CommandQueue(ctx)
+
+a_mem = clarr.to_device(queue, a)
+b_mem = clarr.to_device(queue, b)
+
+result = clarr.take(a_mem, b_mem)
+
+print(result.get())</pre><p>
+</p><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">/Library/Frameworks/Python.framework/Versions/3.5/bin/python3.5 /Users/komatsu/PycharmProjects/MyPythonProject/CLTakeTest.py
+[  0.   2.   4.   6.   8.  10.  12.  14.  16.  18.  20.  22.  24.  26.  28.
+  30.  32.  34.]</pre><p>
+</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_if_positive"></a>if_positive</h4></div></div></div><p>if_positiveはpyopencl.arrayの関数で、配列aの添字iの値が正の場合は配列bの添字iの値、負の場合は配列cの添字iの値を戻すような操作を行えます。</p><p>実装例は以下のようになります。</p><p><strong>CLIfPositiveTest.py. </strong>
+</p><pre xmlns="" class="prettyprint">import pyopencl.array as clarr
+import pyopencl as cl
+import numpy as np
+
+ctx = cl.Context(cl.get_platforms()[0].get_devices(cl.device_type.GPU))
+queue = cl.CommandQueue(ctx)
+
+a = np.array((1, 5, 3, -2, 2, 2, -3, 2, -8, 9)).astype(np.int32)
+b = np.arange(10).astype(np.int32)
+c = np.arange(10,20).astype(np.int32)
+
+print(a)
+
+a_mem = clarr.to_device(queue, a)
+b_mem = clarr.to_device(queue, b)
+c_mem = clarr.to_device(queue, c)
+
+d = clarr.if_positive(a_mem, then_=b_mem, else_=c_mem)
+
+print(b_mem.get())
+print(c_mem.get())
+print(d)</pre><p>
+</p><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">/Library/Frameworks/Python.framework/Versions/3.5/bin/python3.5 /Users/komatsu/PycharmProjects/MyPythonProject/CLIfPositiveTest.py
+[ 1  5  3 -2  2  2 -3  2 -8  9]
+[0 1 2 3 4 5 6 7 8 9]
+[10 11 12 13 14 15 16 17 18 19]
+[ 0  1  2 13  4  5 16  7 18  9]</pre><p>
+</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_concatenate"></a>concatenate</h4></div></div></div><p>numpy.concatenate関数に対応するのが、pyopencl.array.concatenateです。</p><pre xmlns="" class="prettyprint">pyopencl.array.concatenate(
+    arrays,
+    axis=0,
+    queue=None,
+    allocator=None)</pre><p>arrays引数で指定した配列を結合します。</p><p>以下が実装例となります。</p><p><strong>CLConcatenateTest.py. </strong>
+</p><pre xmlns="" class="prettyprint">import numpy as np
+import pyopencl as cl
+import pyopencl.array as clarr
+import warnings
+
+import os
+os.environ['PYOPENCL_COMPILER_OUTPUT'] = '1'
+
+a = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]).astype(np.float32)
+b = np.array([10, 9, 8, 7, 6, 5, 4, 3, 2, 1]).astype(np.float32)
+
+platforms = cl.get_platforms()
+ctx = cl.Context([platforms[0].get_devices(cl.device_type.GPU)[0]])
+queue = cl.CommandQueue(ctx)
+
+a_mem = clarr.to_device(queue, a)
+b_mem = clarr.to_device(queue, b)
+
+result_mem = clarr.concatenate((a_mem, b_mem))
+
+print(result_mem.get())</pre><p>
+</p><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">/Library/Frameworks/Python.framework/Versions/3.5/bin/python3.5 /Users/komatsu/PycharmProjects/MyPythonProject/CLConcatenateTest.py
+[  1.   2.   3.   4.   5.   6.   7.   8.   9.  10.  10.   9.   8.   7.   6.
+   5.   4.   3.   2.   1.]</pre><p>
+</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_diff"></a>diff</h4></div></div></div><p>差分計算関数もnumpyと同様にpyopencl.arrayは提供しています。</p><p>以下が実装例となります。</p><p><strong>CLDiffTest.py. </strong>
+</p><pre xmlns="" class="prettyprint">import numpy as np
+import pyopencl as cl
+import pyopencl.array as clarr
+import warnings
+
+import os
+os.environ['PYOPENCL_COMPILER_OUTPUT'] = '1'
+
+a = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]).astype(np.float32)
+b = np.array([10, 8, 12, 15, 16, 15, 1, 2, 2, 1]).astype(np.float32)
+
+platforms = cl.get_platforms()
+ctx = cl.Context([platforms[0].get_devices(cl.device_type.GPU)[0]])
+queue = cl.CommandQueue(ctx)
+
+a_mem = clarr.to_device(queue, a)
+b_mem = clarr.to_device(queue, b)
+
+diff_a_mem = clarr.diff(a_mem)
+diff_b_mem = clarr.diff(b_mem)
+
+print(diff_a_mem.get())
+print(diff_b_mem.get())</pre><p>
+</p><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">/Library/Frameworks/Python.framework/Versions/3.5/bin/python3.5 /Users/komatsu/PycharmProjects/MyPythonProject/CLDiffTest.py
+[ 1.  1.  1.  1.  1.  1.  1.  1.  1.]
+[ -2.   4.   3.   1.  -1. -14.   1.   0.  -1.]</pre><p>
+</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_dot"></a>dot</h4></div></div></div><p>pyopencl.arrayライブラリはドット積関数についても提供しています。</p><p>以下が実装例となります。</p><p><strong>CLDotTest.py. </strong>
+</p><pre xmlns="" class="prettyprint">import numpy as np
+import pyopencl as cl
+import pyopencl.array as clarr
+import pyopencl.tools as cltool
+import warnings
+
+import os
+os.environ['PYOPENCL_COMPILER_OUTPUT'] = '1'
+
+a = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]).astype(np.float32)
+b = np.array([10, 9, 8, 7, 6, 5, 4, 3, 2, 1]).astype(np.float32)
+
+platforms = cl.get_platforms()
+ctx = cl.Context([platforms[0].get_devices(cl.device_type.GPU)[0]])
+queue = cl.CommandQueue(ctx)
+
+a_mem = clarr.to_device(queue, a)
+b_mem = clarr.to_device(queue, b)
+
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    result = clarr.dot(a_mem, b_mem)
+
+print(result.get())</pre><p>
+</p><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">/Library/Frameworks/Python.framework/Versions/3.5/bin/python3.5 /Users/komatsu/PycharmProjects/MyPythonProject/CLDotTest.py
+220.0</pre><p>
+</p></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch08.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch08.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch08s02.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>B.26. コンパイラ（ビルド）オプション</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="apb.html" title="Appendix B. OpenCL 1.2 API Reference" /><link rel="prev" href="apbs25.html" title="B.25. プログラムのリンク" /><link rel="next" href="apbs27.html" title="B.27. リンカーオプション" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="apbs25.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apbs27.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_コンパイラ_ビルド_オプション_2"></a>B.26. コンパイラ（ビルド）オプション</h2></div></div></div><div class="table"><a id="compiler_option"></a><p class="title"><strong>Table B.70. コンパイラ・ビルドオプション</strong></p><div class="table-contents"><table class="table" summary="コンパイラ・ビルドオプション" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">プリプロセッサオプション</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">実際のコンパイルの
+前に各プログラムソース
+に適用されるOpenCL C
+プリプロセッサを制御す
+るオプション。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">-D name</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">nameを定義「1」のマク
+ロとして事前定義します。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">-D name=definition</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">definitionの内容は
+トークン化され、`#define`
+ディレクティブを第3翻訳
+フェーズで扱う時と同様に処理。
+改行文字が埋め込まれている
+とそこで定義を打ちきる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">-D options</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout"> clBuildProgramまたは
+clCompileProgramに指定
+したoptions引数内での並
+びの順に処理。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">-I dir</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">dirを、ヘッダファイルを
+検索する際の対象ディレク
+トリの一覧に加えます。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">組み込み数学機能に関
+するオプション</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">浮動小数点演算に関する
+コンパイラのふるまいを制御。
+これらのオプションは、
+処理速度と正確性との
+トレードオフになる。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">-cl-single-
+precision-constant</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">倍精度浮動小数点定数を
+単精度浮動小数点定数と
+して扱う。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">-cl-denorms-are-zero</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">単精度および倍精度非正規
+化数をどのように扱うかを制
+御するオプション。このオプ
+ションを指定すると、単精度
+非正規化数を0に丸めることが
+でき、倍精度浮動小数点数が
+サポートされている場合はこ
+ちらも0に丸めることができる。
+このオプションはパフォーマ
+ンスに関して求める要件をコ
+ンパイラに伝えることを意図
+しており、OpenCLコンパイラ
+はデバイスが単精度（または
+倍精度）非正規化数をサポート
+しているときに非正規化数を
+0に丸めないという選択が可能。
+
+―CL_DEVICE_SINGLE_
+FP_CONFIGにCL_FP_
+DENORMビットが立ってい
+ない場合、単精度浮動小数
+点数に関しては無視。
+
+このオプションは、
+デバイスが倍精度浮動小数
+点数をサポートしていない
+または倍精度浮動小数点数
+をサポートしているが倍精
+度非正規化数をサポートし
+ていない―CL_DEVICE_
+DOUBLE_FP_CONFIGに
+CL_FP_DENORMビットが
+立っていない場合、倍精度
+浮動小数点数に関しては
+無視する。
+
+このフラグは、スカラお
+よびベクトル単精度浮動
+小数点変数とこれら浮動
+小数点変数へのプログラム
+内での演算処理にのみ適用。
+イメージオブジェクトか
+らの読み込みやイメージ
+オブジェクトへの書き込
+みには適用されない。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">-cl-fp32-correctly-
+rounded-divide-sqrt</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">-cl-fp32-correctly-
+rounded-divide-sqrt
+ビルドオプションを使った
+clBuildProgramまたは
+clCompileProgramコマ
+ンドは、プログラムソース
+内で単精度浮動小数点で割
+り算（x/y and 1/x）や
+sqrtを正しく丸めること
+を指定することを可能と
+する。
+
+このビルドオプションは
+CL_FP_CORRECTLY_
+ROUNDED_DIVIDE_SQRTが
+デバイスのCL_DEVICE_
+SINGLE_FP_CONFIGに設
+定された場合に限り指定できる。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">最適化オプション</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">様々な種類の最適化を
+制御するオプション。
+最適化フラグを有効にす
+ると、コンパイラはコン
+パイル時間や場合によっ
+てはプログラムのデバッグ
+のしやすさと引き換えに、
+パフォーマンスおよび/
+またはコードサイズの改
+善を試みます。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">-cl-opt-disable</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">すべての最適化を無効
+にするオプション。既定
+では最適化は有効化され
+ている。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">-cl-mad-enable</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">a*b+cをmadに交換する。
+madは(a*b+c)を減少し
+た正確性で計算。例えば、
+OpenCLのいくつかは、
+cを加算するまえにa*b
+の結果を切り捨て（縮
+めて）る。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">-cl-no-signed-zeros</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">0の符号の有無を無視
+した浮動小数点演算の
+最適化をする。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">-cl-unsafe-
+math-optimizations</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">引数と結果が有効、
+IEEE 754規格を侵害、
+OpenCLの数値コンプライ
+アンス要件を侵害を前提
+とする浮動小数点演算の
+最適化を可能とする。
+
+このオプションは-cl-no
+-signed-zerosと-cl-
+mad-enableを含む。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">-cl-finite-
+math-only</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">引数と結果がNaNs
+または±∞でないという
+前提の浮動小数点演算
+の最適化をする。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">-cl-fast-
+relaxed-math</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">-cl-finite-math-only
+と-cl-unsafe-math-
+optimizationsを設定する。
+このオプションにより、プリプロセッ
+サマクロに
+`__FAST_RELAXED_MATH__`
+が定義される。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">警告の要求また
+は抑制をするオプション</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">警告はリスクのあ
+る問題をレポートする診断メッセージ。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">-w</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">警告メッセージを抑制。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">-Werror</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">全ての警告をエラーにする。</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">OpenCL Cバージョン
+の管理をするオプション</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">以下のオプションは
+コンパイラが許容するO
+penCL Cのバージョンの管理をする。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">-cl-std=</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">使用するOpenCL C言語
+のバージョンを決定。
+
+有効な値には以下のものがある。
+
+CL1.1
+CL1.2</pre></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " colspan="2" align="left" valign="top"><pre class="literallayout">カーネル引数情報の
+取得についてのオプション</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">-cl-kernel-
+arg-info</pre></td><td style="" align="left" valign="top"><pre class="literallayout">このオプションは
+コンパイラがカーネル引数
+についての情報を格納す
+ることを可能とする。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apbs25.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apb.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apbs27.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

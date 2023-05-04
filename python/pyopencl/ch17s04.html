@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>17.4. 組み込み関数</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch17.html" title="Chapter 17. OpenCL C言語プログラミング" /><link rel="prev" href="ch17s03.html" title="17.3. その他の関数" /><link rel="next" href="ch17s05.html" title="17.5. 整数関数" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch17s03.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch17s05.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_組み込み関数"></a>17.4. 組み込み関数</h2></div></div></div><p>OpenCL-C組込み関数はstdio.hやstdlib.h、math.hといった標準ライブラリをインクルードできないので、それらの代用という面もありますが、ベクトルや並列演算、FPU等のハードウェアに合わせた機能を提供します。</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="workItemChapter"></a>17.4.1. ワークアイテム関数</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：ワークアイテム・グループ関数」（<a class="xref" href="apbs38.html#workitem" title="Table B.102. 表：ワークアイテム・グループ関数">Table B.102, “表：ワークアイテム・グループ関数”</a>）を参照ください。</p></div><p>get_global_id関数はdimindexで指定した次元で固有のグローバル・ワークアイテムIDを返します。</p><p><strong>定義. </strong>
+</p><pre xmlns="" class="prettyprint">size_t get_global_id(uint dimindx)</pre><p>
+</p><p><strong>サンプル. </strong>
+</p><pre xmlns="" class="prettyprint">size_t global_id_0 = get_global_id(0);
+size_t global_id_1 = get_global_id(1);
+size_t global_id_2 = get_global_id(2);</pre><p>
+</p><p>get_local_id関数はdimindexで指定した次元で固有のローカル・ワークアイテムIDを返します。</p><pre xmlns="" class="prettyprint">size_t get_global_offset(uint dimindx)</pre><p>dimindexで指定した次元のオフセット（offset）を返します。clEnqueueNDRangeKernelのglobal_work_offset引数で指定したものが該当します。</p><pre xmlns="" class="prettyprint">size_t get_local_id(uint dimindx)</pre><p>dimindexで指定した次元で固有のローカル・ワークアイテム（work item）IDを返します。</p><pre xmlns="" class="prettyprint">size_t get_group_id(uint dimindx)</pre><p>dimindexで指定した次元のオフセット（offset）を返します。clEnqueueNDRangeKernelのglobal_work_offset引数で指定したものが該当します。</p><pre xmlns="" class="prettyprint">size_t get_global_size(uint dimindx)</pre><p>dimindexで指定した次元のローカル・ワークアイテム（work item）の数を返します。clEnqueueNDRangeKernelのlocal_work_size引数で指定したものが該当します。</p><pre xmlns="" class="prettyprint">size_t get_local_size(uint dimindx)</pre><p>dimindexで指定した次元のローカル・ワークアイテム（work item）の数を返します。clEnqueueNDRangeKernelのlocal_work_size引数で指定したものが該当します。</p><pre xmlns="" class="prettyprint">size_t get_num_groups(uint dimindx)</pre><p>dimindexで指定した次元のワークグループ（work group）の数を返します。clEnqueueNDRangeKernelのlocal_work_size引数で指定したものが該当します。</p><pre xmlns="" class="prettyprint">import numpy as np
+import pyopencl as cl
+
+devices = [cl.get_platforms()[0].get_devices(cl.device_type.GPU)[0]]
+
+ctx = cl.Context(devices)
+queue = cl.CommandQueue(ctx)
+mf = cl.mem_flags
+
+ary = np.arange(64).astype(np.uint32)
+ary_mem = cl.Buffer(ctx, mf.USE_HOST_PTR, hostbuf=ary)
+
+program = cl.Program(ctx, """
+    __kernel void ndrange_id(__global write_only uint *output) {
+
+       size_t global_id_0 = get_global_id(0); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO47-1"></a>(1)
+       size_t global_id_1 = get_global_id(1); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO47-2"></a>(2)
+       size_t global_id_2 = get_global_id(2); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO47-3"></a>(3)
+
+       size_t global_size_0 = get_global_size(0); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO47-4"></a>(4)
+       size_t global_size_1 = get_global_size(1); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO47-5"></a>(5)
+
+       size_t offset_0 = get_global_offset(0); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO47-6"></a>(6)
+       size_t offset_1 = get_global_offset(1); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO47-7"></a>(7)
+       size_t offset_2 = get_global_offset(2); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO47-8"></a>(8)
+
+       size_t local_id_0 = get_local_id(0); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO47-9"></a>(9)
+       size_t local_id_1 = get_local_id(1); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO47-10"></a>(10)
+       size_t local_id_2 = get_local_id(2); //<a xmlns="http://www.w3.org/1999/xhtml" id="CO47-11"></a>(11)
+
+       int index_0 = global_id_0 - offset_0; //<a xmlns="http://www.w3.org/1999/xhtml" id="CO47-12"></a>(12)
+       int index_1 = global_id_1 - offset_1; //<a xmlns="http://www.w3.org/1999/xhtml" id="CO47-13"></a>(13)
+       int index_2 = global_id_2 - offset_2; //<a xmlns="http://www.w3.org/1999/xhtml" id="CO47-14"></a>(14)
+
+       int index = index_2 * global_size_0 * global_size_1  + index_1 * global_size_0 + index_0;
+       float f = global_id_0 * 100000 + global_id_1 * 10000 + global_id_2 * 1000;
+       f += local_id_0 * 100 + local_id_1 * 10 + local_id_2 * 1;
+       output[index] = f; //<a xmlns="http://www.w3.org/1999/xhtml" id="CO47-15"></a>(15)
+    }
+    """).build()
+
+kernel = cl.Kernel(program, name="ndrange_id")
+
+output = np.zeros(64).astype(np.uint32)
+out_mem = cl.Buffer(ctx, cl.mem_flags.WRITE_ONLY | cl.mem_flags.USE_HOST_PTR, hostbuf=output)
+kernel.set_arg(0, out_mem)
+
+global_size = (4, 4, 4)
+local_size = (4, 4, 4)
+
+cl.enqueue_nd_range_kernel(queue, kernel, global_work_size=global_size, local_work_size=local_size)
+
+cl.enqueue_read_buffer(queue, mem=out_mem, hostbuf=output)
+
+queue.finish()
+
+print(output)</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO47-1">(1)</a> </p></td><td valign="top" align="left"><p>
+次元1のグローバルIDを取得
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO47-2">(2)</a> </p></td><td valign="top" align="left"><p>
+次元2のグローバルIDを取得
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO47-3">(3)</a> </p></td><td valign="top" align="left"><p>
+次元3のグローバルIDを取得
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO47-4">(4)</a> </p></td><td valign="top" align="left"><p>
+次元1のグローバルサイズ（ワークアイテム数）を取得
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO47-5">(5)</a> </p></td><td valign="top" align="left"><p>
+次元2のグローバルサイズ（ワークアイテム数）を取得
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO47-6">(6)</a> </p></td><td valign="top" align="left"><p>
+次元1のグローバルオフセットを取得
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO47-7">(7)</a> </p></td><td valign="top" align="left"><p>
+次元2のグローバルオフセットを取得
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO47-8">(8)</a> </p></td><td valign="top" align="left"><p>
+次元3のグローバルオフセットを取得
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO47-9">(9)</a> </p></td><td valign="top" align="left"><p>
+次元1のローカルIDを取得
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO47-10">(10)</a> </p></td><td valign="top" align="left"><p>
+次元2のローカルIDを取得
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO47-11">(11)</a> </p></td><td valign="top" align="left"><p>
+次元3のローカルIDを取得
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO47-12">(12)</a> </p></td><td valign="top" align="left"><p>
+グローバルIDとオフセットを調整
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO47-13">(13)</a> </p></td><td valign="top" align="left"><p>
+グローバルIDとオフセットを調整
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO47-14">(14)</a> </p></td><td valign="top" align="left"><p>
+グローバルIDとオフセットを調整
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO47-15">(15)</a> </p></td><td valign="top" align="left"><p>
+出力変数「output」に代入
+</p></td></tr></table></div><p>ホストプログラム側の設定は、64個のワークアイテムを3次元に分割するものとします。</p><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">[     0 100100 200200 300300  10010 110110 210210 310310  20020 120120
+ 220220 320320  30030 130130 230230 330330   1001 101101 201201 301301
+  11011 111111 211211 311311  21021 121121 221221 321321  31031 131131
+ 231231 331331   2002 102102 202202 302302  12012 112112 212212 312312
+  22022 122122 222222 322322  32032 132132 232232 332332   3003 103103
+ 203203 303303  13013 113113 213213 313313  23023 123123 223223 323323
+  33033 133133 233233 333333]</pre><p>
+</p><p>出力を見て頂くと、グローバル空間が4x4x4、ローカル空間が2x2x2ということが確認できます。</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_数学関数"></a>17.4.2. 数学関数</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳細は「表：数学関数」（<a class="xref" href="apbs38.html#maths" title="Table B.103. 表：数学関数">Table B.103, “表：数学関数”</a>）を参照ください。</p></div><p>数学関数は組込み版のmath.hのようなものです。ベクトル型に対応しているので、math.hのアップグレード版と考えることもできます。math.hからの円滑な移行を可能するために設計された数学関数には、信号処理、統計、機械学習で頻繁に使うガンマ関数、三角関数、指数関数が提供されています。</p><p><strong>関数定義. </strong>
+</p><pre xmlns="" class="prettyprint">gentype cos (gentype)￼
+gentype sin (gentype)
+gentype tan (gentype)
+gentype sincos (
+    gentype x,
+    __global gentype *cosval)</pre><p>
+</p><p><strong>サンプル. </strong>
+</p><pre xmlns="" class="prettyprint">float4 data = (float4)(M_PI_F,M_PI_2_F,M_PI_4_F,0.0f);
+printf("data: %#v4f\n", data);
+float4 res_cos = cos(data);
+float4 res_sin = sin(data);
+float4 res_sin_cos = res_sin/res_cos;
+float4 res_tan = tan(data);
+
+printf("cos(vecotr data) = %#v4f\n",res_cos);
+printf("sin(vector data) = %#v4f\n",res_sin);
+printf("sin/cos = %#v4f\n",res_sin_cos);
+printf("tan = %#v4f\n", res_tan);
+printf("cos(pi) = %f\n", cos(M_PI_F));
+printf("cos(pi/2) = %f\n", cos(M_PI_2_F));
+printf("cos(pi/4) = %f\n", cos(M_PI_4_F));
+
+float angle = 45.0f;
+float radians = angle * M_PI_F / 180.0f;
+printf("45 degrees to radians, then cosine(r) = %f\n", cos(radians));
+printf("pi/4 radians to degree %f\n", degrees(radians));</pre><p>
+</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>M_PI_F等の定数については「表：浮動小数点マクロ」（<a class="xref" href="apbs38.html#flt_macro" title="表：浮動小数点マクロ">表：浮動小数点マクロ</a>）と「表：浮動小数点との互換性」（<a class="xref" href="apbs38.html#flt_interop" title="Table B.106. 表：浮動小数点との互換性">Table B.106, “表：浮動小数点との互換性”</a>）と「表：浮動小数点定数」（<a class="xref" href="apbs38.html#flt_constant" title="Table B.107. 表：浮動小数点定数">Table B.107, “表：浮動小数点定数”</a>）を参照ください。</p></div><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">data: 3.141593,1.570796,0.785398,0.000000
+cos(vecotr data) = -1.000000,-0.000000,0.707107,1.000000
+sin(vector data) = -0.000000,1.000000,0.707107,0.000000
+sin/cos = 0.000000,-22877334.000000,1.000000,0.000000
+tan = 0.000000,-22877334.000000,1.000000,0.000000
+cos(pi) = -1.000000
+cos(pi/2) = -0.000000
+cos(pi/4) = 0.707107
+45 degrees to radians, then cosine(r) = 0.707107
+pi/4 radians to degree 45.000000</pre><p>
+</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>gentypeは「float, float2, float3, float4, float8, float16, double, double2, double3, double4, double8 or double16」のいずれかを指す。</p></div><p>双曲線余弦（hyperbolic cosine）、双曲線正弦(hyperbolic sine)、双曲線正接（Hyperbolic arc tangent)を計算するには以下の関数を使います。</p><p><strong>関数定義. </strong>
+</p><pre xmlns="" class="prettyprint">gentype cosh (gentype)
+gentype sinh (gentype)
+gentype tanh (gentype)</pre><p>
+</p><p><strong>サンプル. </strong>
+</p><pre xmlns="" class="prettyprint">float res_sinh = sinh(2.0f);
+float res_cosh = cosh(2.0f);
+float res_tanh = tanh(2.0f);
+
+printf("sinh=%f, cosh=%f, tanh=%f\n", res_sinh, res_cosh, res_tanh);</pre><p>
+</p><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">sinh=3.626860, cosh=3.762196, tanh=0.964028</pre><p>
+</p><p>逆双曲線余弦(Inverse hyperbolic cosine)、逆双曲線正弦(Inverse hyperbolic sine)、逆双曲線正接（Inverse Hyperbolic arc tangent)を計算するには以下の関数を使います。</p><p><strong>関数定義. </strong>
+</p><pre xmlns="" class="prettyprint">gentype acosh (gentype)
+gentype asin (gentype)
+gentype atanh (gentype)</pre><p>
+</p><p><strong>サンプル. </strong>
+</p><pre xmlns="" class="prettyprint">float res_asinh = asinh(3.626860f);
+float res_acosh = acosh(3.762196f);
+float res_atanh = atanh(0.964028f);
+
+printf("asinh=%f, acosh=%f, atanh=%f\n", res_asinh, res_acosh, res_atanh);</pre><p>
+</p><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">sinh=3.626860, cosh=3.762196, tanh=0.964028</pre><p>
+</p><p>xのy乗を計算するには、pow関数や、pown関数を使います。pownのy引数は整数型です。</p><pre xmlns="" class="prettyprint">gentype pow(gentype x, gentype y)
+gentype pown(gentype x, intn y)</pre><p>数値の丸めをする関数も</p><pre xmlns="" class="prettyprint">gentype rint (gentype)</pre><p>最近接偶数への丸め (round to the nearest even) モードで整数値への丸めを行います。</p><pre xmlns="" class="prettyprint">gentype ceil (gentype)</pre><p>正の無限大への丸めモードで天井値を計算。</p><pre xmlns="" class="prettyprint">gentype round (gentype x)</pre><p>丸め方向と関係なくxに最も近い整数値への丸め(中間値は０より遠い方向)を行います。</p><pre xmlns="" class="prettyprint">gentype trunc (gentype)</pre><p>0への丸め (rounding toward zero)モードで整数への丸めを計算します。</p><p><strong>サンプル. </strong>
+</p><pre xmlns="" class="prettyprint">float2 tmp = (float2)(1.234f, 2.654f);
+
+float2 rint_out = rint(tmp);
+printf("rint: %#v2f\n", rint_out);
+float2 round_out = round(tmp);
+printf("round: %#v2f\n", round_out);
+float2 trunc_out = trunc(tmp);
+printf("trunc: %#v2f\n", trunc_out);
+float2 floor_out = floor(tmp);
+printf("floor: %#v2f\n", floor_out);
+float2 ceil_out = ceil(tmp);
+printf("ceil: %#v2f\n", ceil_out);</pre><p>
+</p><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">rint: 1.000000,3.000000
+round: 1.000000,3.000000
+trunc: 1.000000,2.000000
+floor: 1.000000,2.000000
+ceil: 2.000000,3.000000</pre><p>
+</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_half型_native型数学関数"></a>17.4.3. half型、native型数学関数</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳細は「表：half型、native型の数学関数」（&lt;&lt;half_maths&gt;）を参照ください。</p></div><p>half型とnative型に適合した数学関数です。half_func_name、native_func_nameというように、*half_*か*native_*が関数の先頭文字となります。</p><p>half_が接頭にある場合は半精度浮動小数点を使い計算をします。</p><pre xmlns="" class="prettyprint">gentype half_cos (gentype x)</pre><p>この関数は余弦（cosine）の計算をし、引数xの範囲は`-216 … +216`とします。</p><p>半精度浮動小数点関数を使うのは、深層学習が流行したということもありますが、ハードウェアがニーズに対応した側面もあります。半精度浮動小数点は一般に単精度や倍精度の演算よりも高速ですが、ハードが対応しない場合はパフォーマンスが向上するとは限りません。</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>gentypeは「float, float2, float3, float4, float8, float16」のいずれかを指します。</p></div><p>nativeが窃盗にある関数はハードウェアの特殊演算ユニットに１対１または１対多のマッピングを行ないます。三角関数、指数関数、対数やべき乗の計算で高速な演算を行なうことができます。精度についてはOpenCLの実装によります。</p><pre xmlns="" class="prettyprint">gentype native_cos (gentype x)</pre><p>余弦（cosine）の計算をしますが、引数xの範囲は実装システムに依存します。</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_浮動小数点定数"></a>17.4.4. 浮動小数点定数</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_浮動小数点境界値"></a>浮動小数点境界値</h4></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：浮動小数点境界値」（<a class="xref" href="apbs38.html#flt_edge" title="Table B.105. 表：浮動小数点境界値">Table B.105, “表：浮動小数点境界値”</a>）を参照ください。</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_浮動小数点数マクロ"></a>浮動小数点数マクロ</h4></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：浮動小数点マクロ」（<a class="xref" href="apbs38.html#flt_macro" title="表：浮動小数点マクロ">表：浮動小数点マクロ</a>）と「表：浮動小数点との互換性」（<a class="xref" href="apbs38.html#flt_interop" title="Table B.106. 表：浮動小数点との互換性">Table B.106, “表：浮動小数点との互換性”</a>）と「表：浮動小数点定数」（<a class="xref" href="apbs38.html#flt_constant" title="Table B.107. 表：浮動小数点定数">Table B.107, “表：浮動小数点定数”</a>）を参照ください。</p></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_倍精度"></a>17.4.5. 倍精度</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：倍精度型マクロ」（<a class="xref" href="apbs38.html#dbl_macro" title="表：倍精度型マクロ">表：倍精度型マクロ</a>）と「表：倍精度型の互換性」（<a class="xref" href="apbs38.html#dbl_interop" title="Table B.108. 表：倍精度型の互換性">Table B.108, “表：倍精度型の互換性”</a>）と「表：倍精度定数」（<a class="xref" href="apbs38.html#dbl_constant" title="Table B.109. 表：倍精度定数">Table B.109, “表：倍精度定数”</a>）を参照ください。</p></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch17s03.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch17.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch17s05.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

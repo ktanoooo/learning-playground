@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>16.3. バッファーの読み込み・書き込み・コピー</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="ch16.html" title="Chapter 16. OpenCLランタイム" /><link rel="prev" href="ch16s02.html" title="16.2. バッファオブジェクト" /><link rel="next" href="ch16s04.html" title="16.4. バッファオブジェクトのマップ" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ch16s02.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch16s04.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_バッファーの読み込み_書き込み_コピー"></a>16.3. バッファーの読み込み・書き込み・コピー</h2></div></div></div><p>ホストプログラムではメモリオブジェクトを継承したバッファオブジェクトの生成を行なうBufferを前の項目で解説しました。</p><p>バッファオブジェクトはカーネルに処理をさせたいデータを渡したり、カーネルから処理済みのデータを受け取ることを可能とします。</p><p>つまり以下の２点のような処理が必要となります。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+バッファオブジェクトからホストメモリへの読み込み
+</li><li class="listitem">
+ホストメモリからバッファオブジェクトへの書き込みを行う
+</li></ul></div><p>OpenCLではenqueue_read_buffer/enqueue_write_bufferを使いホストメモリ-バッファオブジェクト間のデータ読み込み、書き込みを行います。</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_enqueue_read_bufferとenqueue_write_buffer"></a>16.3.1. enqueue_read_bufferとenqueue_write_buffer</h3></div></div></div><p>まずバッファオブジェクトからの読み込みから見てみましょう。</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：clEnqueueReadBufferとclEnqueueWriteBuffer」（<a class="xref" href="apbs13.html#clEnqueueReadBuffer" title="Table B.31. 表：clEnqueueReadBufferとclEnqueueWriteBuffer">Table B.31, “表：clEnqueueReadBufferとclEnqueueWriteBuffer”</a>）を参照ください。</p></div><pre xmlns="" class="prettyprint">pyopencl.enqueue_read_buffer(
+    queue, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO26-1"></a>(1)
+    mem, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO26-2"></a>(2)
+    hostbuf, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO26-3"></a>(3)
+    device_offset=0, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO26-4"></a>(4)
+    wait_for=None, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO26-5"></a>(5)
+    is_blocking=True) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO26-6"></a>(6)</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO26-1">(1)</a> </p></td><td valign="top" align="left"><p>
+コマンドキュー
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO26-2">(2)</a> </p></td><td valign="top" align="left"><p>
+読みとるバッファオブジェクト
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO26-3">(3)</a> </p></td><td valign="top" align="left"><p>
+読み取ったデータをコピーする先のホストポインタ
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO26-4">(4)</a> </p></td><td valign="top" align="left"><p>
+オフセット
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO26-5">(5)</a> </p></td><td valign="top" align="left"><p>
+待機イベントリスト
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO26-6">(6)</a> </p></td><td valign="top" align="left"><p>
+読みとりのブロックフラグ
+</p></td></tr></table></div><p>このうち❹ はオフセットが必要な場合、5はコマンドの処理順序を整理させる場合でなければNoneを設定します。</p><p>❷は、pyopencl.Bufferで生成したメモリオブジェクトを指定して、読み取った結果をコピーするホストメモリの領域を指定するポインタ（メモリオブジェクトで割当てたデータ型と同型を使う）を使います。</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_実装例_4"></a>実装例</h4></div></div></div><p>この項目で説明するenqueue_write_bufferとenqueue_read_bufferの実装例では引数のエントリは、hostbufを除けば同じとします。</p><pre xmlns="" class="prettyprint">cl.enqueue_write_buffer(
+    queue=queue,
+    mem=output_mem,
+    hostbuf=data) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO27-1"></a>(1)</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO27-1">(1)</a> </p></td><td valign="top" align="left"><p>
+dataは書き込むデータのホストメモリ領域を指すポインタです。
+</p></td></tr></table></div><pre xmlns="" class="prettyprint">cl.enqueue_read_buffer(
+    queue=queue,
+    mem=output_mem,
+    hostbuf=output) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO28-1"></a>(1)</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO28-1">(1)</a> </p></td><td valign="top" align="left"><p>
+outputは読み込んだデータを保存するメモリ領域を指すポインタです。
+</p></td></tr></table></div><p>それでは空のバッファに対して書き込みをしてそれを読み込むサンプルソースコードを見てみましょう。</p><p>以下の例では、配列要素にnumpy.rangeで設定した領域のデータにenqueue_write_bufferを用いてバッファに書き込みます。その上で、enqueue_read_bufferを使い書き込んだデータを読み取ります。</p><pre xmlns="" class="prettyprint">import pyopencl as cl
+import numpy as np
+
+ctx = cl.create_some_context()
+devices = ctx.get_info(cl.context_info.DEVICES)
+queue = cl.CommandQueue(ctx)
+
+input = np.arange(16).astype(np.int32)
+input[0:16:4] = 100
+
+cl.enqueue_write_buffer(
+    queue=queue,
+    mem=output_mem,
+    hostbuf=input)
+
+output_map = cl.enqueue_map_buffer(
+    queue=queue,
+    buf=output_mem,
+    offset=0,
+    flags=cl.mem_flags.HOST_WRITE_ONLY,
+    shape=(16,),
+    dtype=np.int32)
+
+print(output_map[0])</pre><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">[100   1   2   3 100   5   6   7 100   9  10  11 100  13  14  15]</pre><p>
+</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_enqueue_copy"></a>16.3.2. enqueue_copy</h3></div></div></div><p>enqueue_copy関数はバッファオブジェクトで識別されたsrc_bufferからdst_bufferへの複製を行うコマンドを挿入します。</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：clEnqueueCopyBuffer」（<a class="xref" href="apbs13.html#clEnqueueCopyBuffer" title="Table B.33. 表：clEnqueueCopyBuffer">Table B.33, “表：clEnqueueCopyBuffer”</a>）を参照ください。</p></div><pre xmlns="" class="prettyprint">pyopencl.enqueue_copy(
+    queue, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO29-1"></a>(1)
+    src, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO29-2"></a>(2)
+    dst, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO29-3"></a>(3)
+    byte_count=-1, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO29-4"></a>(4)
+    src_offset=0, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO29-5"></a>(5)
+    dst_offset=0, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO29-6"></a>(6)
+    wait_for=None) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO29-7"></a>(7)</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO29-1">(1)</a> </p></td><td valign="top" align="left"><p>
+複製コマンドを挿入するコマンドキューを指定。command_queue、src_buffer、dst_buffer と関連付けられたOpenCLコンテキストは同じとなる必要がある。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO29-2">(2)</a> </p></td><td valign="top" align="left"><p>
+複製元のバッファオブジェクト。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO29-3">(3)</a> </p></td><td valign="top" align="left"><p>
+複製先のバッファオブジェクト。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO29-4">(4)</a> </p></td><td valign="top" align="left"><p>
+複製するデータのサイズをバイトで指定。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO29-5">(5)</a> </p></td><td valign="top" align="left"><p>
+src_bufferから複製を行う際に、読み込み開始位置をどれだけずらすかを指定。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO29-6">(6)</a> </p></td><td valign="top" align="left"><p>
+dst_bufferへ複製を行う際に、書き込み開始位置をどれだけずらすかを指定。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO29-7">(7)</a> </p></td><td valign="top" align="left"><p>
+このコマンドが実行される前に完了していなければならないイベントを指定。
+</p></td></tr></table></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_実装例_5"></a>実装例</h4></div></div></div><p>以下の実装例ではnumpy.arangeに上書きしたinput配列をinput_memバッファとします。そしてinput_memを、データが空のoutput_memバッファにコピーします。</p><pre xmlns="" class="prettyprint">import pyopencl as cl
+import numpy as np
+
+ctx = cl.create_some_context()
+
+devices = ctx.get_info(cl.context_info.DEVICES)
+
+input = np.arange(16).astype(np.int32)
+input[0:16:2] = 0
+
+mf = cl.mem_flags
+
+input_mem = cl.Buffer(
+    ctx,
+    mf.USE_HOST_PTR,
+    hostbuf=input)
+
+input_check = input_mem.get_host_array(
+    shape=(16,),
+    dtype=np.int32)
+print(input_check)
+
+output_mem = cl.Buffer(
+    ctx,
+    mf.ALLOC_HOST_PTR,
+    size=input.nbytes)
+
+queue = cl.CommandQueue(ctx)
+
+cl.enqueue_copy(
+    queue=queue,
+    src=input_mem,
+    dest=output_mem)
+
+output_check = np.arange(16).astype(np.int32)
+
+cl.enqueue_read_buffer(
+    queue=queue,
+    mem=output_mem,
+    hostbuf=output_check)
+
+print(output_check)</pre><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">[ 0  1  0  3  0  5  0  7  0  9  0 11  0 13  0 15]
+[ 0  1  0  3  0  5  0  7  0  9  0 11  0 13  0 15]</pre><p>
+</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_clenqueuefillbuffer"></a>16.3.3. clEnqueueFillBuffer</h3></div></div></div><p>clEnqueueFillBuffer関数は指定したパターンサイズのパターンで、バッファオブジェクトをフィル（埋める）するコマンドを挿入します。</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>詳しくは「表：clEnqueueFillBuffer」（<a class="xref" href="apbs13.html#clEnqueueFillBuffer" title="Table B.35. 表：clEnqueueFillBuffer">Table B.35, “表：clEnqueueFillBuffer”</a>）を参照ください。</p></div><pre xmlns="" class="prettyprint">pyopencl.enqueue_fill_buffer(
+    queue, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO30-1"></a>(1)
+    mem, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO30-2"></a>(2)
+    pattern, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO30-3"></a>(3)
+    offset, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO30-4"></a>(4)
+    size, #<a xmlns="http://www.w3.org/1999/xhtml" id="CO30-5"></a>(5)
+    wait_for=None) #<a xmlns="http://www.w3.org/1999/xhtml" id="CO30-6"></a>(6)</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO30-1">(1)</a> </p></td><td valign="top" align="left"><p>
+フィルコマンドが挿入されるコマンドキューを指定。コマンドキューとバッファに関連付けられたOpenCLコンテキストは同じとなる必要がある。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO30-2">(2)</a> </p></td><td valign="top" align="left"><p>
+有効なバッファオブジェクトを指定。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO30-3">(3)</a> </p></td><td valign="top" align="left"><p>
+データパターンを指す値。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO30-4">(4)</a> </p></td><td valign="top" align="left"><p>
+フィルする領域のオフセット。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO30-5">(5)</a> </p></td><td valign="top" align="left"><p>
+バッファ内でフィルされる領域の位置をバイトで表した値を指定。
+</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO30-6">(6)</a> </p></td><td valign="top" align="left"><p>
+このコマンドが実行される前に完了していなければならないイベントを指定。
+</p></td></tr></table></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_実装例_6"></a>実装例</h4></div></div></div><p>以下の実装例では、input_memバッファオブジェクトに数値1からなるパターンを書き込みます。</p><pre xmlns="" class="prettyprint">import pyopencl as cl
+import numpy as np
+
+ctx = cl.create_some_context()
+devices = ctx.get_info(cl.context_info.DEVICES)
+queue = cl.CommandQueue(ctx)
+
+input = np.arange(16).astype(np.int32)
+
+mf = cl.mem_flags
+
+input_mem = cl.Buffer(
+    ctx,
+    mf.ALLOC_HOST_PTR,
+    size=input.nbytes)
+
+cl.enqueue_fill_buffer(queue, mem=input_mem, pattern=np.int32(1), offset=0, size=input.nbytes)
+
+output = input.copy()
+
+cl.enqueue_read_buffer(
+    queue=queue,
+    mem=input_mem,
+    hostbuf=output)
+
+print(output)</pre><p><strong>出力. </strong>
+</p><pre xmlns="" class="prettyprint">[1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1]</pre><p>
+</p></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch16s02.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ch16.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ch16s04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>

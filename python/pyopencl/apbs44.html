@@ -1,0 +1,637 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>B.44. OpenCL-Cイメージ処理関数</title><link rel="stylesheet" type="text/css" href="index.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.79.1" /><link rel="home" href="index.html" title="Python OpenCL入門" /><link rel="up" href="apb.html" title="Appendix B. OpenCL 1.2 API Reference" /><link rel="prev" href="apbs43.html" title="B.43. ベクトルデータ読み出し・変換関数" /><link rel="next" href="apbs45.html" title="B.45. サンプラー無し読み込み" /><meta xmlns="" name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" /><script xmlns="" type="text/javascript" src="prettify/prettify.js"></script><link xmlns="" rel="stylesheet" type="text/css" href="prettify/skins/sons-of-obsidian.css" /><script xmlns="">
+    window.addEventListener("load", function() {
+      PR.prettyPrint();
+	  });	
+	</script><script xmlns="" type="text/javascript" src="script/head.js"></script></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="apbs43.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apbs45.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_opencl_cイメージ処理関数"></a>B.44. OpenCL-Cイメージ処理関数</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_サンプラー_2"></a>B.44.1. サンプラー</h3></div></div></div><div class="table"><a id="sampler_state"></a><p class="title"><strong>Table B.124. 表：サンプラの状態</strong></p><div class="table-contents"><table class="table" summary="表：サンプラの状態" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><thead><tr><th style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top">Samplerの状態（state）</th><th style="border-bottom: 1px solid #527bbd; " align="left" valign="top">詳細
+
+￼</th></tr></thead><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">座標&lt;normalized
+coords&gt;
+￼</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">x,y,zの座標が正規化
+されたか、非正規化され
+た値かを指定します。この
+状態はリテラル値で以下の
+２つのenum値のどちらか
+になります。
+
+CLK_NORMALIZED_
+COORDS_TRUE
+CLK_NORMALIZED_
+COORDS_FALSE
+
+read_image
+{f|i|ui} を複数回
+呼び出すsamplerでは、
+&lt;normalized coords&gt;
+に同じ値をいれる必要が
+あります。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">アドレス&lt;addressing
+mode&gt;</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">イメージのアドレスモード
+を指定します。例えば範囲
+外のイメージ座標の処理方
+法です。この状態はリテラ
+ル値で以下の５つのenum値
+のどちらかになります。
+
+CLK_ADDRESS_
+MIRRORED_REPEAT
+
+CLK_ADDRESS_
+REPEAT
+
+CLK_ADDRESS_
+CLAMP_TO_EDGE
+
+CLK_ADDRESS_
+CLAMP
+
+CLK_ADDRESS_
+NONE
+
+1次元、２次元のイメージ
+アレイでは、アドレスモード
+はxまたは(x,y)座標に
+適用されます。アレイの添字
+を指定する場合は常にCLK_
+ADDRESS_CLAMP_TO_EDGE
+モードを使います。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">フィルター&lt;filter
+mode&gt;￼</pre></td><td style="" align="left" valign="top"><pre class="literallayout">フィルターモードを指
+定します。この状態はリ
+テラル値で以下の2つの
+enum値のどちらかになります。
+
+CLK_FILTER_
+NEAREST
+
+CLK_FILTER_
+LINEAR</pre></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_イメージ読み込み_書き込み関数_2"></a>B.44.2. イメージ読み込み・書き込み関数</h3></div></div></div><div class="table"><a id="image_read_write"></a><p class="title"><strong>Table B.125. 表：イメージ読み込み・書き込み関数</strong></p><div class="table-contents"><table class="table" summary="表：イメージ読み込み・書き込み関数" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="100%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><thead><tr><th style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top">関数￼</th><th style="border-bottom: 1px solid #527bbd; " align="left" valign="top">詳細</th></tr></thead><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">float4 read_imagef (image2d_t image,
+    sampler_t sampler,
+int2 coord)
+float4 read_imagef (image2d_t image,
+    sampler_t sampler,
+float2 coord)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">座標(coord.x, coord.y)
+を使い２次元イメージオブジェ
+クトの要素ルックアップをします。
+
+image_channel_data_
+typeがCL_UNORM_INT8
+かCL_UNORM_INT16のい
+ずれかに指定されて生成
+されたイメージオブジェク
+トにおいて、[0.0 ... 1.0]
+の範囲の浮動小数点の値
+を返します。
+
+image_channel_data_
+typeがCL_SNORM_INT8か
+CL_SNORM_INT16のいずれ
+かに指定されて生成された
+イメージオブジェクトにお
+いて、[-1.0 ... 1.0]の
+範囲の浮動小数点の値を返
+します。
+
+image_channel_data_
+typeがCL_HALF_FLOATか
+CL_FLOATのいずれかに指定
+されて生成されたイメージ
+オブジェクトにおいて、浮動
+小数点の値を返します。
+
+整数の座標を扱う呼び出し
+では、フィルターモードが
+CLK_FILTER_NEAREST、
+座標モードは
+CLK_NORMALIZED_
+COORDS_FALSE、
+アドレスモードは
+CLK_ADDRESS_
+CLAMP_TO_EDGE,
+CLK_ADDRESS_CLAMP、
+CLK_ADDRESS_NONEの
+いずれかに指定している
+必要があります。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">int4 read_imagei (
+    image2d_t image,
+    sampler_t sampler,
+    int2 coord)
+int4 read_imagei (
+    image2d_t image,
+    sampler_t sampler,
+    float2 coord)
+uint4 read_imageui (
+    image2d_t image,
+    sampler_t sampler,
+    int2 coord)
+uint4 read_imageui (
+    image2d_t image,
+    sampler_t sampler,
+    float2 coord)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">座標(coord.x, coord.y)
+を使い２次元イメージオブジェ
+クトの要素ルックアップをします。
+
+read_imageiは正規化した
+符号付き、read_imageui
+は符号無しの整数値を返し
+ます。各チャンネルは32ビッ
+ト整数に保存されます。
+
+read_imageiはimage_
+channel_data_typeが
+
+CL_SIGNED_INT8
+CL_SIGNED_INT16
+CL_SIGNED_INT32
+
+のいずれかに指定されたイメ
+ージオブジェクトにたいして
+使うことができます。
+
+read_imageuiはimage_
+channel_data_typeが
+
+CL_UNSIGNED_INT8
+CL_UNSIGNED_INT16
+CL_UNSIGNED_INT32
+
+のいずれかに指定されたイメ
+ージオブジェクトにたいして
+使うことができます。
+
+read_image{i|ui}のコー
+ルはCLK_FILTER_NEAREST
+のみをサポートします。
+
+整数の座標を扱うread_image
+{i|ui}の呼び出しでは、
+座標モードは
+CLK_NORMALIZED_
+COORDS_FALSE、
+アドレスモードは
+CLK_ADDRESS_CLAMP_
+TO_EDGE,
+CLK_ADDRESS_CLAMP、
+CLK_ADDRESS_NONEの
+いずれかに指定している
+必要があります。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">float4 read_imagef (
+    image3d_t image,
+    sampler_t sampler,
+    int4 coord )
+float4 read_imagef (
+    image3d_t image,
+    sampler_t sampler,
+    float4 coord)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">座標(coord.x, coord.y,
+coord.z)を使い3次元イメージ
+オブジェクトの要素ルックアッ
+プをします。coord.wは使わ
+れません。
+
+image_channel_data_
+typeがCL_UNORM_INT8か
+CL_UNORM_INT16のいずれ
+かに指定されて生成された
+イメージオブジェクトにお
+いて、[0.0 ... 1.0]の
+範囲の浮動小数点の値を返
+します。
+
+image_channel_data_
+typeがCL_SNORM_INT8か
+CL_SNORM_INT16のいずれ
+かに指定されて生成された
+イメージオブジェクトにおい
+て、[-1.0 ... 1.0]の
+範囲の浮動小数点の値を返
+します。
+
+image_channel_data_
+typeがCL_HALF_FLOATか
+CL_FLOATのいずれかに指
+定されて生成されたイメー
+ジオブジェクトにおいて、
+浮動小数点の値を返します。
+
+整数の座標を扱う呼び出し
+では、フィルターモードが
+CLK_FILTER_NEAREST、
+座標モードは
+CLK_NORMALIZED_
+COORDS_FALSE、
+アドレスモードは
+CLK_ADDRESS_CLAMP_
+TO_EDGE,
+CLK_ADDRESS_CLAMP、
+CLK_ADDRESS_NONE
+
+のいずれかに指定してい
+る必要があります。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">int4 read_imagei (
+    image3d_t image,
+    sampler_t sampler,
+    int4 coord)
+int4 read_imagei (
+    image3d_t image,
+    sampler_t sampler,
+    float4 coord)
+uint4 read_imageui (
+    image3d_t image,
+    sampler_t sampler,
+    int4 coord)
+uint4 read_imageui (
+    image3d_t image,
+    sampler_t sampler,
+    float4 coord)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">座標(coord.x, coord.y,
+coord.z)を使い3次元イメー
+ジオブジェクトの要素ルック
+アップをします。
+
+read_imageiは正規化した
+符号付き、read_imageuiは
+符号無しの整数値を返します。
+各チャンネルは32ビット整数
+に保存されます。
+
+read_imageiはimage_
+channel_data_typeが
+
+CL_SIGNED_INT8
+CL_SIGNED_INT16
+CL_SIGNED_INT32
+
+のいずれかに指定された
+イメージオブジェクトにた
+いして使うことができます。
+
+read_imageuiはimage_
+channel_data_typeが
+
+CL_UNSIGNED_INT8
+CL_UNSIGNED_INT16
+CL_UNSIGNED_INT32
+
+のいずれかに指定されたイメ
+ージオブジェクトにたいして
+使うことができます。
+
+read_image{i|ui}の
+コールは
+CLK_FILTER_NEAREST
+のみをサポートします。
+
+整数の座標を扱うread_image
+{i|ui}の呼び出しでは、
+座標モードは
+CLK_NORMALIZED_
+COORDS_FALSE、
+アドレスモードは
+CLK_ADDRESS_CLAMP_
+TO_EDGE,
+CLK_ADDRESS_CLAMP、
+CLK_ADDRESS_NONE
+
+のいずれかに指定して
+いる必要があります。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">float4 read_imagef (
+    image2d_array_t image,
+    sampler_t sampler,
+    int4 coord)
+float4 read_imagef (
+    image2d_array_t image,
+    sampler_t sampler,
+    float4 coord)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">座標coord.xyを使い、
+imageが指定する２次元
+イメージアレイのcoord.zで
+特定される２次元イメージの
+要素ルックアップをします。
+
+image_channel_data_
+typeがCL_UNORM_INT8か
+CL_UNORM_INT16のいずれか
+に指定されて生成されたイ
+メージオブジェクトにおいて、
+[0.0 ... 1.0]の範囲の浮
+動小数点の値を返します。
+
+image_channel_data_
+typeがCL_SNORM_INT8か
+CL_SNORM_INT16のいずれ
+かに指定されて生成された
+イメージオブジェクトにお
+いて、[-1.0 ... 1.0]の
+範囲の浮動小数点の値を返
+します。
+
+image_channel_data_
+typeがCL_HALF_FLOAT
+かCL_FLOATのいずれかに
+指定されて生成されたイ
+メージオブジェクトにおい
+て、浮動小数点の値を返
+します。
+
+整数の座標を扱う呼び出し
+では、フィルターモードが
+CLK_FILTER_NEAREST、
+座標モードは
+CLK_NORMALIZED_
+COORDS_FALSE、
+アドレスモードは
+CLK_ADDRESS_
+CLAMP_TO_EDGE,
+CLK_ADDRESS_CLAMP、
+CLK_ADDRESS_NONE
+
+のいずれかに指定している必要があります。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">int4 read_imagei (
+    image2d_array_t image,
+    sampler_t sampler,
+    int4 coord)
+int4 read_imagei (
+    image2d_array_t image,
+    sampler_t sampler,
+    float4 coord)
+uint4 read_imageui (
+    image2d_array_t image,
+    sampler_t sampler,
+    int4 coord)
+uint4 read_imageui (
+    image2d_array_t image,
+    sampler_t sampler,
+    float4 coord)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">座標coord.xyを使い、
+imageが指定する２次元
+イメージアレイのcoord.z
+で特定される２次元イメージ
+の要素ルックアップをします。
+
+read_imageiは正規化
+した符号付き、read_imageui
+は符号無しの整数値を返します。
+各チャンネルは32ビット整数
+に保存されます。
+
+read_imageiはimage_
+channel_data_typeが
+
+CL_SIGNED_INT8
+CL_SIGNED_INT16
+CL_SIGNED_INT32
+
+のいずれかに指定された
+イメージオブジェクトにた
+いして使うことができます。
+
+read_imageuiはimage_
+channel_data_typeが
+
+CL_UNSIGNED_INT8
+CL_UNSIGNED_INT16
+CL_UNSIGNED_INT32
+
+のいずれかに指定された
+イメージオブジェクトにた
+いして使うことができます。
+
+read_image{i|ui}の
+コールはCLK_FILTER_
+NEARESTのみをサポートします。
+
+整数の座標を扱う
+read_image{i|ui}の
+呼び出しでは、座標モードは
+CLK_NORMALIZED_
+COORDS_FALSE、
+アドレスモードは
+CLK_ADDRESS_CLAMP_
+TO_EDGE,
+CLK_ADDRESS_CLAMP、
+CLK_ADDRESS_NONE
+
+のいずれかに指定して
+いる必要があります。
+￼</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">float4 read_imagef (
+    image1d_t image,
+    sampler_t sampler,
+    int coord)
+float4 read_imagef (
+    image1d_t image,
+    sampler_t sampler,
+    float coord)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">座標coordを使い1次元
+イメージオブジェクトの要
+素ルックアップをします。
+
+image_channel_data_
+typeがCL_UNORM_INT8か
+CL_UNORM_INT16のいずれ
+かに指定されて生成された
+イメージオブジェクトにお
+いて、[0.0 ... 1.0]の
+範囲の浮動小数点の値を返
+します。
+
+image_channel_data_
+typeがCL_SNORM_INT8か
+CL_SNORM_INT16のいずれ
+かに指定されて生成された
+イメージオブジェクトにお
+いて、[-1.0 ... 1.0]の
+範囲の浮動小数点の値を
+返します。
+
+image_channel_data_
+typeがCL_HALF_FLOATか
+CL_FLOATのいずれかに指
+定されて生成されたイメー
+ジオブジェクトにおいて、
+浮動小数点の値を返します。
+
+整数の座標を扱う呼び出し
+では、フィルターモードが
+CLK_FILTER_NEAREST、
+座標モードは
+CLK_NORMALIZED_
+COORDS_FALSE、
+アドレスモードは
+CLK_ADDRESS_CLAMP_
+TO_EDGE,
+CLK_ADDRESS_CLAMP、
+CLK_ADDRESS_NONE
+
+のいずれかに指定して
+いる必要があります。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">int4 read_imagei (
+    image1d_t image,
+    sampler_t sampler,
+    int coord)
+int4 read_imagei (
+    image1d_t image,
+    sampler_t sampler,
+    float coord)
+uint4 read_imageui (
+    image1d_t image,
+    sampler_t sampler,
+    int coord)
+uint4 read_imageui (
+    image1d_t image,
+    sampler_t sampler,
+    float coord)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">座標coordを使い1次元
+イメージオブジェクトの要素
+ルックアップをします。
+
+read_imageiは正規化した
+符号付き、read_imageui
+は符号無しの整数値を返しま
+す。各チャンネルは32ビット
+整数に保存されます。
+
+read_imageiはimage_
+channel_data_typeが
+
+CL_SIGNED_INT8
+CL_SIGNED_INT16
+CL_SIGNED_INT32
+
+のいずれかに指定された
+イメージオブジェクトにたい
+して使うことができます。
+
+read_imageuiはimage_
+channel_data_typeが
+
+CL_UNSIGNED_INT8
+CL_UNSIGNED_INT16
+CL_UNSIGNED_INT32
+
+のいずれかに指定された
+イメージオブジェクトにたい
+して使うことができます。
+
+read_image{i|ui}の
+コールは
+CLK_FILTER_NEAREST
+のみをサポートします。
+
+整数の座標を扱う
+read_image{i|ui}
+の呼び出しでは、座標モードは
+CLK_NORMALIZED_
+COORDS_FALSE、
+アドレスモードは
+CLK_ADDRESS_CLAMP_
+TO_EDGE,
+CLK_ADDRESS_CLAMP、
+CLK_ADDRESS_NONE
+
+のいずれかに指定して
+いる必要があります。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">float4 read_imagef (
+    image1d_array_t image,
+    sampler_t sampler,
+    int2 coord)
+float4 read_imagef (
+    image1d_array_t image,
+    sampler_t sampler,
+    float2 coord)</pre></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">座標coord.xを使い、
+imageが指定する1次元
+イメージアレイのcoord.y
+で特定される1次元イメージ
+の要素ルックアップをします。
+
+image_channel_data_
+typeがCL_UNORM_INT8か
+CL_UNORM_INT16のいずれ
+かに指定されて生成された
+イメージオブジェクトにお
+いて、[0.0 ... 1.0]の
+範囲の浮動小数点の値を返
+します。
+
+image_channel_data_
+typeがCL_SNORM_INT8か
+CL_SNORM_INT16のいずれ
+かに指定されて生成された
+イメージオブジェクトにお
+いて、[-1.0 ... 1.0]の
+範囲の浮動小数点の値を返します。
+
+image_channel_data_
+typeがCL_HALF_FLOATか
+CL_FLOATのいずれかに指
+定されて生成されたイメー
+ジオブジェクトにおいて、
+浮動小数点の値を返します。
+
+整数の座標を扱う呼び出し
+では、フィルターモードが
+CLK_FILTER_NEAREST、
+座標モードは
+CLK_NORMALIZED_
+COORDS_FALSE、
+アドレスモードは
+CLK_ADDRESS_CLAMP_
+TO_EDGE,
+CLK_ADDRESS_CLAMP、
+CLK_ADDRESS_NONE
+
+のいずれかに指定してい
+る必要があります。</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">int4 read_imagei (
+    image1d_array_t image,
+    sampler_t sampler,
+    int2 coord)
+int4 read_imagei (
+    image1d_array_t image,
+    sampler_t sampler,
+    float2 coord)
+uint4 read_imageui (
+    image1d_array_t image,
+    sampler_t sampler,
+    int2 coord)
+uint4 read_imageui (
+    image1d_array_t image,
+    sampler_t sampler,
+    float2 coord)</pre></td><td style="" align="left" valign="top"><pre class="literallayout">座標coord.xを使い、image
+が指定する1次元イメージア
+レイのcoord.yで特定される
+1次元イメージの要素ルック
+アップをします。
+
+read_imageiは正規化した
+符号付き、read_imageuiは
+符号無しの整数値を返します。
+各チャンネルは32ビット整数
+に保存されます。
+
+read_imageiはimage_
+channel_data_typeが
+
+CL_SIGNED_INT8
+CL_SIGNED_INT16
+CL_SIGNED_INT32
+
+のいずれかに指定された
+イメージオブジェクトにた
+いして使うことができます。
+
+read_imageuiはimage_
+channel_data_typeが
+
+CL_UNSIGNED_INT8
+CL_UNSIGNED_INT16
+CL_UNSIGNED_INT32
+
+のいずれかに指定された
+イメージオブジェクトにた
+いして使うことができます。
+
+read_image{i|ui}の
+コールは
+CLK_FILTER_NEAREST
+のみをサポートします。
+
+整数の座標を扱うread_
+image{i|ui}の呼び出
+しでは、座標モードは
+CLK_NORMALIZED_
+COORDS_FALSE、
+アドレスモードは
+CLK_ADDRESS_CLAMP_
+TO_EDGE,
+CLK_ADDRESS_CLAMP、
+CLK_ADDRESS_NONE
+
+のいずれかに指定している必要があります。</pre></td></tr></tbody></table></div></div><br class="table-break" /></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apbs43.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apb.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apbs45.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div><wrapper xmlns=""><p>Copyright 2018-2019, by Masaki Komatsu</p>
+
+
+</wrapper></body></html>
