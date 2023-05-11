@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "accepting_command_line_arguments"
+name = "minigrep"
 version = "0.1.0"
